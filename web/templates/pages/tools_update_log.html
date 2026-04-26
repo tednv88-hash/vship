@@ -1,0 +1,54 @@
+{{define "pages/tools_update_log"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.tools_update_log.title">更新日誌</h5>
+        <a href="/tools" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span></a>
+    </div>
+    <div class="card-body">
+        <div class="timeline">
+            <div class="mb-4">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-primary me-2">v1.2.0</span>
+                    <small class="text-muted">2025-12-15</small>
+                </div>
+                <ul class="list-unstyled ms-3">
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v120_scan">掃碼入庫/出庫功能</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v120_forecast">預報包裹管理</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v120_problems">問題件管理</span></li>
+                    <li class="mb-1"><span class="badge bg-info me-1" data-i18n="pages.tools_update_log.optimization">優化</span> <span data-i18n="pages.tools_update_log.v120_perf">包裹列表查詢性能</span></li>
+                    <li class="mb-1"><span class="badge bg-warning text-dark me-1" data-i18n="pages.tools_update_log.bugfix">修復</span> <span data-i18n="pages.tools_update_log.v120_fix">批次發貨通知發送失敗問題</span></li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-primary me-2">v1.1.0</span>
+                    <small class="text-muted">2025-11-20</small>
+                </div>
+                <ul class="list-unstyled ms-3">
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v110_warehouse">多倉庫支持</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v110_levels">會員等級體系</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v110_coupons">優惠券系統</span></li>
+                    <li class="mb-1"><span class="badge bg-info me-1" data-i18n="pages.tools_update_log.optimization">優化</span> <span data-i18n="pages.tools_update_log.v110_order_flow">訂單建立流程</span></li>
+                    <li class="mb-1"><span class="badge bg-info me-1" data-i18n="pages.tools_update_log.optimization">優化</span> <span data-i18n="pages.tools_update_log.v110_dashboard">後台儀表板統計</span></li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-primary me-2">v1.0.0</span>
+                    <small class="text-muted">2025-10-01</small>
+                </div>
+                <ul class="list-unstyled ms-3">
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_packages">包裹管理（入庫、出庫、查詢）</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_orders">集運訂單管理</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_batches">批次管理與發貨</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_users">用戶與權限管理</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_settings">基礎設置（國家、幣種、路線）</span></li>
+                    <li class="mb-1"><span class="badge bg-success me-1" data-i18n="pages.tools_update_log.new_feature">新增</span> <span data-i18n="pages.tools_update_log.v100_tracking">物流軌跡追蹤</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

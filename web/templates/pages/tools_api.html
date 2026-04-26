@@ -1,0 +1,96 @@
+{{define "pages/tools_api"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.tools_api.title">API 接口</h5>
+        <a href="/tools" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span></a>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-1"></i><span data-i18n="pages.tools_api.api_info">所有 API 請求需攜帶認證 Token，基礎路徑為 <code>/api/v1</code></span>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-key me-1"></i><span data-i18n="pages.tools_api.authentication">認證</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/auth/login</code></td><td data-i18n="pages.tools_api.auth_login">用戶登入</td></tr>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/auth/register</code></td><td data-i18n="pages.tools_api.auth_register">用戶註冊</td></tr>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/auth/refresh</code></td><td data-i18n="pages.tools_api.auth_refresh">刷新 Token</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-box me-1"></i><span data-i18n="pages.tools_api.section_packages">包裹</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/packages</code></td><td data-i18n="pages.tools_api.packages_list">包裹列表</td></tr>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/packages</code></td><td data-i18n="pages.tools_api.packages_create">新增包裹</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/packages/:id</code></td><td data-i18n="pages.tools_api.packages_detail">包裹詳情</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/packages/:id</code></td><td data-i18n="pages.tools_api.packages_update">更新包裹</td></tr>
+                    <tr><td><span class="badge bg-danger">DELETE</span></td><td><code>/packages/:id</code></td><td data-i18n="pages.tools_api.packages_delete">刪除包裹</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/packages/:id/receive</code></td><td data-i18n="pages.tools_api.packages_receive">確認入庫</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/packages/:id/ship-out</code></td><td data-i18n="pages.tools_api.packages_ship_out">確認出庫</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-file-invoice me-1"></i><span data-i18n="pages.tools_api.section_orders">訂單</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/orders</code></td><td data-i18n="pages.tools_api.orders_list">訂單列表</td></tr>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/orders</code></td><td data-i18n="pages.tools_api.orders_create">建立訂單</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/orders/:id</code></td><td data-i18n="pages.tools_api.orders_detail">訂單詳情</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/orders/:id</code></td><td data-i18n="pages.tools_api.orders_update">更新訂單</td></tr>
+                    <tr><td><span class="badge bg-danger">DELETE</span></td><td><code>/orders/:id</code></td><td data-i18n="pages.tools_api.orders_delete">刪除訂單</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-layer-group me-1"></i><span data-i18n="pages.tools_api.section_batches">批次</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/batches</code></td><td data-i18n="pages.tools_api.batches_list">批次列表</td></tr>
+                    <tr><td><span class="badge bg-success">POST</span></td><td><code>/batches</code></td><td data-i18n="pages.tools_api.batches_create">建立批次</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/batches/:id</code></td><td data-i18n="pages.tools_api.batches_detail">批次詳情</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/batches/:id</code></td><td data-i18n="pages.tools_api.batches_update">更新批次</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-users me-1"></i><span data-i18n="pages.tools_api.section_users">用戶</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/users</code></td><td data-i18n="pages.tools_api.users_list">用戶列表</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/users/:id</code></td><td data-i18n="pages.tools_api.users_detail">用戶詳情</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/users/:id</code></td><td data-i18n="pages.tools_api.users_update">更新用戶</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/members</code></td><td data-i18n="pages.tools_api.members_list">會員列表</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="mt-4 mb-3"><i class="fas fa-cog me-1"></i><span data-i18n="pages.tools_api.section_settings">設置</span></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light"><tr><th data-i18n="pages.tools_api.method">方法</th><th data-i18n="pages.tools_api.path">路徑</th><th data-i18n="pages.tools_api.description">說明</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/settings/:key</code></td><td data-i18n="pages.tools_api.settings_get">取得設置</td></tr>
+                    <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/settings/:key</code></td><td data-i18n="pages.tools_api.settings_update">更新設置</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/countries</code></td><td data-i18n="pages.tools_api.countries_list">國家列表</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/currencies</code></td><td data-i18n="pages.tools_api.currencies_list">幣種列表</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/shipping-routes</code></td><td data-i18n="pages.tools_api.routes_list">路線列表</td></tr>
+                    <tr><td><span class="badge bg-primary">GET</span></td><td><code>/warehouses</code></td><td data-i18n="pages.tools_api.warehouses_list">倉庫列表</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}

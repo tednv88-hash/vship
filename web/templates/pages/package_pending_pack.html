@@ -1,0 +1,120 @@
+{{define "pages/package_pending_pack"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_pending_pack.title">待打包</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadPackages(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.package_pending_pack.search_placeholder" placeholder="搜尋快遞單號/用戶...">
+        </div>
+        <select class="form-select" id="filterWarehouse" style="max-width:180px;">
+            <option value="" data-i18n="common.filter_all_warehouse">全部倉庫</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                    <th data-i18n="pages.package_pending_pack.tracking_no">快遞單號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="common.warehouse">倉庫</th>
+                    <th data-i18n="pages.packages.weight">重量</th>
+                    <th data-i18n="pages.packages.category">分類</th>
+                    <th data-i18n="pages.package_pending_pack.shelf_location">貨架位置</th>
+                    <th data-i18n="pages.package_claim.storage_time">入庫時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <div>
+            <button class="btn btn-primary btn-sm" onclick="batchPack()"><i class="fas fa-box me-1"></i><span data-i18n="pages.package_pending_pack.batch_pack">批量打包</span></button>
+        </div>
+        <div id="pagination"></div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1;
+const limit = 20;
+
+async function loadWarehouses() {
+    try {
+        const res = await apiRequest('GET', '/warehouses?limit=100');
+        const sel = document.getElementById('filterWarehouse');
+        (res.data || []).forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name}</option>`; });
+    } catch(e) {}
+}
+
+function loadPackages(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const warehouse_id = document.getElementById('filterWarehouse').value;
+    const params = buildQueryParams({ search, status: 'pending_pack', warehouse_id });
+    loadTableData('/packages', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td><input type="checkbox" class="row-check" value="${item.id}"></td>
+        <td>${item.tracking_no || '--'}</td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.warehouse_name || '--'}</td>
+        <td>${item.weight || 0} kg</td>
+        <td>${item.category_name || '--'}</td>
+        <td>${item.shelf_location || '--'}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <a href="/packages/${item.id}/edit" class="btn btn-sm btn-outline-primary" title="${_t('common.edit', '編輯')}"><i class="fas fa-edit"></i></a>
+                <button class="btn btn-sm btn-outline-success" onclick="markPacked('${item.id}')" title="${_t('pages.package_pending_pack.mark_packed', '標記已打包')}"><i class="fas fa-box"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
+}
+
+async function markPacked(id) {
+    if (!confirm(_t('pages.package_pending_pack.confirm_pack', '確定標記為已打包嗎？'))) return;
+    try {
+        await apiRequest('PUT', '/packages/' + id, { status: 'packed' });
+        showToast(_t('pages.package_pending_pack.packed_success', '已標記為已打包'), 'success');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+async function batchPack() {
+    const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.value);
+    if (ids.length === 0) { showToast(_t('pages.package_pending_pack.please_select', '請選擇包裹'), 'warning'); return; }
+    if (!confirm(_t('pages.package_pending_pack.confirm_batch_pack', '確定批量打包嗎？').replace('{count}', ids.length))) return;
+    let success = 0;
+    for (const id of ids) {
+        try {
+            await apiRequest('PUT', '/packages/' + id, { status: 'packed' });
+            success++;
+        } catch(e) {}
+    }
+    showToast(_t('pages.package_pending_pack.batch_pack_result', '成功打包 {success}/{total} 個包裹').replace('{success}', success).replace('{total}', ids.length), 'success');
+    loadPackages(currentPage);
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadWarehouses(); loadPackages(1); });
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadPackages(1)));
+document.getElementById('filterWarehouse').addEventListener('change', () => loadPackages(1));
+</script>
+{{end}}

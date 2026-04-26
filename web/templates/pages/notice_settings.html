@@ -1,0 +1,73 @@
+{{define "pages/notice_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.notice_settings.title">通知設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <h6 class="mb-3" data-i18n="pages.notice_settings.notification_switches">通知開關</h6>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="new_order_notify" id="newOrderNotify" value="true">
+                <label class="form-check-label" for="newOrderNotify" data-i18n="pages.notice_settings.new_order_notify">新訂單通知</label>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="payment_notify" id="paymentNotify" value="true">
+                <label class="form-check-label" for="paymentNotify" data-i18n="pages.notice_settings.payment_notify">付款通知</label>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="shipping_notify" id="shippingNotify" value="true">
+                <label class="form-check-label" for="shippingNotify" data-i18n="pages.notice_settings.shipping_notify">發貨通知</label>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="refund_notify" id="refundNotify" value="true">
+                <label class="form-check-label" for="refundNotify" data-i18n="pages.notice_settings.refund_notify">退款通知</label>
+            </div>
+            <hr>
+            <h6 class="mb-3" data-i18n="pages.notice_settings.notification_method">通知方式</h6>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.notice_settings.notify_email">通知郵箱</label>
+                <input type="email" class="form-control" name="notify_email" placeholder="admin@example.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.notice_settings.notify_phone">通知手機</label>
+                <input type="text" class="form-control" name="notify_phone">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()" data-i18n="common.save_settings">儲存設置</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'notice_setting';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+            document.getElementById('newOrderNotify').checked = !!val.new_order_notify;
+            document.getElementById('paymentNotify').checked = !!val.payment_notify;
+            document.getElementById('shippingNotify').checked = !!val.shipping_notify;
+            document.getElementById('refundNotify').checked = !!val.refund_notify;
+        }
+    } catch (e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    data.new_order_notify = document.getElementById('newOrderNotify').checked;
+    data.payment_notify = document.getElementById('paymentNotify').checked;
+    data.shipping_notify = document.getElementById('shippingNotify').checked;
+    data.refund_notify = document.getElementById('refundNotify').checked;
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

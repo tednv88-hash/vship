@@ -1,0 +1,116 @@
+{{define "pages/shipping_labels"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.shipping_labels.title">運單標籤</h5>
+        <button class="btn btn-primary btn-sm" onclick="batchPrint()">
+            <i class="fas fa-print me-1"></i><span data-i18n="pages.shipping_labels.batch_print">批量列印</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.shipping_labels.search_order" placeholder="搜尋訂單號...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="packed" data-i18n="pages.shipping_labels.packed">已打包</option>
+            <option value="shipped" data-i18n="pages.shipping_labels.shipped">已出貨</option>
+            <option value="completed" data-i18n="common.status_completed">已完成</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                    <th data-i18n="pages.shipping_labels.order_no">訂單號</th>
+                    <th data-i18n="pages.shipping_labels.recipient">收件人</th>
+                    <th data-i18n="pages.shipping_labels.destination">目的地</th>
+                    <th data-i18n="pages.shipping_labels.route">線路</th>
+                    <th data-i18n="pages.shipping_labels.weight">重量</th>
+                    <th data-i18n="pages.shipping_labels.pieces">件數</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 20;
+const selectedIds = new Set();
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, status });
+    loadTableData('/orders', 'tableBody', renderRow, 'pagination', page, limit, params);
+    document.getElementById('selectAll').checked = false;
+}
+
+function renderRow(item) {
+    const checked = selectedIds.has(item.id) ? 'checked' : '';
+    return `<tr>
+        <td><input type="checkbox" class="row-check" value="${item.id}" ${checked} onchange="toggleSelect('${item.id}', this.checked)"></td>
+        <td><strong>${item.order_no || '--'}</strong></td>
+        <td>${item.recipient_name || '--'}</td>
+        <td>${item.destination || '--'}</td>
+        <td>${item.route_name || '--'}</td>
+        <td>${item.total_weight ? item.total_weight + 'kg' : '--'}</td>
+        <td>${item.package_count || 0}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="printLabel('${item.id}')" title="${_t('pages.shipping_labels.print', '列印')}">
+                    <i class="fas fa-print"></i>
+                </button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function toggleSelect(id, checked) {
+    if (checked) { selectedIds.add(id); } else { selectedIds.delete(id); }
+    updateSelectAllState();
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.row-check').forEach(cb => {
+        cb.checked = checked;
+        if (checked) { selectedIds.add(cb.value); } else { selectedIds.delete(cb.value); }
+    });
+}
+
+function updateSelectAllState() {
+    const boxes = document.querySelectorAll('.row-check');
+    const allChecked = boxes.length > 0 && Array.from(boxes).every(cb => cb.checked);
+    document.getElementById('selectAll').checked = allChecked;
+}
+
+function printLabel(id) {
+    window.open('/orders/' + id + '/label', '_blank');
+}
+
+function batchPrint() {
+    if (selectedIds.size === 0) {
+        showToast(_t('pages.shipping_labels.select_orders_first', '請先選擇要列印的訂單'), 'warning');
+        return;
+    }
+    const ids = Array.from(selectedIds).join(',');
+    window.open('/orders/labels?ids=' + encodeURIComponent(ids), '_blank');
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

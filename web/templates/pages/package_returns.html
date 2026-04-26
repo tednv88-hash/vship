@@ -1,0 +1,137 @@
+{{define "pages/package_returns"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_returns.title">退貨件</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadPackages(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.package_returns.search_placeholder" placeholder="搜尋快遞單號/用戶...">
+        </div>
+        <select class="form-select" id="filterReturnStatus" style="max-width:160px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="pending" data-i18n="common.status_pending">待處理</option>
+            <option value="approved" data-i18n="pages.package_returns.status_approved">已批准</option>
+            <option value="returning" data-i18n="pages.package_returns.status_returning">退回中</option>
+            <option value="completed" data-i18n="common.status_completed">已完成</option>
+            <option value="rejected" data-i18n="common.status_rejected">已拒絕</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.package_returns.tracking_no">快遞單號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.package_returns.return_reason">退貨原因</th>
+                    <th data-i18n="pages.package_returns.return_address">退貨地址</th>
+                    <th data-i18n="pages.packages.weight">重量</th>
+                    <th data-i18n="pages.package_returns.return_fee">退貨運費</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="pages.package_returns.request_time">申請時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- 處理退貨 Modal -->
+<div class="modal fade" id="processModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-i18n="pages.package_returns.process_return">處理退貨</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="processId">
+                <div class="mb-3">
+                    <label class="form-label" data-i18n="pages.package_returns.process_result">處理結果</label>
+                    <select class="form-select" id="processAction">
+                        <option value="approved" data-i18n="pages.package_returns.approve_return">批准退貨</option>
+                        <option value="rejected" data-i18n="pages.package_returns.reject_return">拒絕退貨</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" data-i18n="pages.package_returns.return_fee">退貨運費</label>
+                    <input type="number" class="form-control" id="returnFee" step="0.01" min="0" value="0">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" data-i18n="common.remark">備注</label>
+                    <textarea class="form-control" id="processRemark" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitProcess()" data-i18n="common.confirm">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1;
+const limit = 20;
+
+function loadPackages(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const return_status = document.getElementById('filterReturnStatus').value;
+    const params = buildQueryParams({ search, status: 'return', return_status });
+    loadTableData('/packages', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.tracking_no || '--'}</td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.return_reason || '--'}</td>
+        <td>${item.return_address || '--'}</td>
+        <td>${item.weight || 0} kg</td>
+        <td>${formatMoney(item.return_fee || 0)}</td>
+        <td>${getStatusBadge(item.return_status || item.status)}</td>
+        <td>${formatDate(item.return_requested_at || item.updated_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="openProcess('${item.id}')" title="${_t('pages.package_returns.process', '處理')}"><i class="fas fa-cog"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openProcess(id) {
+    document.getElementById('processId').value = id;
+    document.getElementById('processAction').value = 'approved';
+    document.getElementById('returnFee').value = '0';
+    document.getElementById('processRemark').value = '';
+    openModal('processModal');
+}
+
+async function submitProcess() {
+    const id = document.getElementById('processId').value;
+    const action = document.getElementById('processAction').value;
+    const return_fee = parseFloat(document.getElementById('returnFee').value) || 0;
+    const remark = document.getElementById('processRemark').value;
+    try {
+        await apiRequest('PUT', '/packages/' + id, { return_status: action, return_fee, return_remark: remark });
+        showToast(_t('pages.package_returns.process_success', '處理成功'), 'success');
+        closeModal('processModal');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadPackages(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadPackages(1)));
+document.getElementById('filterReturnStatus').addEventListener('change', () => loadPackages(1));
+</script>
+{{end}}

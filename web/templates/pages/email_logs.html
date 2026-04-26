@@ -1,0 +1,79 @@
+{{define "pages/email_logs"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.email_logs.title">郵件推送</h5>
+        <div>
+            <button class="btn btn-primary btn-sm" onclick="openSendModal()"><i class="fas fa-paper-plane me-1"></i><span data-i18n="pages.email_logs.send_email">發送郵件</span></button>
+            <button class="btn btn-outline-secondary btn-sm ms-1" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.email_logs.search" placeholder="搜尋郵箱/主題..."></div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="sent" data-i18n="pages.email_logs.sent">已發送</option>
+            <option value="failed" data-i18n="pages.recharge_orders.failed">失敗</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.email_logs.recipient">郵箱</th><th data-i18n="pages.email_logs.subject">主題</th><th data-i18n="common.status">狀態</th><th data-i18n="pages.email_logs.send_time">發送時間</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="4" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="sendModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" data-i18n="pages.email_logs.send_email">發送郵件</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <form id="sendForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.email_logs.recipient_email">收件人郵箱 <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" name="email" required data-i18n-placeholder="pages.email_logs.enter_email" placeholder="請輸入郵箱地址">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.email_logs.subject">主題 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="subject" required data-i18n-placeholder="pages.email_logs.enter_subject" placeholder="請輸入郵件主題">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.email_logs.content">內容 <span class="text-danger">*</span></label>
+                <textarea class="form-control" name="content" rows="6" required data-i18n-placeholder="pages.email_logs.enter_content" placeholder="請輸入郵件內容"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-primary" onclick="sendEmail()" data-i18n="pages.email_logs.send">發送</button>
+    </div>
+</div></div></div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; const API_PATH = '/emails';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    return `<tr>
+        <td>${item.email || '--'}</td>
+        <td>${item.subject || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.sent_at || item.created_at)}</td>
+    </tr>`;
+}
+function openSendModal() { resetForm('sendForm'); openModal('sendModal'); }
+async function sendEmail() {
+    const data = getFormData('sendForm');
+    if (!data.email || !data.subject || !data.content) { showToast(_t('pages.email_logs.fill_required', '請填寫必填項'), 'error'); return; }
+    try {
+        await apiRequest('POST', API_PATH, data);
+        showToast(_t('pages.email_logs.send_success', '發送成功'), 'success');
+        closeModal('sendModal'); loadData(currentPage);
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

@@ -1,0 +1,55 @@
+{{define "pages/client_web"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.client_web.title">PC端管理</h5>
+    </div>
+    <div class="card-body">
+        <div class="mb-4">
+            <label class="form-label fw-bold" data-i18n="pages.client_web.official_site">官網入口</label>
+            <div class="input-group">
+                <input type="text" class="form-control bg-light" id="webEntryUrl" readonly value="載入中...">
+                <a class="btn btn-primary" id="visitWebBtn" href="#" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i><span data-i18n="pages.client_web.visit_url">訪問URL</span>
+                </a>
+            </div>
+            <small class="text-muted" data-i18n="pages.client_web.site_url_desc">PC端官網的訪問地址</small>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold" data-i18n="pages.client_web.logistics_url">查詢物流URL</label>
+            <div class="input-group">
+                <input type="text" class="form-control bg-light" id="trackingUrl" readonly value="載入中...">
+                <a class="btn btn-primary" id="visitTrackingBtn" href="#" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i><span data-i18n="pages.client_web.visit_url">訪問URL</span>
+                </a>
+            </div>
+            <small class="text-muted" data-i18n="pages.client_web.logistics_url_desc">PC端查詢物流的訪問地址</small>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadWebSettings() {
+    try {
+        const res = await apiRequest('GET', '/app-settings?setting_type=web');
+        const data = res.data || res;
+        if (data && typeof data === 'object') {
+            const baseUrl = data.site_url || window.location.origin;
+            const webUrl = baseUrl;
+            const trackUrl = baseUrl + '/tracking';
+            document.getElementById('webEntryUrl').value = webUrl;
+            document.getElementById('trackingUrl').value = trackUrl;
+            document.getElementById('visitWebBtn').href = webUrl;
+            document.getElementById('visitTrackingBtn').href = trackUrl;
+        }
+    } catch (e) {
+        const baseUrl = window.location.origin;
+        document.getElementById('webEntryUrl').value = baseUrl;
+        document.getElementById('trackingUrl').value = baseUrl + '/tracking';
+        document.getElementById('visitWebBtn').href = baseUrl;
+        document.getElementById('visitTrackingBtn').href = baseUrl + '/tracking';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => loadWebSettings());
+</script>
+{{end}}

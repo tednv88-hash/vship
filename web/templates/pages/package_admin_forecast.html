@@ -1,0 +1,131 @@
+{{define "pages/package_admin_forecast"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="fas fa-user-edit me-2"></i><span data-i18n="pages.package_admin_forecast.title">代客預報</span></h5>
+    </div>
+    <div class="card-body">
+        <form id="forecastForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.select_user">選擇用戶 <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="userSearch" data-i18n-placeholder="pages.package_admin_forecast.search_user_placeholder" placeholder="搜尋用戶名/手機號...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="searchUsers()"><i class="fas fa-search"></i></button>
+                    </div>
+                    <select class="form-select mt-2 d-none" id="userSelect" size="3"></select>
+                    <input type="hidden" id="selectedUserId">
+                    <div id="selectedUserInfo" class="mt-2 text-muted small"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.warehouse">倉庫 <span class="text-danger">*</span></label>
+                    <select class="form-select" id="warehouseId" required><option value="" data-i18n="pages.package_admin_forecast.select_warehouse">請選擇倉庫</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.tracking_no">快遞單號 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="trackingNo" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.logistics_company">快遞公司</label>
+                    <select class="form-select" id="logisticsId"><option value="" data-i18n="common.please_select">請選擇</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.package_category">包裹分類</label>
+                    <select class="form-select" id="categoryId"><option value="" data-i18n="common.please_select">請選擇</option></select>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.item_description">物品描述</label>
+                    <textarea class="form-control" id="description" rows="2" data-i18n-placeholder="pages.package_admin_forecast.description_placeholder" placeholder="請描述包裹內容物..."></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.estimated_weight">預估重量(kg)</label>
+                    <input type="number" class="form-control" id="estimatedWeight" step="0.01" min="0">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.quantity">件數</label>
+                    <input type="number" class="form-control" id="quantity" value="1" min="1">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.declared_value">預估價值</label>
+                    <input type="number" class="form-control" id="declaredValue" step="0.01" min="0">
+                </div>
+                <div class="col-12">
+                    <label class="form-label" data-i18n="common.remark">備注</label>
+                    <textarea class="form-control" id="remark" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i><span data-i18n="pages.package_admin_forecast.submit_forecast">提交預報</span></button>
+                <button type="button" class="btn btn-outline-secondary ms-2" onclick="resetForm('forecastForm')" data-i18n="common.reset">重置</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadDropdowns() {
+    try {
+        const [wRes, cRes, lRes] = await Promise.all([
+            apiRequest('GET', '/warehouses?limit=100'),
+            apiRequest('GET', '/package-categories?limit=100'),
+            apiRequest('GET', '/logistics-companies?limit=100')
+        ]);
+        const wSel = document.getElementById('warehouseId');
+        (wRes.data || []).forEach(w => { wSel.innerHTML += `<option value="${w.id}">${w.name}</option>`; });
+        const cSel = document.getElementById('categoryId');
+        (cRes.data || []).forEach(c => { cSel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+        const lSel = document.getElementById('logisticsId');
+        (lRes.data || []).forEach(l => { lSel.innerHTML += `<option value="${l.id}">${l.name}</option>`; });
+    } catch(e) {}
+}
+
+async function searchUsers() {
+    const search = document.getElementById('userSearch').value.trim();
+    if (!search) return;
+    try {
+        const res = await apiRequest('GET', '/users?search=' + encodeURIComponent(search) + '&limit=10');
+        const sel = document.getElementById('userSelect');
+        sel.innerHTML = '';
+        (res.data || []).forEach(u => {
+            sel.innerHTML += `<option value="${u.id}">${u.name || u.user_name} (${u.phone || u.email})</option>`;
+        });
+        sel.classList.remove('d-none');
+        sel.addEventListener('change', () => {
+            const opt = sel.options[sel.selectedIndex];
+            document.getElementById('selectedUserId').value = opt.value;
+            document.getElementById('selectedUserInfo').textContent = _t('pages.package_admin_forecast.selected', '已選擇') + ': ' + opt.text;
+        });
+    } catch(e) {}
+}
+
+document.getElementById('forecastForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userId = document.getElementById('selectedUserId').value;
+    if (!userId) { showToast(_t('pages.package_admin_forecast.please_select_user', '請選擇用戶'), 'error'); return; }
+    const data = {
+        user_id: userId,
+        tracking_no: document.getElementById('trackingNo').value.trim(),
+        warehouse_id: document.getElementById('warehouseId').value,
+        logistics_company_id: document.getElementById('logisticsId').value || undefined,
+        category_id: document.getElementById('categoryId').value || undefined,
+        description: document.getElementById('description').value,
+        estimated_weight: parseFloat(document.getElementById('estimatedWeight').value) || 0,
+        quantity: parseInt(document.getElementById('quantity').value) || 1,
+        declared_value: parseFloat(document.getElementById('declaredValue').value) || 0,
+        remark: document.getElementById('remark').value,
+        status: 'forecast'
+    };
+    try {
+        await apiRequest('POST', '/packages/forecast', data);
+        showToast(_t('pages.package_admin_forecast.forecast_success', '代客預報成功'), 'success');
+        resetForm('forecastForm');
+        document.getElementById('selectedUserId').value = '';
+        document.getElementById('selectedUserInfo').textContent = '';
+        document.getElementById('userSelect').classList.add('d-none');
+    } catch(e) {}
+});
+
+document.addEventListener('DOMContentLoaded', loadDropdowns);
+</script>
+{{end}}

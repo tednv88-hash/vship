@@ -1,0 +1,191 @@
+{{define "pages/app_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.app_settings.title">客戶端設置</h5>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="settingTabs">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('miniprogram', event)" data-i18n="pages.app_settings.miniprogram">小程式</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('h5', event)">H5</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('wechat', event)" data-i18n="pages.app_settings.wechat_official">公眾號</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('web', event)">Web</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('language', event)" data-i18n="pages.app_settings.language">語言</a></li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <!-- 小程式 -->
+            <div class="tab-pane" id="tab-miniprogram">
+                <form id="form-miniprogram">
+                    <div class="mb-3">
+                        <label class="form-label">App ID</label>
+                        <input type="text" class="form-control" name="app_id">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">App Secret</label>
+                        <input type="text" class="form-control" name="app_secret">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.name">名稱</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSetting('miniprogram')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- H5 -->
+            <div class="tab-pane d-none" id="tab-h5">
+                <form id="form-h5">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.domain">域名</label>
+                        <input type="text" class="form-control" name="domain" placeholder="https://">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.h5_title">標題</label>
+                        <input type="text" class="form-control" name="title">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.description">描述</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSetting('h5')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- 公眾號 -->
+            <div class="tab-pane d-none" id="tab-wechat">
+                <form id="form-wechat">
+                    <div class="mb-3">
+                        <label class="form-label">App ID</label>
+                        <input type="text" class="form-control" name="app_id">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">App Secret</label>
+                        <input type="text" class="form-control" name="app_secret">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Token</label>
+                        <input type="text" class="form-control" name="token">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Encoding Key</label>
+                        <input type="text" class="form-control" name="encoding_key">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSetting('wechat')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- Web -->
+            <div class="tab-pane d-none" id="tab-web">
+                <form id="form-web">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.site_name">站點名稱</label>
+                        <input type="text" class="form-control" name="site_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.site_url">站點網址</label>
+                        <input type="url" class="form-control" name="site_url" placeholder="https://">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Logo URL</label>
+                        <input type="url" class="form-control" name="logo_url" placeholder="https://">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Favicon URL</label>
+                        <input type="url" class="form-control" name="favicon_url" placeholder="https://">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSetting('web')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- 語言 -->
+            <div class="tab-pane d-none" id="tab-language">
+                <form id="form-language">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.default_language">預設語言</label>
+                        <select class="form-select" name="default_language">
+                            <option value="zh-CN" data-i18n="pages.app_settings.simplified_chinese">簡體中文</option>
+                            <option value="zh-TW" data-i18n="pages.app_settings.traditional_chinese">繁體中文</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.app_settings.supported_languages">支援語言</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="lang_zh_cn" id="langZhCN" value="zh-CN">
+                            <label class="form-check-label" for="langZhCN" data-i18n="pages.app_settings.simplified_chinese">簡體中文</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="lang_zh_tw" id="langZhTW" value="zh-TW">
+                            <label class="form-check-label" for="langZhTW" data-i18n="pages.app_settings.traditional_chinese">繁體中文</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="lang_en" id="langEn" value="en">
+                            <label class="form-check-label" for="langEn">English</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveSetting('language')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentTab = 'miniprogram';
+const API_PATH = '/app-settings';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function switchTab(tab, event) {
+    if (event) event.preventDefault();
+    document.querySelectorAll('#settingTabs .nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('d-none'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.remove('d-none');
+    currentTab = tab;
+    loadSetting(tab);
+}
+
+async function loadSetting(type) {
+    try {
+        const res = await apiRequest('GET', API_PATH + '?setting_type=' + type);
+        const data = res.data || res;
+        if (data && typeof data === 'object') {
+            const formId = 'form-' + type;
+            if (type === 'language' && data.supported_languages) {
+                const langs = data.supported_languages || [];
+                document.getElementById('langZhCN').checked = langs.includes('zh-CN');
+                document.getElementById('langZhTW').checked = langs.includes('zh-TW');
+                document.getElementById('langEn').checked = langs.includes('en');
+                if (data.default_language) {
+                    const sel = document.querySelector(`#${formId} [name="default_language"]`);
+                    if (sel) sel.value = data.default_language;
+                }
+            } else {
+                populateForm(formId, data);
+            }
+        }
+    } catch (e) {}
+}
+
+async function saveSetting(type) {
+    const formId = 'form-' + type;
+    let data = getFormData(formId);
+    data.setting_type = type;
+
+    if (type === 'language') {
+        const supported = [];
+        if (document.getElementById('langZhCN').checked) supported.push('zh-CN');
+        if (document.getElementById('langZhTW').checked) supported.push('zh-TW');
+        if (document.getElementById('langEn').checked) supported.push('en');
+        data.supported_languages = supported;
+    }
+
+    try {
+        await apiRequest('POST', API_PATH, data);
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSetting('miniprogram'));
+</script>
+{{end}}

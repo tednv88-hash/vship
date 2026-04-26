@@ -1,0 +1,121 @@
+{{define "pages/dealers"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.dealers.title">分銷商列表</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.dealers.search_dealer" placeholder="搜尋分銷商..."></div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="common.enable">啟用</option>
+            <option value="inactive" data-i18n="common.disable">停用</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="common.user">用戶</th>
+                <th data-i18n="pages.dealers.level">等級</th>
+                <th data-i18n="pages.dealers.parent">上級</th>
+                <th data-i18n="pages.dealers.commission_rate">佣金比例</th>
+                <th data-i18n="pages.dealers.total_commission">總佣金</th>
+                <th data-i18n="pages.dealers.withdrawn">已提現</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" data-i18n="pages.dealers.edit_dealer">編輯分銷商</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <form id="itemForm">
+            <input type="hidden" name="id" id="itemId">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealers.level">等級</label>
+                <select class="form-select" name="level_id" id="levelSelect">
+                    <option value="" data-i18n="common.please_select">請選擇</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealers.commission_rate">佣金比例 (%)</label>
+                <input type="number" class="form-control" name="commission_rate" step="0.01" min="0" max="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="common.status">狀態</label>
+                <select class="form-select" name="status">
+                    <option value="active" data-i18n="common.enable">啟用</option>
+                    <option value="inactive" data-i18n="common.disable">停用</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+    </div>
+</div></div></div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/dealers';
+
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.level_name || '--'}</td>
+        <td>${item.parent_name || '--'}</td>
+        <td>${item.commission_rate != null ? item.commission_rate + '%' : '--'}</td>
+        <td>${formatMoney(item.total_commission)}</td>
+        <td>${formatMoney(item.withdrawn_amount)}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td><div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+        </div></td>
+    </tr>`;
+}
+
+async function editItem(id) {
+    editingId = id;
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch(e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        await apiRequest('PUT', API_PATH + '/' + editingId, data);
+        showToast(_t('pages.dealers.update_success', '更新成功'), 'success');
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    loadData(1);
+    try {
+        const levels = await apiRequest('GET', '/dealer/levels?limit=100');
+        const sel = document.getElementById('levelSelect');
+        (levels.data || levels || []).forEach(l => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${l.id}">${l.name}</option>`);
+        });
+    } catch(e) {}
+});
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

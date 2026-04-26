@@ -1,0 +1,337 @@
+{{define "pages/warehouses"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouses.title">倉庫管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.warehouses.search_warehouse" placeholder="搜尋倉庫名稱...">
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.warehouses.warehouse_name">倉庫名稱</th>
+                    <th data-i18n="pages.warehouses.warehouse_code">倉庫代碼</th>
+                    <th data-i18n="pages.warehouses.country">國家</th>
+                    <th data-i18n="pages.warehouses.address">地址</th>
+                    <th data-i18n="pages.warehouses.contact">聯絡人</th>
+                    <th data-i18n="pages.warehouses.contact_phone">聯絡電話</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Warehouse Form Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.warehouses.add_warehouse">新增倉庫</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id" id="itemId">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.warehouse_name">倉庫名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.warehouse_code">倉庫代碼 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.country">國家</label>
+                        <select class="form-select" name="country_id" id="countrySelect">
+                            <option value="" data-i18n="common.please_select">請選擇</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.address">地址</label>
+                        <textarea class="form-control" name="address" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.contact">聯絡人</label>
+                        <input type="text" class="form-control" name="contact_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.warehouses.contact_phone">聯絡電話</label>
+                        <input type="text" class="form-control" name="contact_phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.status">狀態</label>
+                        <select class="form-select" name="status">
+                            <option value="active" data-i18n="common.status_active">啟用</option>
+                            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shelf Management Modal -->
+<div class="modal fade" id="shelfModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-th-large me-2"></i><span data-i18n="pages.warehouses.shelf_management">貨架管理</span> - <span id="shelfWarehouseName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <small class="text-muted" data-i18n="pages.warehouses.manage_shelves_hint">管理此倉庫的貨架位置</small>
+                    <button class="btn btn-primary btn-sm" onclick="openAddShelfForm()">
+                        <i class="fas fa-plus me-1"></i><span data-i18n="pages.warehouses.add_shelf">新增貨架</span>
+                    </button>
+                </div>
+                <!-- Add/Edit Shelf Form (hidden by default) -->
+                <div id="shelfFormArea" class="card mb-3" style="display:none;">
+                    <div class="card-body">
+                        <form id="shelfForm">
+                            <input type="hidden" name="shelf_id" id="shelfId">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <label class="form-label" data-i18n="pages.warehouses.shelf_code">貨架編號 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" name="shelf_code" required data-i18n-placeholder="pages.warehouses.shelf_code_placeholder" placeholder="A-01">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" data-i18n="pages.warehouses.zone">區域</label>
+                                    <input type="text" class="form-control form-control-sm" name="zone" data-i18n-placeholder="pages.warehouses.zone_placeholder" placeholder="A區">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.warehouses.capacity">容量</label>
+                                    <input type="number" class="form-control form-control-sm" name="capacity" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="common.status">狀態</label>
+                                    <select class="form-select form-select-sm" name="status">
+                                        <option value="active" data-i18n="common.status_active">啟用</option>
+                                        <option value="inactive" data-i18n="common.status_inactive">停用</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-1">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveShelf()" data-i18n="common.save">儲存</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelShelfForm()" data-i18n="common.cancel">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th data-i18n="pages.warehouses.shelf_code">貨架編號</th>
+                                <th data-i18n="pages.warehouses.zone">區域</th>
+                                <th data-i18n="pages.warehouses.capacity">容量</th>
+                                <th data-i18n="pages.warehouses.used">已用</th>
+                                <th data-i18n="common.status">狀態</th>
+                                <th data-i18n="common.actions">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shelfTableBody">
+                            <tr><td colspan="6" class="text-center py-3 text-muted" data-i18n="common.loading">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1;
+const limit = 20;
+let editingId = null;
+let currentWarehouseId = null;
+let editingShelfId = null;
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const params = buildQueryParams({ search });
+    loadTableData('/warehouses', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.name || '--'}</td>
+        <td>${item.code || '--'}</td>
+        <td>${item.country_name || '--'}</td>
+        <td>${item.address || '--'}</td>
+        <td>${item.contact_name || '--'}</td>
+        <td>${item.contact_phone || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-info" onclick="openShelfModal('${item.id}', '${(item.name||'').replace(/'/g, "\\'")}')" title="${_t('pages.warehouses.manage_shelves', '管理貨架')}"><i class="fas fa-th-large"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.warehouses.add_warehouse', '新增倉庫');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.warehouses.edit_warehouse', '編輯倉庫');
+    try {
+        const res = await apiRequest('GET', '/warehouses/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if (editingId) {
+            await apiRequest('PUT', '/warehouses/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', '/warehouses', data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.warehouses.confirm_delete', '確定要刪除此倉庫嗎？'))) return;
+    try {
+        await apiRequest('DELETE', '/warehouses/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+// ===== Shelf Management =====
+function openShelfModal(warehouseId, warehouseName) {
+    currentWarehouseId = warehouseId;
+    document.getElementById('shelfWarehouseName').textContent = warehouseName;
+    cancelShelfForm();
+    loadShelves();
+    openModal('shelfModal');
+}
+
+async function loadShelves() {
+    try {
+        const res = await apiRequest('GET', '/warehouses/' + currentWarehouseId + '/shelves?limit=100');
+        const shelves = res.data || [];
+        const tbody = document.getElementById('shelfTableBody');
+        if (shelves.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">' + _t('pages.warehouses.no_shelves', '尚無貨架') + '</td></tr>';
+            return;
+        }
+        tbody.innerHTML = shelves.map(s => `<tr>
+            <td><strong>${s.shelf_code || '--'}</strong></td>
+            <td>${s.zone || '--'}</td>
+            <td>${s.capacity || 0}</td>
+            <td>${s.used_capacity || 0}</td>
+            <td>${getStatusBadge(s.status)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editShelf('${s.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteShelf('${s.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>`).join('');
+    } catch (e) {
+        document.getElementById('shelfTableBody').innerHTML = '<tr><td colspan="6" class="text-center py-3 text-danger">' + _t('common.load_failed', '載入失敗') + '</td></tr>';
+    }
+}
+
+function openAddShelfForm() {
+    editingShelfId = null;
+    resetForm('shelfForm');
+    document.getElementById('shelfFormArea').style.display = 'block';
+}
+
+function cancelShelfForm() {
+    document.getElementById('shelfFormArea').style.display = 'none';
+    resetForm('shelfForm');
+    editingShelfId = null;
+}
+
+async function editShelf(id) {
+    editingShelfId = id;
+    try {
+        const res = await apiRequest('GET', '/warehouses/' + currentWarehouseId + '/shelves?limit=100');
+        const shelf = (res.data || []).find(s => s.id === id);
+        if (shelf) {
+            populateForm('shelfForm', shelf);
+            document.getElementById('shelfFormArea').style.display = 'block';
+        }
+    } catch (e) {}
+}
+
+async function saveShelf() {
+    const data = getFormData('shelfForm');
+    delete data.shelf_id;
+    try {
+        if (editingShelfId) {
+            await apiRequest('PUT', '/shelves/' + editingShelfId, data);
+            showToast(_t('pages.warehouses.shelf_update_success', '貨架更新成功'), 'success');
+        } else {
+            await apiRequest('POST', '/warehouses/' + currentWarehouseId + '/shelves', data);
+            showToast(_t('pages.warehouses.shelf_create_success', '貨架建立成功'), 'success');
+        }
+        cancelShelfForm();
+        loadShelves();
+    } catch (e) {}
+}
+
+async function deleteShelf(id) {
+    if (!confirmDelete(_t('pages.warehouses.confirm_delete_shelf', '確定要刪除此貨架嗎？'))) return;
+    try {
+        await apiRequest('DELETE', '/shelves/' + id);
+        showToast(_t('pages.warehouses.shelf_delete_success', '貨架刪除成功'), 'success');
+        loadShelves();
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    loadData(1);
+    try {
+        const countries = await apiRequest('GET', '/countries?limit=200');
+        const sel = document.getElementById('countrySelect');
+        (countries.data || countries || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name_zh || c.name}</option>`);
+        });
+    } catch (e) {}
+});
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

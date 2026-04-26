@@ -1,0 +1,72 @@
+{{define "pages/blind_box_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.blind_box.blind_box_settings">盲盒設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.enable_blind_box">是否開啟盲盒功能</label>
+                    <select class="form-select" name="enabled">
+                        <option value="true" data-i18n="pages.blind_box.open">開啟</option>
+                        <option value="false" data-i18n="pages.blind_box.close">關閉</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.daily_limit">每日抽獎次數限制</label>
+                    <input type="number" class="form-control" name="daily_limit" data-type="number" data-i18n-placeholder="pages.blind_box.daily_limit_hint" placeholder="0 表示不限">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.default_cost_points">默認消耗積分</label>
+                    <input type="number" class="form-control" name="default_cost_points" data-type="number" data-i18n-placeholder="pages.blind_box.cost_per_draw_hint" placeholder="每次抽獎消耗積分">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.guarantee_count">保底次數</label>
+                    <input type="number" class="form-control" name="guarantee_count" data-type="number" data-i18n-placeholder="pages.blind_box.guarantee_hint" placeholder="連續抽多少次必中稀有獎品">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.show_records">是否顯示中獎記錄</label>
+                    <select class="form-select" name="show_records">
+                        <option value="true" data-i18n="pages.blind_box.show">顯示</option>
+                        <option value="false" data-i18n="pages.blind_box.hide">隱藏</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.blind_box.allow_share">是否允許分享</label>
+                    <select class="form-select" name="allow_share">
+                        <option value="true" data-i18n="pages.blind_box.allow">允許</option>
+                        <option value="false" data-i18n="pages.blind_box.forbid">禁止</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer text-end">
+        <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span></button>
+    </div>
+</div>
+<script>
+const API_PATH = '/blind-box/setting';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', API_PATH);
+        const data = res.data || res;
+        populateForm('settingsForm', data);
+    } catch(e){}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', API_PATH, data);
+        showToast(_t('common.save_success', '保存成功'));
+    } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', loadSettings);
+</script>
+{{end}}

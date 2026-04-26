@@ -1,0 +1,28 @@
+# Go
+/bin/
+*.exe
+*.test
+*.out
+
+# Env / secrets
+.env
+.env.local
+*.local
+
+# Node
+miniprogram/node_modules/
+miniprogram/dist/
+miniprogram/.env.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Automation artifacts
+scripts/.chrome-neon-profile/
+scripts/.automation-output/
+
+# Logs
+*.log

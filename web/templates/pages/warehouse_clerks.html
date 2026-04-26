@@ -1,0 +1,159 @@
+{{define "pages/warehouse_clerks"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouse_clerks.title">倉管員</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.warehouse_clerks.search_clerk" placeholder="搜尋姓名/電話..."></div>
+        <select class="form-select" id="filterWarehouse" style="max-width:200px;">
+            <option value="" data-i18n="common.filter_all_warehouse">全部倉庫</option>
+        </select>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="common.status_active">啟用</option>
+            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.warehouse_clerks.warehouse">倉庫</th>
+                <th data-i18n="pages.warehouse_clerks.name">姓名</th>
+                <th data-i18n="pages.warehouse_clerks.phone">電話</th>
+                <th data-i18n="pages.warehouse_clerks.role">角色</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.warehouse_clerks.add_clerk">新增倉管員</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <form id="itemForm">
+            <input type="hidden" name="id" id="itemId">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_clerks.warehouse">倉庫</label>
+                <select class="form-select" name="warehouse_id" id="warehouseSelect">
+                    <option value="" data-i18n="common.please_select">請選擇</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_clerks.name">姓名 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_clerks.phone">電話 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="phone" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_clerks.role">角色</label>
+                <select class="form-select" name="role">
+                    <option value="clerk" data-i18n="pages.warehouse_clerks.role_clerk">倉管員</option>
+                    <option value="manager" data-i18n="pages.warehouse_clerks.role_manager">主管</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="common.status">狀態</label>
+                <select class="form-select" name="status">
+                    <option value="active" data-i18n="common.status_active">啟用</option>
+                    <option value="inactive" data-i18n="common.status_inactive">停用</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+    </div>
+</div></div></div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/warehouse-clerks';
+
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, warehouse_id: document.getElementById('filterWarehouse').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.warehouse_name || '--'}</td>
+        <td>${item.name || '--'}</td>
+        <td>${item.phone || '--'}</td>
+        <td>${item.role || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td><div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.warehouse_clerks.add_clerk', '新增倉管員');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.warehouse_clerks.edit_clerk', '編輯倉管員');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch(e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.warehouse_clerks.confirm_delete', '確定要刪除此倉管員嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+async function loadWarehouses() {
+    try {
+        const res = await apiRequest('GET', '/warehouses?limit=100');
+        const items = res.data || res || [];
+        const selects = [document.getElementById('filterWarehouse'), document.getElementById('warehouseSelect')];
+        items.forEach(w => {
+            selects.forEach(sel => sel.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`));
+        });
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadData(1); loadWarehouses(); });
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterWarehouse').addEventListener('change', () => loadData(1));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

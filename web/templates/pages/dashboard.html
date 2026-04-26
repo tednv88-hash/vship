@@ -1,0 +1,310 @@
+{{define "pages/dashboard"}}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<!-- Stat Cards Row 1 -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.total_packages">總包裹</h6>
+                    <h3 class="stat-card-value" id="totalPackages">--</h3>
+                </div>
+                <div class="stat-card-icon bg-primary-light">
+                    <i class="fas fa-box text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.total_orders">總訂單</h6>
+                    <h3 class="stat-card-value" id="totalOrders">--</h3>
+                </div>
+                <div class="stat-card-icon bg-info-light">
+                    <i class="fas fa-shopping-cart text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.total_users">總用戶</h6>
+                    <h3 class="stat-card-value" id="totalUsers">--</h3>
+                </div>
+                <div class="stat-card-icon bg-warning-light">
+                    <i class="fas fa-users text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.total_batches">總批次</h6>
+                    <h3 class="stat-card-value" id="totalBatches">--</h3>
+                </div>
+                <div class="stat-card-icon bg-danger-light">
+                    <i class="fas fa-layer-group text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards Row 2 -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.pending_orders">待處理訂單</h6>
+                    <h3 class="stat-card-value" id="pendingOrders">--</h3>
+                </div>
+                <div class="stat-card-icon bg-warning-light">
+                    <i class="fas fa-clock text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.shipping_batches">運送中批次</h6>
+                    <h3 class="stat-card-value" id="shippingBatches">--</h3>
+                </div>
+                <div class="stat-card-icon bg-info-light">
+                    <i class="fas fa-truck text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.today_packages">今日包裹</h6>
+                    <h3 class="stat-card-value" id="todayPackages">--</h3>
+                </div>
+                <div class="stat-card-icon bg-primary-light">
+                    <i class="fas fa-box-open text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="dashboard.today_orders">今日訂單</h6>
+                    <h3 class="stat-card-value" id="todayOrders">--</h3>
+                </div>
+                <div class="stat-card-icon bg-success-light">
+                    <i class="fas fa-receipt text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="dashboard.order_trend">近30天趨勢</h5>
+            </div>
+            <div class="card-body">
+                <div id="trendChart" style="width: 100%; height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="dashboard.revenue_overview">收入概覽</h5>
+            </div>
+            <div class="card-body">
+                <div class="revenue-item mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" data-i18n="dashboard.today_revenue">今日收入</span>
+                        <span class="fw-bold text-primary" id="todayRevenue">--</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" id="todayRevenueBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="revenue-item mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" data-i18n="dashboard.week_revenue">本週收入</span>
+                        <span class="fw-bold text-info" id="weekRevenue">--</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" id="weekRevenueBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="revenue-item mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" data-i18n="dashboard.month_revenue">本月收入</span>
+                        <span class="fw-bold text-success" id="monthRevenue">--</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" id="monthRevenueBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="revenue-item">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted" data-i18n="dashboard.total_revenue">總收入</span>
+                        <span class="fw-bold text-warning" id="totalRevenue">--</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" id="totalRevenueBar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" data-i18n="dashboard.recent_orders">最近訂單</h5>
+                <a href="/orders" class="btn btn-sm btn-outline-primary" data-i18n="dashboard.view_all">查看全部</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th data-i18n="pages.orders.order_number">訂單編號</th>
+                                <th data-i18n="common.user">用戶</th>
+                                <th data-i18n="pages.orders.package_count">包裹數</th>
+                                <th data-i18n="pages.orders.total_weight">總重量</th>
+                                <th data-i18n="pages.orders.amount">金額</th>
+                                <th data-i18n="common.status">狀態</th>
+                                <th data-i18n="common.created_at">建立時間</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersBody">
+                            <tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const data = await apiRequest('GET', '/dashboard/stats');
+        if (data) {
+            document.getElementById('totalPackages').textContent = (data.total_packages || 0).toLocaleString();
+            document.getElementById('totalOrders').textContent = (data.total_orders || 0).toLocaleString();
+            document.getElementById('totalUsers').textContent = (data.total_users || 0).toLocaleString();
+            document.getElementById('totalBatches').textContent = (data.total_batches || 0).toLocaleString();
+            document.getElementById('pendingOrders').textContent = (data.pending_orders || 0).toLocaleString();
+            document.getElementById('shippingBatches').textContent = (data.shipping_batches || 0).toLocaleString();
+            document.getElementById('todayPackages').textContent = (data.today_packages || 0).toLocaleString();
+            document.getElementById('todayOrders').textContent = (data.today_orders || 0).toLocaleString();
+            document.getElementById('todayRevenue').textContent = formatMoney(data.today_revenue || 0);
+            document.getElementById('weekRevenue').textContent = formatMoney(data.week_revenue || 0);
+            document.getElementById('monthRevenue').textContent = formatMoney(data.month_revenue || 0);
+            document.getElementById('totalRevenue').textContent = formatMoney(data.total_revenue || 0);
+
+            if (data.total_revenue > 0) {
+                document.getElementById('todayRevenueBar').style.width = ((data.today_revenue / data.total_revenue) * 100) + '%';
+                document.getElementById('weekRevenueBar').style.width = ((data.week_revenue / data.total_revenue) * 100) + '%';
+                document.getElementById('monthRevenueBar').style.width = ((data.month_revenue / data.total_revenue) * 100) + '%';
+            }
+
+            // Render trend chart
+            if (data.trend_dates && data.trend_dates.length > 0) {
+                initTrendChart(data.trend_dates, data.trend_packages || [], data.trend_orders || []);
+            } else {
+                initTrendChart([], [], []);
+            }
+
+            // Render recent orders
+            if (data.recent_orders && data.recent_orders.length > 0) {
+                const tbody = document.getElementById('recentOrdersBody');
+                tbody.innerHTML = data.recent_orders.map(o => `
+                    <tr>
+                        <td><a href="/orders/${o.id}">${o.order_no || '--'}</a></td>
+                        <td>${o.user_name || '--'}</td>
+                        <td>${o.package_count || 0}</td>
+                        <td>${o.total_weight || 0} kg</td>
+                        <td>${formatMoney(o.total_amount || 0)}</td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td>${formatDate(o.created_at)}</td>
+                    </tr>
+                `).join('');
+            } else {
+                document.getElementById('recentOrdersBody').innerHTML =
+                    '<tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.no_data">暫無訂單</td></tr>';
+            }
+        }
+    } catch (err) {
+        console.error('Failed to load dashboard stats:', err);
+    }
+});
+
+function initTrendChart(dates, packages, orders) {
+    const chart = echarts.init(document.getElementById('trendChart'));
+    const option = {
+        tooltip: { trigger: 'axis' },
+        const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+        legend: { data: [_t('dashboard.chart_packages', '包裹'), _t('dashboard.chart_orders', '訂單')], bottom: 0 },
+        grid: { left: '3%', right: '4%', bottom: '12%', top: '5%', containLabel: true },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: dates.length > 0 ? dates : generateLast30Days()
+        },
+        yAxis: { type: 'value' },
+        series: [
+            {
+                name: _t('dashboard.chart_packages', '包裹'),
+                type: 'line',
+                smooth: true,
+                areaStyle: { opacity: 0.15 },
+                lineStyle: { color: '#05ce78', width: 2 },
+                itemStyle: { color: '#05ce78' },
+                data: packages.length > 0 ? packages : new Array(30).fill(0)
+            },
+            {
+                name: _t('dashboard.chart_orders', '訂單'),
+                type: 'line',
+                smooth: true,
+                areaStyle: { opacity: 0.15 },
+                lineStyle: { color: '#3b82f6', width: 2 },
+                itemStyle: { color: '#3b82f6' },
+                data: orders.length > 0 ? orders : new Array(30).fill(0)
+            }
+        ]
+    };
+    chart.setOption(option);
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function generateLast30Days() {
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        days.push((d.getMonth() + 1) + '/' + d.getDate());
+    }
+    return days;
+}
+</script>
+{{end}}

@@ -1,0 +1,150 @@
+{{define "pages/help_articles"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.help_articles.title">幫助中心</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.help_articles.search_title" placeholder="搜尋標題..."></div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.all_status">全部狀態</option>
+            <option value="active" data-i18n="common.enable">啟用</option>
+            <option value="inactive" data-i18n="common.disable">停用</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.help_articles.article_title">標題</th><th data-i18n="pages.help_articles.category">分類</th><th data-i18n="common.sort">排序</th><th data-i18n="pages.help_articles.is_hot">是否熱門</th><th data-i18n="pages.help_articles.views">瀏覽數</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.help_articles.add_article">新增文章</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <form id="itemForm">
+            <input type="hidden" name="id" id="itemId">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.help_articles.article_title">標題 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.help_articles.content">內容</label>
+                <textarea class="form-control" name="content" rows="8"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.help_articles.category">分類</label>
+                    <input type="text" class="form-control" name="category">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="common.sort">排序</label>
+                    <input type="number" class="form-control" name="sort_order" value="0" min="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.help_articles.is_hot">是否熱門</label>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="is_hot" id="isHotCheck">
+                        <label class="form-check-label" for="isHotCheck" data-i18n="pages.help_articles.set_hot">設為熱門</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="common.status">狀態</label>
+                    <select class="form-select" name="status">
+                        <option value="active" data-i18n="common.enable">啟用</option>
+                        <option value="inactive" data-i18n="common.disable">停用</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+    </div>
+</div></div></div>
+
+<script>
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/help-articles';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.title || '--'}</td>
+        <td>${item.category || '--'}</td>
+        <td>${item.sort_order ?? 0}</td>
+        <td>${item.is_hot ? '<span class="badge bg-danger">' + _t('pages.help_articles.hot', '熱門') + '</span>' : '--'}</td>
+        <td>${item.view_count ?? 0}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td><div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.help_articles.add_article', '新增文章');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.help_articles.add_article');
+    resetForm('itemForm');
+    document.getElementById('isHotCheck').checked = false;
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.help_articles.edit_article', '編輯文章');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.help_articles.edit_article');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const item = res.data || res;
+        populateForm('itemForm', item);
+        document.getElementById('isHotCheck').checked = !!item.is_hot;
+        openModal('formModal');
+    } catch(e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.is_hot = document.getElementById('isHotCheck').checked;
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.help_articles.confirm_delete', '確定要刪除此文章嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

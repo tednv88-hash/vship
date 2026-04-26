@@ -1,0 +1,71 @@
+{{define "pages/ai_recognition_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.ai_recognition_settings.title">智能AI識別</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="enableAi" name="enabled">
+                    <label class="form-check-label" for="enableAi" data-i18n="pages.ai_recognition_settings.enable_ai">是否啟用AI識別</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.ai_recognition_settings.ai_engine">AI識別引擎</label>
+                <select class="form-select" name="engine">
+                    <option value="builtin" data-i18n="pages.ai_recognition_settings.builtin_engine">內建引擎</option>
+                    <option value="baidu" data-i18n="pages.ai_recognition_settings.baidu_ai">百度AI</option>
+                    <option value="tencent" data-i18n="pages.ai_recognition_settings.tencent_ai">騰訊AI</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.ai_recognition_settings.api_key">API Key</label>
+                <input type="password" class="form-control" name="api_key" data-i18n-placeholder="pages.ai_recognition_settings.enter_api_key" placeholder="請輸入API Key">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.ai_recognition_settings.api_secret">API Secret</label>
+                <input type="password" class="form-control" name="api_secret" data-i18n-placeholder="pages.ai_recognition_settings.enter_api_secret" placeholder="請輸入API Secret">
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoExpressNo" name="auto_express_no">
+                    <label class="form-check-label" for="autoExpressNo" data-i18n="pages.ai_recognition_settings.auto_express_no">自動識別快遞單號</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoProductName" name="auto_product_name">
+                    <label class="form-check-label" for="autoProductName" data-i18n="pages.ai_recognition_settings.auto_product_name">自動識別商品名稱</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoWeight" name="auto_weight">
+                    <label class="form-check-label" for="autoWeight" data-i18n="pages.ai_recognition_settings.auto_weight">自動識別重量</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.ai_recognition_settings.accuracy_threshold">識別準確率閾值(%)</label>
+                <input type="number" class="form-control" name="accuracy_threshold" min="0" max="100" step="1" value="80" placeholder="0-100">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">保存設置</span></button>
+        </form>
+    </div>
+</div>
+<script>
+const API_PATH = '/settings/ai-recognition';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+async function loadSettings() {
+    try {
+        const data = await apiRequest('GET', API_PATH);
+        if (data) populateForm('settingsForm', data);
+    } catch(e){}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try { await apiRequest('PUT', API_PATH, data); showToast(_t('common.save_success', '保存成功')); } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

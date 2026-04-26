@@ -1,0 +1,158 @@
+{{define "pages/client_weblink"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.client_weblink.title">友情鏈接</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="pages.client_weblink.add_link">新增鏈接</span>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.client_weblink.link_id">鏈接ID</th>
+                    <th data-i18n="pages.client_weblink.link_name">鏈接名稱</th>
+                    <th data-i18n="pages.client_weblink.link_image">鏈接圖片</th>
+                    <th data-i18n="pages.client_weblink.carousel_type">輪播類型</th>
+                    <th data-i18n="pages.client_weblink.address">地址</th>
+                    <th data-i18n="common.sort">排序</th>
+                    <th data-i18n="common.add_time">添加時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.client_weblink.add_friendship_link">新增友情鏈接</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_weblink.link_name">鏈接名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_weblink.link_url">鏈接地址</label>
+                        <input type="url" class="form-control" name="url" placeholder="https://">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_weblink.link_image">鏈接圖片</label>
+                        <input type="text" class="form-control" name="image_url" data-i18n-placeholder="pages.client_weblink.image_url" placeholder="圖片URL">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_weblink.carousel_type">輪播類型</label>
+                        <select class="form-select" name="link_type">
+                            <option value="image" data-i18n="pages.client_weblink.image">圖片</option>
+                            <option value="text" data-i18n="pages.client_weblink.text">文字</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.sort">排序</label>
+                        <input type="number" class="form-control" name="sort_order" value="0" min="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/web-links';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const typeLabels = {
+    image: () => _t('pages.client_weblink.image', '圖片'),
+    text: () => _t('pages.client_weblink.text', '文字')
+};
+
+function loadData(page) {
+    currentPage = page;
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit);
+}
+
+function renderRow(item) {
+    const imgHtml = item.image_url ? `<img src="${item.image_url}" style="max-height:40px;max-width:80px;" alt="">` : '--';
+    const labelFn = typeLabels[item.link_type];
+    const typeLabel = labelFn ? labelFn() : (item.link_type || '--');
+    const typeBadge = `<span class="badge bg-info">${typeLabel}</span>`;
+    const urlDisplay = item.url ? `<a href="${item.url}" target="_blank" class="text-truncate d-inline-block" style="max-width:150px;">${item.url}</a>` : '--';
+    return `<tr>
+        <td><small class="text-muted">${(item.id || '').substring(0, 8)}...</small></td>
+        <td>${item.name || '--'}</td>
+        <td>${imgHtml}</td>
+        <td>${typeBadge}</td>
+        <td>${urlDisplay}</td>
+        <td>${item.sort_order ?? 0}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.client_weblink.add_friendship_link', '新增友情鏈接');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_weblink.add_friendship_link');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.client_weblink.edit_friendship_link', '編輯友情鏈接');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_weblink.edit_friendship_link');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.sort_order = parseInt(data.sort_order) || 0;
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.client_weblink.confirm_delete', '確定要刪除此鏈接嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+</script>
+{{end}}

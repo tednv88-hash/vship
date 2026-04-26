@@ -1,0 +1,181 @@
+{{define "pages/notifications"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.notifications.title">通知管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.notifications.search_notification" placeholder="搜尋通知標題...">
+        </div>
+        <select class="form-select" id="filterType" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_type">全部類型</option>
+            <option value="system" data-i18n="pages.notifications.type_system">系統</option>
+            <option value="order" data-i18n="pages.notifications.type_order">訂單</option>
+            <option value="package" data-i18n="pages.notifications.type_package">包裹</option>
+            <option value="payment" data-i18n="pages.notifications.type_payment">付款</option>
+            <option value="promotion" data-i18n="pages.notifications.type_promotion">促銷</option>
+        </select>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="draft" data-i18n="pages.notifications.draft">草稿</option>
+            <option value="published" data-i18n="pages.notifications.published">已發布</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.notifications.notification_title">標題</th>
+                    <th data-i18n="common.type">類型</th>
+                    <th data-i18n="pages.notifications.content_preview">內容預覽</th>
+                    <th data-i18n="pages.notifications.target">目標</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.created_at">建立時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.notifications.add_notification">新增通知</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id" id="itemId">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.notifications.notification_title">標題 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.type">類型</label>
+                        <select class="form-select" name="type">
+                            <option value="system" data-i18n="pages.notifications.type_system">系統</option>
+                            <option value="order" data-i18n="pages.notifications.type_order">訂單</option>
+                            <option value="package" data-i18n="pages.notifications.type_package">包裹</option>
+                            <option value="payment" data-i18n="pages.notifications.type_payment">付款</option>
+                            <option value="promotion" data-i18n="pages.notifications.type_promotion">促銷</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.notifications.notification_content">內容 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.notifications.target_type">目標類型</label>
+                            <select class="form-select" name="target_type" id="targetType" onchange="toggleTargetId()">
+                                <option value="all" data-i18n="pages.notifications.all_members">全部會員</option>
+                                <option value="member" data-i18n="pages.notifications.specific_member">指定會員</option>
+                                <option value="level" data-i18n="pages.notifications.specific_level">指定等級</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3" id="targetIdField" style="display:none;">
+                            <label class="form-label" data-i18n="pages.notifications.target_id">目標 ID</label>
+                            <input type="text" class="form-control" name="target_id" data-i18n-placeholder="pages.notifications.enter_target_id" placeholder="輸入會員ID或等級ID">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.status">狀態</label>
+                        <select class="form-select" name="status">
+                            <option value="draft" data-i18n="pages.notifications.draft">草稿</option>
+                            <option value="published" data-i18n="pages.notifications.published">已發布</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/notifications';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+const typeLabels = { system: () => _t('pages.notifications.type_system', '系統'), order: () => _t('pages.notifications.type_order', '訂單'), package: () => _t('pages.notifications.type_package', '包裹'), payment: () => _t('pages.notifications.type_payment', '付款'), promotion: () => _t('pages.notifications.type_promotion', '促銷') };
+const targetLabels = { all: () => _t('pages.notifications.all_members', '全部會員'), member: () => _t('pages.notifications.specific_member', '指定會員'), level: () => _t('pages.notifications.specific_level', '指定等級') };
+
+function getTypeBadge(type) {
+    const colors = { system: 'primary', order: 'info', package: 'warning', payment: 'success', promotion: 'danger' };
+    const labelFn = typeLabels[type];
+    return `<span class="badge bg-${colors[type] || 'secondary'}">${labelFn ? labelFn() : (type || '--')}</span>`;
+}
+
+function toggleTargetId() {
+    const val = document.getElementById('targetType').value;
+    document.getElementById('targetIdField').style.display = (val === 'all') ? 'none' : 'block';
+}
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const type = document.getElementById('filterType').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, type, status });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const preview = item.content ? (item.content.length > 50 ? item.content.substring(0, 50) + '...' : item.content) : '--';
+    const targetFn = targetLabels[item.target_type];
+    return `<tr>
+        <td>${item.title || '--'}</td>
+        <td>${getTypeBadge(item.type)}</td>
+        <td>${preview}</td>
+        <td>${targetFn ? targetFn() : (item.target_type || '--')}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.notifications.add_notification', '新增通知');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.notifications.add_notification');
+    resetForm('itemForm');
+    document.getElementById('targetIdField').style.display = 'none';
+    openModal('formModal');
+}
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.notifications.edit_notification', '編輯通知');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.notifications.edit_notification');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const data = res.data || res;
+        populateForm('itemForm', data);
+        toggleTargetId();
+        openModal('formModal');
+    } catch (e) {}
+}
+async function saveItem() { const data = getFormData('itemForm'); try { if (editingId) { await apiRequest('PUT', API_PATH + '/' + editingId, data); showToast(_t('common.update_success', '更新成功')); } else { await apiRequest('POST', API_PATH, data); showToast(_t('common.create_success', '建立成功')); } closeModal('formModal'); loadData(currentPage); } catch (e) {} }
+async function deleteItem(id) { if (!confirmDelete()) return; try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功')); loadData(currentPage); } catch (e) {} }
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterType').addEventListener('change', () => loadData(1));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

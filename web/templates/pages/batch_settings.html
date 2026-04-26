@@ -1,0 +1,61 @@
+{{define "pages/batch_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.batch_settings.title">批次設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.batch_settings.batch_no_prefix">批次編號前綴</label>
+                <input type="text" class="form-control" name="batch_no_prefix" data-i18n-placeholder="pages.batch_settings.prefix_placeholder" placeholder="例如: BT">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.batch_settings.auto_batch_rule">自動批次規則</label>
+                <select class="form-select" name="auto_batch_rule">
+                    <option value="none" data-i18n="pages.batch_settings.no_auto">不自動建批</option>
+                    <option value="by_route" data-i18n="pages.batch_settings.by_route">按線路自動建批</option>
+                    <option value="by_warehouse" data-i18n="pages.batch_settings.by_warehouse">按倉庫自動建批</option>
+                    <option value="by_date" data-i18n="pages.batch_settings.by_date">按日期自動建批</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.batch_settings.max_packages">批次最大包裹數</label>
+                <input type="number" class="form-control" name="max_packages_per_batch" min="1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.batch_settings.max_weight">批次最大重量 (kg)</label>
+                <input type="number" class="form-control" name="max_weight_per_batch" step="0.01" min="0">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                <i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'batch_setting';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings?key=' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const settings = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', settings);
+        }
+    } catch(e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings', { key: SETTING_KEY, value: data });
+        showToast(_t('pages.batch_settings.settings_saved', '設置已儲存'), 'success');
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

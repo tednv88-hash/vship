@@ -1,0 +1,3290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>集运系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="assets/common/i/favicon.ico"/>
+    <link href="assets/common/css/animate.compat.css" rel="stylesheet">
+    <meta name="apple-mobile-web-app-title" content="集运系统"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.datetimepicker.css"/>
+    
+    <!--原始背景-->
+        <!--蓝色背景-->
+        <!--静态图背景-->
+        <!--数字粒子背景-->
+        <link rel="stylesheet" href="assets/store/css/app_shu1/app_shu.css?v=2.2.55"/>
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_783249_m68ye1gfnza.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3768063_yu9jg4vyhs.css">
+    <script src="assets/common/js/jquery.min.js"></script>
+    <script src="assets/common/js/base.js"></script>
+    <script src="assets/common/js/amazeui.datetimepicker.min.js"></script>
+    <script src="//at.alicdn.com/t/font_783249_e5yrsf08rap.js"></script>
+    <script>
+        BASE_URL = 'https://zhuanyun.sllowly.cn/';
+        STORE_URL = 'index.php?s=/store';
+    </script>
+</head>
+
+<body data-type="">
+<div class="am-g tpl-g">
+    <!-- 头部 -->
+    <header class="tpl-header">
+        <!-- 右侧内容 -->
+        <div class="tpl-header-fluid">
+            <!-- 侧边切换 -->
+            <div class="am-fl tpl-header-button switch-button">
+                <i class="iconfont icon-menufold"></i>
+            </div>
+            <!-- 刷新页面 -->
+            <div class="am-fl tpl-header-button refresh-button">
+                <i class="iconfont icon-refresh"></i>
+            </div>
+            <!-- 其它功能-->
+            <div class="am-fr tpl-header-navbar">
+                <ul>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tr_order/payment_audit" style="color: #ff0000;    font-weight: 900;">
+                            <span >线下支付审核 (4)</span>
+                        </a>
+                    </li>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/setting.certificate/index" style="color: #ff0000;    font-weight: 900;">
+                            <span >汇款凭证审核 (32)</span>
+                        </a>
+                    </li>
+                                        <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tools/guide"><span>使用指南</span></a>
+                    </li>
+                                        <li style="margin-top:10px" class="am-text-sm tpl-header-navbar-welcome">
+                        <div class="am-dropdown" data-am-dropdown>
+                              <button class="am-btn am-btn-danger am-dropdown-toggle" data-am-dropdown-toggle>待处理 <span class="am-icon-caret-down"></span></button>
+                              <ul class="am-dropdown-content">
+                                <li class="am-dropdown-header"><a style="line-height:20px;" href="index.php?s=/store/tr_order/exceedorder" >超时订单 <span class="tipsspan"> 4 </span></a></li>
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >问题包裹 <span class="tipsspan">1</span></a></li>-->
+                              </ul>
+                            </div>
+                    </li>
+                                        <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="javascript:;">有限期：<span>2030-02-01</span>
+                        </a>
+                    </li>
+                    <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/store.user/renew">欢迎你，<span>admin</span>
+                        </a>
+                    </li>
+                    <!-- 退出 -->
+                    <li class="am-text-sm">
+                        <a href="index.php?s=/store/passport/logout">
+                            <i class="iconfont icon-tuichu"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!-- 侧边导航栏 -->
+    <div class="left-sidebar dis-flex" id="particles-js">
+                    <canvas class="particles-js-canvas-el" style="width: 100%; height: 100%;" width="472" height="625"></canvas>
+                    <div class="sidebar-scroll ">
+            <!-- 一级菜单 -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-heading">集运系统</li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-home"
+                                   style=""></i>
+                                                        总览                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/package.index/index"
+                           class="active">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-miaosha"
+                                   style=""></i>
+                                                        包裹管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tr_order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        集运订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-user"
+                                   style=""></i>
+                                                        用户管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/shop/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shop"
+                                   style=""></i>
+                                                        仓库管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/batch/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        批次管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/goods/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-goods"
+                                   style=""></i>
+                                                        商品管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        商城订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/content.article/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        内容管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/market.coupon/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-marketing"
+                                   style=""></i>
+                                                        营销管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/statistics.data/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-qushitu"
+                                   style=""></i>
+                                                        数据统计                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/wxapp/setting"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wxapp"
+                                   style="color:#36b313;"></i>
+                                                        客户端                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/apps.dealer.apply/index"
+                           class="">
+                                                            <svg class="icon sidebar-nav-link-logo" aria-hidden="true">
+                                    <use xlink:href="#icon-application"></use>
+                                </svg>
+                                                        应用中心                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/store.user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        管理员                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/setting/store"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-setting"
+                                   style=""></i>
+                                                        设置                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tools/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        工具箱                        </a>
+                    </li>
+                            </ul>
+        </div>
+        <!-- 子级菜单-->
+                    <div class="sidebar-second-scroll">
+                <ul class="left-sidebar-second">
+                    <li class="sidebar-second-title">包裹管理</li>
+                    <li class="sidebar-second-item">
+                                                        <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/add"
+                                   class=""
+                                   >
+                                    后台录入                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.newpack/newadd"
+                                   class=""
+                                   >
+                                    新后台录入                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.newpack/addpackage"
+                                   class=""
+                                   >
+                                    一票多件录入                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/adminreport"
+                                   class=""
+                                   >
+                                    代客预报                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/scan"
+                                   class=""
+                                   >
+                                    扫码入库                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/scanout"
+                                   class=""
+                                   >
+                                    扫码出库                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.report/index"
+                                   class=""
+                                   >
+                                    预报包裹                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/nouser"
+                                   class=""
+                                   >
+                                    待认领                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/claim"
+                                   class=""
+                                   >
+                                    客户认领                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/index"
+                                   class="active"
+                                   target="_blank">
+                                    全部包裹                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/uninpack"
+                                   class=""
+                                   >
+                                    待打包                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/appointment"
+                                   class=""
+                                   >
+                                    预约件                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/returned"
+                                   class=""
+                                   >
+                                    退货件                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/errors"
+                                   class=""
+                                   >
+                                    问题件                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/package.index/deletepack"
+                                   class=""
+                                   >
+                                    包裹回收站                                </a>
+                                                </li>
+                </ul>
+            </div>
+            </div>
+
+    <!-- 内容区域 start -->
+    <div class="tpl-content-wrapper ">
+        <div class="row-content am-cf">
+    <div class="row">
+        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+            <div class="widget am-cf">
+                <div class="widget-head am-cf">
+                    <div class="widget-title am-cf">包裹列表<small style="padding-left:10px;color:#1686ef">(提示：需要导出某个用户所有包裹，可先通过id搜索该用户，然后点导出（无需勾选），勾选后只导出勾选部分的信息)</small></div>
+                    <div id="datatotal"  style="margin-top:30px;">
+                        
+                    </div>
+                    
+                </div>
+                <div class="widget-body am-fr">
+                    <!-- 工具栏 -->
+                    <div class="page_toolbar am-margin-bottom-xs am-cf">
+                        <form class="toolbar-form" action="">
+                            <input type="hidden" name="s" value="/store/package.index/index">
+                             <div class="am-u-sm-12 am-u-md-12">
+                                <div class="am">
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="limitnum"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '显示条数'}">
+                                                                                        <option value="15" >系统默认15条</option>
+                                                                                        <option value="15"  >显示15条</option>
+                                            <option value="30" >显示30条</option>
+                                            <option value="50" >显示50条</option>
+                                            <option value="100" >显示100条</option>
+                                            <option value="200" >显示200条</option>
+                                            <option value="500" >显示500条</option>
+                                        </select>
+                                    </div>
+                                    
+                                                                        <div class="am-form-group am-fl">
+                                                                                <select name="status"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '包裹状态'}" onchange="document.getElementsByClassName('toolbar-form')[0].submit()">
+                                            <option value=""></option>
+                                            <option value=" "
+                                                >全部
+                                            </option>
+                                            <option value="1"
+                                                >未入库
+                                            </option>
+                                            <option value="2"
+                                                >已入库
+                                            </option>
+                                            <option value="9"
+                                                >已发货
+                                            </option>
+                                            <option value="10"
+                                                >已收货
+                                            </option>
+                                            <option value="11"
+                                                >已完成
+                                            </option>
+                                            <option value="-1"
+                                                >问题件
+                                            </option>
+                                            <option value="12"
+                                                >在库包裹
+                                            </option>
+                                            <option value="13"
+                                                >已发货包裹
+                                            </option>
+                                        </select>
+                                    </div>
+                                                                        <div class="am-form-group am-fl">
+                                                                                <select name="extract_shop_id"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '仓库名称'}">
+                                            <option value=""></option>
+                                            <option value=" "
+                                                >全部
+                                            </option>
+                                                                                            <option value="184"
+                                                    >电脑科技有限公司                                                </option>
+                                                                                            <option value="183"
+                                                    >广州D010                                                </option>
+                                                                                    </select>
+                                    </div>
+                                                                        <!--录入来源 [1小程序录入 2平台录入 3 代购同步 4 批量导入 5 PC端预报 6 拼团预报] 7预约取件 8仓管录入-->
+                                    <div class="am-form-group am-fl">
+                                        <select name="source"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '包裹来源'}">
+                                            <option value="">包裹来源</option>
+                                            <option value="1">小程序录入</option>
+                                            <option value="2">平台录入</option>
+                                            <option value="4">批量导入</option>
+                                            <option value="5">H5端预报</option>
+                                            <option value="6">拼团预报</option>
+                                            <option value="7">预约取件</option>
+                                            <option value="8">仓管录入</option>
+                                        </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="is_scan"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '是否查验出库'}">
+                                            <option  value="">是否查验出库</option>
+                                            <option  value="0">全部</option>
+                                            <option  value="1">未查验</option>
+                                            <option  value="2">已查验</option>
+                                        </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select onchange="changecategory(this)" name="top_id"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '顶级分类'}">
+                                            <option value=""></option>
+                                            <option value=""
+                                                >全部
+                                            </option>
+                                                                                        <option value="1697" >普货</option>
+                                                                                        <option value="1698" >敏感货</option>
+                                                                                        <option value="1820" >家具</option>
+                                                                                        <option value="2137" >衣服</option>
+                                                                                        <option value="2138" >鞋子</option>
+                                                                                        <option value="2140" >电子数码</option>
+                                                                                        <option value="2141" >数码相机4</option>
+                                                                                        <option value="2142" >鞋子</option>
+                                                                                    </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="class_id" id="Packcategory"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '包裹分类'}">
+                                            <option value=""></option>
+                                            <option value=""
+                                                >全部
+                                            </option>
+                                                                                        <option value="1697" >普货</option>
+                                                                                        <option value="1698" >敏感货</option>
+                                                                                        <option value="1820" >家具</option>
+                                                                                        <option value="2137" >衣服</option>
+                                                                                        <option value="2138" >鞋子</option>
+                                                                                        <option value="2140" >电子数码</option>
+                                                                                        <option value="2141" >数码相机4</option>
+                                                                                        <option value="2142" >鞋子</option>
+                                                                                    </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="shelf_id"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '所在货架'}">
+                                            <option value=" "
+                                                >所在货架
+                                            </option>
+                                                                                            <option value="802"
+                                                    >2号货架                                                </option>
+                                                                                            <option value="805"
+                                                    >3号货架                                                </option>
+                                                                                            <option value="807"
+                                                    >ZZ                                                </option>
+                                                                                            <option value="810"
+                                                    >L                                                </option>
+                                                                                            <option value="812"
+                                                    >N                                                </option>
+                                                                                            <option value="813"
+                                                    >HH                                                </option>
+                                                                                            <option value="814"
+                                                    >JJ                                                </option>
+                                                                                    </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="time_type"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '时间类型'}">
+                                            <option value="entering_warehouse_time" >入库时间</option>
+                                            <option value="created_time" >预报时间</option>
+                                            <option value="scan_time" >扫码查验时间</option>
+                                             
+    
+                                        </select>
+                                    </div>
+                                    <div class="am-form-group tpl-form-border-form am-fl">
+                                        <input style="padding:6px 5px;" autocomplete="off" type="text" name="start_time"
+                                               class="am-form-field"
+                                               value="" placeholder="请选择起始日期"
+                                               data-am-datepicker>
+                                    </div>
+                                    <div class="am-form-group tpl-form-border-form am-fl">
+                                        <input style="padding:6px 5px;" autocomplete="off" type="text" name="end_time"
+                                               class="am-form-field"
+                                               value="" placeholder="请选择截止日期"
+                                               data-am-datepicker>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form">
+                                            <input type="text" style="width:60px;" class="am-form-field" name="min-weight"
+                                                   placeholder="重量" value="">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="am-form-group am-fl" style="padding: 1px;">
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form">
+                                            <input type="text" style="width:60px;" class="am-form-field" name="max-weight"
+                                                   placeholder="重量" value="">
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group am-fl" style="padding: 1px;">
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form">
+                                            <textarea cols="200" rows="2"  class="am-form-field" name="express_num"
+                                                   placeholder="可输入多个快递单号,按换车换行" value=""></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group am-fl" style="padding: 1px;">
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form">
+                                            <input type="text" style="width:200px;" class="am-form-field" name="likesearch"
+                                                   placeholder="请输入包裹单号（模糊搜索）" value="">
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                                <select name="search_type"
+                                                data-am-selected="{btnSize: 'sm', placeholder: '请选择查询类型'}">
+                                            <option value="all" >模糊查询</option>
+                                            <option value="member_id" >用户ID</option>
+                                            <option value="user_code" >用户CODE</option>
+                                            <option value="user_mark" >用户唛头</option>
+                                            <option value="nickName" >用户昵称</option>
+                                            <option value="mobile" >手机号</option>
+                                        </select>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form">
+                                            <input type="text" class="am-form-field" name="search"
+                                                   placeholder="请输入用户昵称/ID/CODE/唛头" value="">
+                                            <div class="am-input-group-btn">
+                                                <button class="am-btn am-btn-default am-icon-search"
+                                                        type="submit"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group am-fl">
+                                                                            </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="page_toolbar am-margin-bottom-xs am-cf" style="margin-bottom:20px; margin-left:15px;">
+                        <!--代用户打包-->
+                                                <!--修改所属用户-->
+                                                <button type="button" id="j-upuser" class="am-btn am-btn-success am-radius"><i class="iconfont icon-yonghu "></i> 修改所属用户</button>
+                                                <!--修改包裹类型-->
+                                                <button type="button" id="j-changetype" class="am-btn am-btn-secondary am-radius"><i class="iconfont icon-dingwei"></i> 修改包裹类型</button>
+                                                <!--修改包裹位置-->
+                                                <button type="button" id="j-change" class="am-btn am-btn-warning am-radius"><i class="iconfont icon-dingwei"></i> 修改包裹位置</button>
+                                                <!--标记为问题件-->
+                                                <button type="button" id="j-error" class="am-btn am-btn-danger am-radius"><i class="iconfont icon-htmal5icon27 "></i> 标记为问题件</button>
+                                                <!--批量删除-->
+                                                <button type="button" id="j-deleteall" class="am-btn am-btn-danger am-radius"><i class="iconfont am-icon-trash"></i> 批量删除</button>
+                                                <!--导出-->
+                                                <button type="button" id="j-export" class="am-btn am-btn-default am-radius"><i class="iconfont icon-daochu am-margin-right-xs"></i>导出</button>
+                                                 <!--加入批次-->
+                                                <button type="button" id="j-batch" class="am-btn am-btn-secondary am-radius"><i class="iconfont icon-pintuan"></i> 加入批次</button>
+                                                <!--复制单号-->
+                        <button type="button" id="j-copy-express" class="am-btn am-btn-primary am-radius"><i class="iconfont icon-fuzhi am-margin-right-xs"></i>一键复制单号</button>
+                    </div>
+                    <div class="am-scrollable-horizontal am-u-sm-12" style="overflow-x: auto; position: relative;">
+                        <table width="100%" class="am-table am-table-compact am-table-striped
+                         tpl-table-black am-text-nowrap fixed-column-table">
+                            <thead>
+                            <tr>
+                                <th><input id="checkAll" type="checkbox" ></th>
+                                <th>包裹ID</th>
+                                <th width='300'>包裹单号/快递单号</th>
+                                <th>用户昵称</th>
+                                <th>仓库/货架</th>
+                                <th>运往国家</th>
+                                <th>包裹信息</th>
+                                <th>状态</th>
+                                <th>时间</th>
+                                <th>备注</th>
+                                <th class="fixed-operation">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body">
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="914558"> 
+                                    </td>
+                                    <td class="am-text-middle">914558</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="9443366755233" > 
+                                            9443366755233 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="9443366755233" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">从平台录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        </br>
+                                                                         <span>[Code:] </span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        电脑科技有限公司</br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):8.8</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:待认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2026-03-09 11:37:57</br>
+                                        更新时间:2026-03-09 11:38:12</br>
+                                                                                入库时间:2026-03-09 11:37:57</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/914558">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/914558">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="914558"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="904915"> 
+                                    </td>
+                                    <td class="am-text-middle">904915</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="SF0259550689798" > 
+                                            SF0259550689798 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="SF0259550689798" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        </br>
+                                                                         <span>[Code:] </span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-03-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:待认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2026-02-11 00:09:51</br>
+                                        更新时间:2026-02-11 00:09:51</br>
+                                                                                入库时间:2026-02-11 00:09:51</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/904915">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/904915">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="904915"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="888626"> 
+                                    </td>
+                                    <td class="am-text-middle">888626</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="FFD7675432321345" > 
+                                            FFD7675432321345 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="FFD7675432321345" onclick="copyUrl2(this)">[复制]</span> 
+                                        圆通速递 </br> 
+                                                                                    所属订单：<a href="index.php?s=/store/tr_order/orderdetail/id/82002">
+                                            2026011465146</a><br>
+                                                                                
+                                        <span class="am-badge am-badge-secondary">小程序预报</span></br>
+                                        
+                                                                                      <span class="am-badge am-badge-success">红木家具</span> </br>
+                                                                                     唛头：JK8977653</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        海阔天空</br>
+                                                                         <span>[Code:] Y16654</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        电脑科技有限公司</br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):1</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):123.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:待支付</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2026-01-14 20:14:33</br>
+                                        更新时间:2026-01-14 20:15:46</br>
+                                                                                入库时间:2026-01-14 20:15:18</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/888626">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/888626">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="888626"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880422"> 
+                                    </td>
+                                    <td class="am-text-middle">880422</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="RETY34567" > 
+                                            RETY34567 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="RETY34567" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                    所属订单：<a href="index.php?s=/store/tr_order/orderdetail/id/82090">
+                                            2026011652577</a><br>
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        海阔天空</br>
+                                                                         <span>[Code:] Y16654</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):0</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:待支付</br>
+                                        认领状态:已认领</br>
+                                        查验状态:已查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:52:08</br>
+                                        更新时间:2026-01-16 09:41:21</br>
+                                                                                入库时间:2025-12-30 21:52:08</br>
+                                                                                查验时间:2026-01-16 09:42:37</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        的方法打发打发地方的方法打发打发地方的方法打发打发地方的方法打发打发地方                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880422">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880422">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880422"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880421"> 
+                                    </td>
+                                    <td class="am-text-middle">880421</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="RDTY3456" > 
+                                            RDTY3456 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="RDTY3456" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                    所属订单：<a href="index.php?s=/store/tr_order/orderdetail/id/82637">
+                                            2026012554198</a><br>
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        海阔天空</br>
+                                                                         <span>[Code:] Y16654</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-03-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:待支付</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:52:00</br>
+                                        更新时间:2026-01-25 09:59:18</br>
+                                                                                入库时间:2025-12-30 21:52:00</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880421">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880421">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880421"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880420"> 
+                                    </td>
+                                    <td class="am-text-middle">880420</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="DFG786543234" > 
+                                            DFG786543234 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="DFG786543234" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                    所属订单：<a href="index.php?s=/store/tr_order/orderdetail/id/81652">
+                                            2026010879985</a><br>
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        海阔天空</br>
+                                                                         <span>[Code:] Y16654</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-03-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:51:49</br>
+                                        更新时间:2026-01-24 19:01:33</br>
+                                                                                入库时间:2025-12-30 21:51:49</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880420">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880420">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880420"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880419"> 
+                                    </td>
+                                    <td class="am-text-middle">880419</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="DF786543456" > 
+                                            DF786543456 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="DF786543456" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        海阔天空</br>
+                                                                         <span>[Code:] Y16654</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-01-03</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:51:39</br>
+                                        更新时间:2026-01-16 09:41:00</br>
+                                                                                入库时间:2025-12-30 21:51:39</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880419">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880419">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880419"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880418"> 
+                                    </td>
+                                    <td class="am-text-middle">880418</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="G4567876543" > 
+                                            G4567876543 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="G4567876543" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-01-03</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:待打包</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:51:21</br>
+                                        更新时间:2026-01-21 12:06:23</br>
+                                                                                入库时间:2025-12-30 21:51:21</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880418">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880418">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880418"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880417"> 
+                                    </td>
+                                    <td class="am-text-middle">880417</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="SDFG675323456" > 
+                                            SDFG675323456 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="SDFG675323456" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">JJ - JJ-01-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:待打包</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:50:26</br>
+                                        更新时间:2026-01-21 12:06:23</br>
+                                                                                入库时间:2025-12-30 21:50:26</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880417">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880417">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880417"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880416"> 
+                                    </td>
+                                    <td class="am-text-middle">880416</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="345676543456" > 
+                                            345676543456 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="345676543456" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">HH - S1</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:50:12</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:50:12</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880416">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880416">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880416"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880415"> 
+                                    </td>
+                                    <td class="am-text-middle">880415</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="DFGH97875643321345" > 
+                                            DFGH97875643321345 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="DFGH97875643321345" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">JJ - B1-01-02-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:49:46</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:49:46</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880415">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880415">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880415"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880414"> 
+                                    </td>
+                                    <td class="am-text-middle">880414</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="FV88765434567" > 
+                                            FV88765434567 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="FV88765434567" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">HH - S1</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:49:32</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:49:32</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880414">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880414">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880414"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880413"> 
+                                    </td>
+                                    <td class="am-text-middle">880413</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="SD8776543567" > 
+                                            SD8776543567 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="SD8776543567" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">HH - S1</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:49:05</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:49:05</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880413">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880413">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880413"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880412"> 
+                                    </td>
+                                    <td class="am-text-middle">880412</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="DR787543456" > 
+                                            DR787543456 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="DR787543456" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">N - N-01-01</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:48:44</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:48:44</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880412">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880412">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880412"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">
+                                       <input name="checkIds" type="checkbox" value="880411"> 
+                                    </td>
+                                    <td class="am-text-middle">880411</td>
+                                    <td class="am-text-middle">
+                                        <span class="am-badge am-badge-success">
+                                            拼邮                                        </span>
+                                        <a href="javascript:;" onclick="getlog(this)" value="DFGH89754324" > 
+                                            DFGH89754324 
+                                        </a>
+                                        <span style="color:#ff6666;cursor:pointer" text="DFGH89754324" onclick="copyUrl2(this)">[复制]</span> 
+                                         </br> 
+                                                                                
+                                        <span class="am-badge am-badge-secondary">仓管录入</span></br>
+                                        
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        冯小狼df</br>
+                                                                         <span>[Code:] 219515</span>
+                                                                        </td>
+                                    <td class="am-text-middle">
+                                        广州D010</br>
+                                                                                    货架：<span style="color:#ff6666;cursor:pointer">HH - S1</span><br>
+                                                                                未上架                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">
+                                        重量(kg):</br>
+                                        体积(立方m³):0</br>
+                                        
+                                        价值(¥):0.00</br>
+                                        包裹数:1</br>
+                                        
+                                    </td>
+                                    <td class="am-text-middle">
+                                        包裹状态:已入库</br>
+                                        认领状态:已认领</br>
+                                        查验状态:未查验</br>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        预报时间:2025-12-30 21:48:21</br>
+                                        更新时间:2026-01-12 10:26:10</br>
+                                                                                入库时间:2025-12-30 21:48:21</br>
+                                                                            </td>
+                                    <td class="am-text-middle">
+                                        -                                        </br>
+                                        -                                    </td>
+                                    <td class="am-text-middle fixed-operation">
+                                        <div class="tpl-table-black-operation">
+                                            <!--编辑-->
+                                                                                        <a href="index.php?s=/store/package.index/edit/id/880411">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                                                                        <!--详情-->
+                                                                                        <a href="index.php?s=/store/package.report/item/id/880411">
+                                                <i class="iconfont icon-xiangqing"></i> 详情
+                                            </a>
+                                                                                        <!--删除-->
+                                                                                         <a href="javascript:void(0);" class="item-delete tpl-table-black-operation-del"
+                                               data-id="880411"> <i class="am-icon-trash"></i> 删除
+                                             </a>
+                                                                                     </div>
+                                        <div class="tpl-table-black-operation" style="margin-top:10px;">
+                                                                                       <a href="javascript:void(0);" class="view-images tpl-table-black-operation-green" 
+                                               data-images='[]'>
+                                                <i class="iconfont icon-xiangqing"></i> 图片预览
+                                            </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                        </tbody>
+                        </table>
+                    </div>
+                    <div class="am-u-lg-12 am-cf">
+                        <div class="am-fr"><ul class="pagination"><li class="disabled"><span>&laquo;</span></li> <li class="active"><span>1</span></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=2">2</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=3">3</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=4">4</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=5">5</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=6">6</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=7">7</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=8">8</a></li><li class="disabled"><span>...</span></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=30">30</a></li><li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=31">31</a></li> <li><a href="/index.php?s=%2Fstore%2Fpackage.index%2Findex&amp;page=2">&raquo;</a></li></ul> </div>
+                        <div class="am-fr pagination-total am-margin-right">
+                            <div class="am-vertical-align-middle">总记录：458</div>
+                            <div style="margin-left:10px;" class="am-vertical-align-middle">总重量(kg)：+∞</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="tpl-user-item" type="text/template">
+    {{ each $data }}
+    <div class="file-item">
+        <a href="{{ $value.avatarUrl }}" title="{{ $value.nickName }} (ID:{{ $value.user_id }})" target="_blank">
+            <img src="{{ $value.avatarUrl }}">
+        </a>
+        <input type="hidden" name="package[user_id]" value="{{ $value.user_id }}">
+    </div>
+    {{ /each }}
+</script>
+<!-- 模板：修改会员等级 -->
+<script id="tpl-inpack" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包裹数量
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                        <p class='am-form-static'> 共选中 {{ selectCount }} 包裹</p>
+                    </div>
+                </div>
+            </div>
+            <div class="am-tab-panel am-padding-0 am-active">
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择线路
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                     <select name="inpack[line_id]"
+                                data-am-selected="{btnSize: 'sm', placeholder: '请选择线路'}">
+                                                        <option value="1125">重量区间计费                                </option>
+                                                            <option value="1108">发货回中国ups                                </option>
+                                                            <option value="1106">韩国空运普货                                </option>
+                                                    </select>
+                    </div>
+                </div>
+            </div>
+                        <div class="am-tab-panel am-padding-0 am-active">
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包装服务
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                      <select name="inpack[id]" data-am-selected="{btnSize: 'sm', placeholder: '请选择线路'}">
+                       <option value="">-- 请选择包装服务 --</option>
+                                                        <option value="107">打木架</option>
+                                                            <option value="176">植物检疫费</option>
+                                                            <option value="177">三者信息费</option>
+                                                            <option value="178">简易费</option>
+                                                            <option value="179">000</option>
+                                                        </select>
+                    </div>
+                </div>
+            </div>
+                        <div class="am-tab-panel am-padding-0 am-active">
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择用户地址
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                      <select id="storeAddress" name="inpack[address_id]"
+                                data-am-selected="{btnSize: 'sm', placeholder: '请选择自提点'}">
+                                <option value="-1">不选择则使用用户自填的默认地址</option>
+                                                             <option value="4277">
+                               【自提点】 AAAA-YUENAN-LL-232323232                                </option>
+                                                            <option value="4345">
+                               【自提点】 美国自提点-美国-洛杉矶-574893434                                </option>
+                                                            <option value="4542">
+                               【自提点】 刘大姐-奥地利-湖北省-13995523535                                </option>
+                                                            <option value="10845">
+                               【自提点】 JIANING HOU-英国-NOTTINGHAM-07587378468                                </option>
+                                                            <option value="14298">
+                               【自提点】 咳咳-0-大阪府-8020332723                                </option>
+                                                        </select>
+                        <div class="am-block">
+                            <small><a target="_blank" href="index.php?s=/store/user/address">新增用户地址</a></small>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+             <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label"> 管理员备注 </label>
+                    <div class="am-u-sm-8 am-u-end">
+                                <textarea rows="2" name="grade[remark]" placeholder="请输入管理员备注"
+                                          class="am-field-valid"></textarea>
+                    </div>
+                </div>
+        </form>
+    </div>
+</script>
+
+<script id="tpl-grade" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+               <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包裹数量
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                       <p class='am-form-static'> 共选中 {{ selectCount }} 包裹</p>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择用户
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                         <div class="widget-become-goods am-form-file am-margin-top-xs">
+                                        <button type="button"
+                                                class="j-selectUser upload-file am-btn am-btn-secondary am-radius" onclick="doSelectUser()">
+                                            <i class="am-icon-cloud-upload"></i> 选择用户
+                                        </button>
+                                        <div class="user-list uploader-list am-cf">
+                                        </div>
+                                        <div class="am-block">
+                                            <small>选择后不可更改</small>
+                                        </div>
+                                    </div>
+                    </div>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+</script>
+
+<script id="tpl-errors" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+               <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包裹数量
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                       <p class='am-form-static'> 共选中 {{ selectCount }} 包裹</p>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        标记原因
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                         <textarea rows="2" name="error[remark]" placeholder="请输入标记原因 如 包裹 长时间未入库"
+                                          class="am-field-valid"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+</script>
+
+<script id="tpl-shelf" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="" id="shelf-form">
+            <div class="am-tab-panel am-padding-0 am-active">
+               <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包裹数量
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                        <p class='am-form-static'><span class="am-badge am-badge-success">{{ selectCount }}</span> 个包裹</p>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择仓库
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                          <select name="shelf[shop_id]" id="shelf-shop-id"
+                                            data-am-selected="{searchBox: 1, btnSize: 'sm', placeholder:'请选择仓库', maxHeight: 400}" 
+                                            data-select_type='shelf'>
+                                        <option value="">请选择仓库</option>
+                                                                                        <option value="184">电脑科技有限公司</option>
+                                                                                            <option value="183">广州D010</option>
+                                                                                </select>
+                                    <small class="am-form-text am-text-warning">选择仓库后会自动加载该仓库下的货架</small>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label">
+                        选择货架
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                         <select id="select-shelf" 
+                                            data-am-selected="{searchBox: 1, btnSize: 'sm', placeholder:'请先选择仓库', maxHeight: 400}" 
+                                            data-select_type='shelf_unit' disabled>
+                                        <option value="">请先选择仓库</option>
+                                    </select>
+                                    <small class="am-form-text am-text-warning">选择货架后会自动加载该货架下的货位</small>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label">
+                        选择货位
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                         <select id="select_shelf_unit" name="shelf[shelf_unit]"
+                                            data-am-selected="{searchBox: 1, btnSize: 'sm', placeholder:'请先选择货架', maxHeight: 400}" disabled>
+                                        <option value="">请先选择货架</option>
+                                    </select>
+                                    <small class="am-form-text am-text-muted">货位为可选，不选择则只更新仓库和货架</small>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <div class="am-u-sm-8 am-u-end am-u-sm-offset-3">
+                        <div class="am-alert am-alert-warning" style="margin-bottom: 0;">
+                            <i class="am-icon-info-circle"></i> 提示：至少需要选择仓库，货架和货位为可选
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<script id="tpl-batch" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+               <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择集运单数
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                        <p class='am-form-static'> 共选中 {{ selectCount }} 订单</p>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择批次
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                          <select name="batch_id"
+                                data-am-selected="{searchBox: 1, btnSize: 'sm', placeholder:'请选择', maxHeight: 400}" onchange="getSelectData(this)" data-select_type='shelf'>
+                            <option value="">请选择</option>
+                                                                <option value="10353">XS520251112-10356 - YH1028001</option>
+                                                                    <option value="10237">20240510 - 20240510-1</option>
+                                                                    <option value="10220">XS20240420-20673 - X0001</option>
+                                                                    <option value="10014">XS20231205-15515 - HJ76543234</option>
+                                                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</script>
+<script id="tpl-log" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+                <div class="am-form-group">
+                    <div class="am-u-sm-12">
+                    <table class="am-table">
+                        <thead>
+                            <tr class="am-primary">
+                                <th>操作时间</th>
+                                <th>轨迹内容</th>
+                                <th>操作人</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{each data value}}
+                                <tr class="am-success">
+                                    <td>{{ value.created_time }}</td>
+                                    <td>{{ value.logistics_describe }}</td>
+                                    <td>{{ value.clerk?value.clerk.real_name:'' }}</td>
+                                </tr>
+                            {{/each}}  
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<script id="tpl-packtype" type="text/template">
+    <div class="am-padding-xs am-padding-top">
+        <form class="am-form tpl-form-line-form" method="post" action="">
+            <div class="am-tab-panel am-padding-0 am-active">
+               <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择包裹数量
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                        <p class='am-form-static'> 共选中 {{ selectCount }} 包裹</p>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">
+                        选择仓库
+                    </label>
+                    <div class="am-u-sm-8 am-u-end">
+                      <select name="package[shop_id]"
+                                data-am-selected="{searchBox: 1, btnSize: 'sm', placeholder:'请选择', maxHeight: 400}" onchange="getSelectData(this)" data-select_type='shelf'>
+                            <option value="">请选择</option>
+                                                                <option value="184">电脑科技有限公司</option>
+                                                                    <option value="183">广州D010</option>
+                                                        </select>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-3 am-form-label form-require">包裹类型</label>
+                    <div class="am-u-sm-8 am-u-end">
+                        <label class="am-radio-inline">
+                            <input type="radio" name="package[pack_type]" value="0" data-am-ucheck checked>
+                            拼邮
+                        </label>
+                        <label class="am-radio-inline">
+                            <input type="radio" name="package[pack_type]" value="1" data-am-ucheck>
+                            直邮
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<script src="assets/store/js/select.data.js?v=2.2.55"></script>
+<script>
+    function getlog(_this){
+        var number = _this.getAttribute('value');
+        console.log(3434);
+        $.ajax({
+			type: 'post',
+			url: "index.php?s=/store/package._index/getlog",
+			data: {number: number},
+			dataType: "json",
+			success: function(res) {
+				if (res.code == 1) {
+				    console.log(res.data,87);
+        				$.showModal({
+                         title: '物流信息'
+                        , area: '800px'
+                        , content: template('tpl-log', res.data)
+                        , uCheck: false
+                        , success: function (index) {}
+                        ,yes: function (index) {window.location.reload();}
+                    });
+				}
+			}
+		})
+    } 
+    
+document.addEventListener('DOMContentLoaded', function() {
+    // 页面加载完成后执行
+    fetchDataAndRender();
+});
+
+function fetchDataAndRender() {
+    // 模拟从后台获取数据
+    $.ajax({
+        type:'post',
+        url:"index.php?s=/store/package.index/gettotal",
+        data:{
+            
+        },
+        dataType:"json",
+        success:function(res){
+              if (res.code==1){
+                  renderData(res.data);
+              }else{
+                  layer.alert(res.msg, {icon: 5});
+              } 
+        }
+    })
+}
+
+function renderData(datatotal) {
+    const userList = document.getElementById('datatotal');
+    userList.innerHTML = ''; // 清空现有内容
+    userList.innerHTML = `
+    <span style="line-height:30px;"  class="am-badge am-badge-warning">今日入库（个数/重量）：
+        ${datatotal.todayin}/${datatotal.todayin_weight}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-warning">今日出库（个数/重量）：
+        ${datatotal.todayout}/${datatotal.todayout_weight}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-success">昨日入库（个数/重量）：
+        ${datatotal.yesin}/${datatotal.yesin_weight}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-success">昨日出库（个数/重量）：
+        ${datatotal.yesout}/${datatotal.yesout_weight}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-success">未入库（已预报）：
+        ${datatotal.report}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-danger">在库中（个数/重量）：
+        ${datatotal.instore}/${datatotal.instore_weight}
+    </span>
+    <span style="line-height:30px;"  class="am-badge am-badge-success">已发货（个数/重量）：
+        ${datatotal.other}/${datatotal.other_weight}
+    </span>`;
+}    
+    
+</script>
+<script>
+    var _render = false;
+    var getSelectData = function(_this){
+        if (_render){
+            return;
+        }
+        var sType = _this.getAttribute('data-select_type');
+        if (!sType || !_this.value) {
+            return;
+        }
+        
+        var api_group = {
+            'shelf': 'index.php?s=/store/shelf_manager.index/getshelf',
+            'shelf_unit': 'index.php?s=/store/shelf_manager.index/getshelf_unit'
+        };
+        
+        var $selected, data, $nextSelect;
+        
+        if (sType == 'shelf'){
+            $selected = $('#select-shelf');
+            $nextSelect = $('#select_shelf_unit');
+            data = {'shop_id': _this.value};
+            
+            // 清空货架和货位选项
+            $selected.html('<option value="">加载中...</option>').prop('disabled', true);
+            $nextSelect.html('<option value="">请先选择货架</option>').prop('disabled', true);
+            
+            // 重新初始化am-selected
+            if ($selected.data('amui.selected')) {
+                $selected.selected('destroy');
+            }
+        }
+        
+        if (sType == 'shelf_unit'){
+            $selected = $('#select_shelf_unit');
+            data = {'shelf_id': _this.value};
+            
+            // 清空货位选项
+            $selected.html('<option value="">加载中...</option>').prop('disabled', true);
+            
+            // 重新初始化am-selected
+            if ($selected.data('amui.selected')) {
+                $selected.selected('destroy');
+            }
+        }
+        
+        _render = true;
+        
+        $.ajax({
+            type: "GET",
+            url: api_group[sType],
+            data: data,
+            dataType: 'json',
+            beforeSend: function() {
+                // 可以在这里添加加载提示
+            },
+            success: function(res){
+                if (res.code != 1) {
+                    layer.msg(res.msg || '加载失败', {icon: 2});
+                    if (sType == 'shelf') {
+                        $selected.html('<option value="">加载失败，请重试</option>');
+                    } else {
+                        $selected.html('<option value="">加载失败，请重试</option>');
+                    }
+                    _render = false;
+                    return;
+                }
+                
+                if (sType == 'shelf'){
+                    var _data = res.data.shelf || [];
+                    var html = '<option value="">请选择货架</option>';
+                    
+                    if (_data.length > 0) {
+                        for (var i = 0; i < _data.length; i++){
+                            html += '<option value="' + _data[i]['id'] + '">' + _data[i]['shelf_name'] + '</option>';
+                        }
+                    } else {
+                        html = '<option value="">该仓库暂无货架</option>';
+                    }
+                    
+                    $selected.html(html).prop('disabled', false);
+                    
+                    // 刷新am-selected组件
+                    if ($selected.data('amui.selected')) {
+                        $selected.selected('refresh');
+                    } else {
+                        // 如果还没有初始化，则重新初始化
+                        $selected.selected({
+                            searchBox: 1,
+                            btnSize: 'sm',
+                            placeholder: sType == 'shelf' ? '请选择货架' : '请选择货位',
+                            maxHeight: 400
+                        });
+                    }
+                } else {
+                    var _data = res.data.shelfunit || [];
+                    var html = '<option value="">请选择货位（可选）</option>';
+                    
+                    if (_data.length > 0) {
+                        for (var i = 0; i < _data.length; i++){
+                            html += '<option value="' + _data[i]['shelf_unit_id'] + '">' + _data[i]['shelf_unit_no'] + '</option>';
+                        }
+                    } else {
+                        html = '<option value="">该货架暂无货位</option>';
+                    }
+                    
+                    $selected.html(html).prop('disabled', false);
+                    
+                    // 刷新am-selected组件
+                    if ($selected.data('amui.selected')) {
+                        $selected.selected('refresh');
+                    } else {
+                        // 如果还没有初始化，则重新初始化
+                        $selected.selected({
+                            searchBox: 1,
+                            btnSize: 'sm',
+                            placeholder: '请选择货位',
+                            maxHeight: 400
+                        });
+                    }
+                }
+                
+                setTimeout(function() {
+                    _render = false;
+                }, 100);
+            },
+            error: function() {
+                layer.msg('网络错误，请重试', {icon: 2});
+                if (sType == 'shelf') {
+                    $selected.html('<option value="">加载失败，请重试</option>');
+                } else {
+                    $selected.html('<option value="">加载失败，请重试</option>');
+                }
+                _render = false;
+            }
+        });
+    }
+
+    $(function () {
+       checker = {
+          num:0, 
+          check:[],
+          init:function(){
+              this.check = document.getElementById('body').getElementsByTagName('input');
+              this.num = this.check.length;
+              this.bindEvent();
+          },
+          bindEvent:function(){
+              var that = this;
+              for(var i=0; i< this.check.length; i++){
+                  this.check[i].onclick = function(){
+                       var _check = that.isFullCheck();
+                       if (_check){
+                           document.getElementById('checkAll').checked = 'checked';
+                       }else{
+                           document.getElementById('checkAll').checked = '';
+                       }
+                  }
+              }
+              
+              var  allCheck = document.getElementById('checkAll');
+              allCheck.onclick = function(){
+                  if (this.checked){
+                      that.setFullCheck();
+                  }else{
+                      that.setFullCheck('');
+                  }
+              }
+              
+          },
+          setFullCheck:function(checked='checked'){
+             for (var ik =0; ik<this.num; ik++){
+                  this.check[ik].checked = checked; 
+              } 
+          },
+          isFullCheck:function(){
+              var hasCheck = 0;
+              for (var k =0; k<this.num; k++){
+                   if (this.check[k].checked){
+                       hasCheck++;
+                   }
+              }
+              return hasCheck==this.num?true:false;
+          },
+          getCheckSelect:function(){
+              var selectIds = [];
+              for (var i=0;i<this.check.length;i++){
+                    if (this.check[i].checked){
+                       selectIds.push(this.check[i].value);
+                    }
+              }
+              return selectIds;
+          }
+       }
+       
+       checker.init();
+       
+        // 选择用户
+        $('.j-selectUser').click(function () {
+            alert(222);
+            var $userList = $('.user-list');
+            $.selectData({
+                title: '选择用户',
+                uri: 'user/lists',
+                dataIndex: 'user_id',
+                done: function (data) {
+                    var user = [data[0]];
+                    $userList.html(template('tpl-user-item', user));
+                }
+            });
+        });
+        /**
+         * 代用户打包
+         */
+        $('#j-inpack').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length==0){
+               layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            var options = [] ;
+            $.ajax({
+                type:'post',
+                url:"index.php?s=/store/package.index/seachuseraddress",
+                data:{
+                    selectIds:data.selectId,
+                },
+                dataType:"json",
+                success:function(res){
+                      if (res.code==1){
+                          for(var i=0;i<res.data.total;i++){
+                              options[i] = "<option value ='"+ res.data.data[i].address_id+"'>"+"【用户地址】" +  res.data.data[i].name +'-'+ res.data.data[i].country +'-'+ res.data.data[i].city +'-'+ res.data.data[i].phone +"</option>"; 
+                          }
+			              $("#storeAddress").append(options);
+                          console.log($('#storeAddress'));
+                      }else{
+                          layer.alert(res.msg, {icon: 5});
+                      } 
+                }
+            })
+            
+           
+            $.showModal({
+                title: '用户打包'
+                , area: '520px'
+                , content: template('tpl-inpack', data)
+                , uCheck: true
+                , success: function ($content) {
+                    $tabs = $content.find('.j-tabs');
+                    $tabs.tabs({noSwipe: 1});
+                }
+                , yes: function ($content) {
+                    $content.find('form').myAjaxSubmit({
+                        url: 'index.php?s=/store/package.index/inpack',
+                        data: {
+                            selectIds:data.selectId,
+                        }
+                    });
+                    return true;
+                }
+            });
+        });
+
+        /**
+         * 修改会员
+         */
+        $('#j-upuser').on('click', function () {
+             var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            $.showModal({
+                title: '修改会员'
+                , area: '460px'
+                , content: template('tpl-grade', data)
+                , uCheck: true
+                , success: function ($content) {
+                }
+                , yes: function ($content) {
+                    $content.find('form').myAjaxSubmit({
+                        url: 'index.php?s=/store/package.index/changeUser',
+                        data: {selectIds:data.selectId}
+                    });
+                    return true;
+                }
+            });
+        });
+        
+          /**
+         * 修改会员
+         */
+        $('#j-error').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            $.showModal({
+                title: '标记为问题件'
+                , area: '460px'
+                , content: template('tpl-errors', data)
+                , uCheck: true
+                , success: function ($content) {
+                }
+                , yes: function ($content) {
+                    $content.find('form').myAjaxSubmit({
+                        url: 'index.php?s=/store/package.index/setErrors',
+                        data: {selectIds:data.selectId},
+                    });
+                    return true;
+                }
+            });
+        });
+        
+         /**
+         * 修改包裹位置
+         */
+        $('#j-change').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length == 0){
+                layer.alert('请先选择要修改位置的包裹', {icon: 5, title: '提示'});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            
+            $.showModal({
+                title: '修改包裹位置 <small style="color:#999;">(已选择 ' + data.selectCount + ' 个包裹)</small>'
+                , area: ['650px', '550px']
+                , content: template('tpl-shelf', data)
+                , uCheck: true
+                , success: function ($content) {
+                    // 等待am-selected初始化完成后再绑定事件
+                    setTimeout(function() {
+                        // 绑定仓库选择事件
+                        var $shopSelect = $content.find('#shelf-shop-id');
+                        if ($shopSelect.length) {
+                            // 使用事件委托，确保能捕获到am-selected的变化
+                            $shopSelect.on('change', function() {
+                                var shopId = $(this).val();
+                                var $shelfSelect = $content.find('#select-shelf');
+                                var $shelfUnitSelect = $content.find('#select_shelf_unit');
+                                
+                                if (shopId) {
+                                    getSelectData(this);
+                                } else {
+                                    // 清空下级选项
+                                    $shelfSelect.html('<option value="">请先选择仓库</option>').prop('disabled', true);
+                                    $shelfUnitSelect.html('<option value="">请先选择货架</option>').prop('disabled', true);
+                                    if ($shelfSelect.data('amui.selected')) {
+                                        $shelfSelect.selected('refresh');
+                                    }
+                                    if ($shelfUnitSelect.data('amui.selected')) {
+                                        $shelfUnitSelect.selected('refresh');
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // 绑定货架选择事件
+                        var $shelfSelect = $content.find('#select-shelf');
+                        if ($shelfSelect.length) {
+                            $shelfSelect.on('change', function() {
+                                var shelfId = $(this).val();
+                                var $shelfUnitSelect = $content.find('#select_shelf_unit');
+                                
+                                if (shelfId) {
+                                    getSelectData(this);
+                                } else {
+                                    // 清空货位选项
+                                    $shelfUnitSelect.html('<option value="">请先选择货架</option>').prop('disabled', true);
+                                    if ($shelfUnitSelect.data('amui.selected')) {
+                                        $shelfUnitSelect.selected('refresh');
+                                    }
+                                }
+                            });
+                        }
+                    }, 100);
+                }
+                , yes: function ($content) {
+                    var $form = $content.find('form');
+                    var shopId = $form.find('select[name="shelf[shop_id]"]').val();
+                    var shelfId = $form.find('#select-shelf').val();
+                    var shelfUnitId = $form.find('select[name="shelf[shelf_unit]"]').val();
+                    
+                    // 表单验证：至少需要选择仓库
+                    if (!shopId) {
+                        layer.msg('请至少选择仓库', {icon: 2, time: 2000});
+                        return false;
+                    }
+                    
+                    // 如果选择了货架但没有选择货位，给出提示（但不阻止提交）
+                    if (shelfId && !shelfUnitId) {
+                        // 货位是可选的，所以这里不阻止提交
+                    }
+                    
+                    // 提交表单
+                    $form.myAjaxSubmit({
+                        url: 'index.php?s=/store/package.index/changeShelf',
+                        data: {selectIds: data.selectId},
+                        beforeSubmit: function() {
+                            layer.load(2, {time: 10*1000});
+                        },
+                        success: function(res) {
+                            layer.closeAll('loading');
+                        }
+                    });
+                    return true;
+                }
+            });
+        });
+        
+         /**
+         * 修改包裹位置
+         */
+        $('#j-changetype').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            $.showModal({
+                title: '修改包裹类型'
+                , area: '460px'
+                , content: template('tpl-packtype', data)
+                , uCheck: true
+                , success: function ($content) {
+                }
+                , yes: function ($content) {
+                    $content.find('form').myAjaxSubmit({
+                        url: 'index.php?s=/store/package.index/changetype',
+                        data: {selectIds:data.selectId},
+                    });
+                    return true;
+                }
+            });
+        });
+        
+        /**
+         * 加入批次
+         */
+        $('#j-batch').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            data.selectCount = selectIds.length;
+            console.log(data.selectId)
+            $.showModal({
+                title: '将包裹加入到批次中'
+                , area: '460px'
+                , content: template('tpl-batch', data)
+                , uCheck: true
+                , success: function ($content) {
+                }
+                , yes: function ($content) {
+                    $content.find('form').myAjaxSubmit({
+                        url: 'index.php?s=/store/batch/addpacktobatch',
+                        data: {selectIds:data.selectId},
+                    });
+                    return true;
+                }
+            });
+        });
+        
+        /**
+         * 批量删除
+         */
+        $('#j-deleteall').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            var hedanurl = "index.php?s=/store/package.index/deleteall";
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            console.log();
+            layer.confirm('请确定是否批量删除选中包裹', {title: '批量删除包裹'}
+                    , function (index) {
+                        $.post(hedanurl,{selectId:data.selectId}, function (result) {
+                            result.code === 1 ? $.show_success(result.msg, result.url)
+                                : $.show_error(result.msg);
+                        });
+                        layer.close(index);
+                    });
+        });
+        
+        /**
+         * 批量还原
+         */
+        $('#j-backall').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            var hedanurl = "index.php?s=/store/package.index/backall";
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            console.log();
+            layer.confirm('请确定是否批量还原选中包裹状态', {title: '批量还原包裹'}
+                    , function (index) {
+                        $.post(hedanurl,{selectId:data.selectId}, function (result) {
+                            result.code === 1 ? $.show_success(result.msg, result.url)
+                                : $.show_error(result.msg);
+                        });
+                        layer.close(index);
+                    });
+        });
+        
+        $('#j-backnormal').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            var hedanurl = "index.php?s=/store/package.index/backtonormalall";
+            if (selectIds.length==0){
+                layer.alert('请先选择包裹', {icon: 5});
+                return;
+            }
+            data.selectId = selectIds.join(',');
+            console.log();
+            layer.confirm('请确定是否批量还原选中包裹状态', {title: '还原成包裹'}
+                    , function (index) {
+                        $.post(hedanurl,{selectId:data.selectId}, function (result) {
+                            result.code === 1 ? $.show_success(result.msg, result.url)
+                                : $.show_error(result.msg);
+                        });
+                        layer.close(index);
+                    });
+        });
+        
+
+        /**
+         * 导出包裹
+         */
+        $('#j-export').on('click', function () {
+            var $tabs, data = $(this).data();
+            var selectIds = checker.getCheckSelect();
+            var serializeObj={};
+            var fordata = $(".toolbar-form").serializeArray().forEach(function(item){
+                if(item.name !='s'){
+                   serializeObj[item.name]=item.value;
+                }
+                
+            });
+            // if(isEmpty(serializeObj['search']) && selectIds.length==0){
+            //         layer.alert('请先选择包裹或者搜索后再点导出', {icon: 5});
+            //         return;
+            // }
+            $.ajax({
+                type:'post',
+                url:"index.php?s=/store/package.index/loaddingoutexcel",
+                data:{
+                    selectId:selectIds,
+                    seach:serializeObj
+                },
+                dataType:"json",
+                success:function(res){
+                      if (res.code==1){
+                          console.log(res.url.file_name);
+                        var a = document.createElement('a');
+                        document.body.appendChild(a);
+                        a.href = res.url.file_name;
+                        a.click();
+                      } 
+                }
+            })
+        });
+
+        /**
+         * 复制单号
+         */
+        $('#j-copy-express').on('click', function () {
+            var selectIds = checker.getCheckSelect();
+            if (selectIds.length == 0) {
+                layer.alert('请先选择要复制的包裹', {icon: 5});
+                return;
+            }
+            
+            // 获取所有选中行的快递单号
+            var expressNums = [];
+            var $checkboxes = $('#body input[name="checkIds"]:checked');
+            
+            $checkboxes.each(function() {
+                var $row = $(this).closest('tr');
+                // 从该行中找到包含快递单号的a标签，优先获取value属性，如果没有则获取文本内容
+                var $expressLink = $row.find('td:eq(2) a[onclick="getlog(this)"]');
+                if ($expressLink.length > 0) {
+                    // 优先使用value属性，如果没有则使用文本内容
+                    var expressNum = $expressLink.attr('value');
+                    if (!expressNum || expressNum.trim() === '') {
+                        expressNum = $expressLink.text().trim();
+                    }
+                    // 清理可能的换行符和多余空格
+                    expressNum = expressNum.replace(/\s+/g, ' ').trim();
+                    if (expressNum && expressNums.indexOf(expressNum) === -1) {
+                        expressNums.push(expressNum);
+                    }
+                }
+            });
+            
+            if (expressNums.length === 0) {
+                layer.alert('未找到快递单号', {icon: 5});
+                return;
+            }
+            
+            // 将单号用换行符连接
+            var expressText = expressNums.join('\n');
+            
+            // 复制到剪贴板
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                // 使用现代 Clipboard API
+                navigator.clipboard.writeText(expressText).then(function() {
+                    layer.msg('已复制 ' + expressNums.length + ' 个快递单号', {icon: 1, time: 2000});
+                }).catch(function(err) {
+                    // 如果 Clipboard API 失败，使用备用方法
+                    fallbackCopyText(expressText, expressNums.length);
+                });
+            } else {
+                // 使用备用方法
+                fallbackCopyText(expressText, expressNums.length);
+            }
+        });
+        
+        /**
+         * 备用复制方法（兼容旧浏览器）
+         */
+        function fallbackCopyText(text, count) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                var successful = document.execCommand('copy');
+                if (successful) {
+                    layer.msg('已复制 ' + count + ' 个快递单号', {icon: 1, time: 2000});
+                } else {
+                    layer.alert('复制失败，请手动复制', {icon: 5});
+                }
+            } catch (err) {
+                layer.alert('复制失败，请手动复制', {icon: 5});
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        /**
+         * 注册操作事件
+         * @type {jQuery|HTMLElement}
+         */
+        var $dropdown = $('.j-opSelect');
+        $dropdown.dropdown();
+        
+        // 删除元素
+        var url = "index.php?s=/store/package.index/delete";
+        $('.item-delete').delete('id', url);
+    });
+    
+     function doSelectUser(){
+           var $userList = $('.user-list');
+            $.selectData({
+                title: '选择用户',
+                uri: 'user/lists',
+                dataIndex: 'user_id',
+                done: function (data) {
+                    var user = [data[0]];
+                    console.log(user,98999);
+                    $userList.html(template('tpl-user-item', user));
+                }
+            });
+    }
+    
+    function changecategory(_this){
+        var categoryid = _this.value;
+        console.log(_this.value);
+        $.ajax({
+            type:'post',
+            url:"index.php?s=/store/package.index/changecategory",
+            data:{
+                categoryid:categoryid
+            },
+            dataType:"json",
+            success:function(res){
+                  if (res.code==1){
+                    var $selected = $("#Packcategory");
+                    $selected.html('');
+                    var cate = res.data;
+       
+                    for (var i=0;i<cate.length;i++){
+                        $selected.append('<option value="' + cate[i]['category_id'] +'" >' + cate[i]['name'] + '</option>');
+                    }
+                    // $("#Packcategory").html();
+                  } 
+            }
+        })
+    }
+    
+    function isEmpty(val){
+          let valType = Object.prototype.toString.call(val);
+          let isEmpty = false;
+          switch (valType) {
+            case "[object Undefined]":
+            case "[object Null]":
+              isEmpty = true;
+              break;
+            case "[object Array]":
+              case "[object String]":
+                try {
+                    isEmpty = val + "" === "null" || val + "" === "undefined" || val.length <= 0 ||  val.split("").length <= 0 ? true : false;
+                  } catch (error) {
+                    isEmpty = false;
+                  };
+                  break;
+            case "[object Object]":
+              try {
+                let temp = JSON.stringify(val);
+                isEmpty = temp + "" === "null" || temp + "" === "undefined" || temp === "{}" ? true : false;
+              } catch (error) {
+                isEmpty = false;
+              }
+              break;
+            case "[object Number]":
+              isEmpty = val + "" === "NaN" || val + "" === "Infinity" ? true : false;
+              break;
+            default:
+              isEmpty = false;
+              break;
+          }
+          return isEmpty;
+        }
+
+</script>
+<!-- 图片预览模态框模板 -->
+<script id="tpl-image-preview" type="text/template">
+    <div class="am-modal am-modal-no-btn image-preview-wrapper" tabindex="-1" id="image-preview-modal">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">
+                图片预览 (共{{ images.length }}张)
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd image-content" style="max-height: 80vh; overflow-y: auto;">
+                <div class="image-gallery" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    {{each images item}}
+                    <div class="image-item" style="flex: 0 0 calc(25% - 10px); box-sizing: border-box;">
+                        <img class="preview-image" 
+                             src="{{ item.file_path }}" 
+                             style="max-width: 100%; max-height: 200px; cursor: pointer;"
+                             data-original="{{ item.file_path }}"
+                             alt="包裹图片">
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- Viewer.js CSS -->
+<link rel="stylesheet" href="assets/store/css/viewer.min.css">
+
+<!-- Viewer.js JS -->
+<script src="assets/store/js/viewer.min.js"></script>
+<script>
+$(function() {
+    // 图片预览点击事件
+    $('.view-images').on('click', function(e) {
+        e.stopPropagation(); // 阻止事件冒泡
+        
+        var images = $(this).data('images');
+        
+        // 渲染模态框
+        var modalHtml = template('tpl-image-preview', {images: images});
+        $('body').append(modalHtml);
+        
+        // 显示模态框
+        var $modal = $('#image-preview-modal');
+        $modal.modal({
+            closeViaDimmer: false
+        });
+        
+        // 初始化Viewer.js
+        var gallery = new Viewer(document.querySelector('.image-gallery'), {
+            inline: false,
+            button: true,
+            navbar: true,
+            title: false,
+            toolbar: {
+                zoomIn: 1,
+                zoomOut: 1,
+                oneToOne: 1,
+                reset: 1,
+                prev: 1,
+                play: 0,
+                next: 1,
+                rotateLeft: 1,
+                rotateRight: 1,
+                flipHorizontal: 1,
+                flipVertical: 1,
+            },
+            viewed() {
+                gallery.zoomTo(1);
+            }
+        });
+        
+        // 点击模态框空白区域关闭
+        $modal.on('click', function(e) {
+            // 检查点击的是否是模态框内容区域以外的部分
+            if ($(e.target).hasClass('image-preview-wrapper')) {
+                $modal.modal('close');
+            }
+        });
+        
+        // 点击图片时不关闭模态框
+        $('.image-content').on('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // 模态框关闭时清理
+        $modal.on('closed.modal.amui', function() {
+            gallery.destroy();
+            $(this).remove();
+        });
+    });
+});
+</script>
+<style>
+    /* 模态框样式 */
+    .image-preview-wrapper {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    
+    .image-preview-wrapper .am-modal-dialog {
+        background: white;
+        border-radius: 5px;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow: hidden;
+    }
+    
+    /* 图片网格样式 */
+    .image-gallery {
+        padding: 10px;
+    }
+    
+    .image-item {
+        transition: all 0.3s ease;
+    }
+    
+    .image-item:hover {
+        transform: scale(1.03);
+    }
+    
+    .preview-image {
+        border: 1px solid #eee;
+        border-radius: 3px;
+    }
+    
+    /* 关闭按钮样式 */
+    .am-close-spin {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        color: #666;
+    }
+    
+    /* 固定列样式 */
+    .fixed-column-table {
+        position: relative;
+    }
+    
+    /* 固定列基础样式 - 操作列固定在右侧 */
+    .fixed-operation {
+        position: sticky;
+        right: 0;
+        z-index: 10;
+        background-color: #fff;
+        min-width: 180px;
+        width: 180px;
+        box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+        padding: 8px 12px !important;
+    }
+    
+    /* 表头固定列样式 */
+    .fixed-column-table thead th.fixed-operation {
+        background-color: #f5f5f5 !important;
+        z-index: 11;
+    }
+    
+    /* 斑马纹表格的固定列背景色 */
+    .fixed-column-table tbody tr:nth-child(even) .fixed-operation {
+        background-color: #f9f9f9;
+    }
+    
+    .fixed-column-table tbody tr:nth-child(odd) .fixed-operation {
+        background-color: #fff;
+    }
+    
+    /* 鼠标悬停时保持背景色 */
+    .fixed-column-table tbody tr:hover .fixed-operation {
+        background-color: #e8f4f8 !important;
+    }
+    
+    /* 确保表格可以横向滚动 */
+    .am-scrollable-horizontal {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* 确保固定列不会超出其容器 */
+    .fixed-column-table {
+        table-layout: auto;
+    }
+    
+    /* 给非固定列添加足够的空间 */
+    .fixed-column-table tbody td:not(.fixed-operation),
+    .fixed-column-table thead th:not(.fixed-operation) {
+        min-width: 100px;
+    }
+    
+    /* 优化滚动条样式 */
+    .am-scrollable-horizontal::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .am-scrollable-horizontal::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .am-scrollable-horizontal::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    
+    .am-scrollable-horizontal::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+    </div>
+    <!-- 内容区域 end -->
+    
+    <!-- 订单提醒弹窗 -->
+    <div id="inpack-notify-popup" style="display:none; position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 15px 20px; z-index: 99999; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="iconfont icon-lingdang" style="font-size: 24px; margin-right: 15px; animation: bell-ring 0.5s ease-in-out infinite;"></i>
+                <div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">你有新集运订单需要处理</div>
+                    <div style="font-size: 14px; opacity: 0.9;" id="notify-order-sn">订单号：<span id="notify-order-sn-value"></span></div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="javascript:;" id="notify-goto-order" style="color: #fff; text-decoration: none; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 4px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">查看订单</a>
+                <a href="javascript:;" id="notify-close" style="color: #fff; text-decoration: none; font-size: 20px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes bell-ring {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        #inpack-notify-popup.show {
+            animation: slideDown 0.3s ease-out;
+        }
+    </style>
+
+</div>
+<script src="assets/common/plugins/layer/layer.js"></script>
+<script src="assets/common/js/jquery.form.min.js"></script>
+<script src="assets/common/js/amazeui.min.js"></script>
+<script src="assets/common/js/webuploader.html5only.js"></script>
+<script src="assets/common/js/art-template.js"></script>
+<script src="assets/store/js/app.js?v=2.2.55"></script>
+<script src="assets/store/js/file.library.js?v=2.2.55"></script>
+        <script src="assets/store/css/app_shu1/jiyunbg.js"></script>
+    <script src="assets/store/css/app_shu1/jiyunApp.js"></script>
+    <script>
+// 菜单链接打开方式：根据配置文件中的 open_new_tab 参数决定
+// 如果菜单项设置了 target="_blank"，则在新标签页打开，否则在当前页打开
+$(document).ready(function() {
+    // 一级菜单：在当前页面跳转
+    $('.sidebar-nav a').on('click', function(e) {
+        var href = $(this).attr('href');
+        // 如果不是 javascript:void(0) 这样的伪链接
+        if (href && href !== 'javascript:void(0);' && href.indexOf('javascript:') !== 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = href; // 当前页面跳转
+        }
+    });
+    
+    // 注意：二级、三级菜单现在由 HTML 的 target 属性控制
+    // 如果菜单配置中有 'open_new_tab' => true，会自动添加 target="_blank"
+});
+
+// 订单提醒功能
+(function() {
+    'use strict';
+    
+    // 配置
+    var POLL_INTERVAL = 30000; // 30秒轮询间隔
+    var STORAGE_KEY = 'inpack_notify_last_check';
+    var AUDIO_PATH = 'assets/store/order.MP3';
+    
+    // 音频对象（延迟加载，等待用户交互）
+    var audio = null;
+    var audioInitialized = false;
+    
+    // 初始化音频对象
+    function initAudio() {
+        if (audioInitialized || audio) return;
+        
+        try {
+            audio = new Audio(AUDIO_PATH);
+            audio.preload = 'auto';
+            audio.volume = 0.8;
+            
+            // 处理音频加载错误
+            audio.addEventListener('error', function(e) {
+                console.warn('订单提醒音频加载失败:', e);
+                audio = null;
+            });
+            
+            audioInitialized = true;
+        } catch (e) {
+            console.warn('初始化音频对象失败:', e);
+        }
+    }
+    
+    // 播放提醒音频
+    function playNotifySound() {
+        if (!audio) {
+            initAudio();
+        }
+        
+        if (audio && audioInitialized) {
+            try {
+                // 重置音频到开始位置
+                audio.currentTime = 0;
+                var playPromise = audio.play();
+                
+                // 处理播放错误
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        console.warn('音频播放失败（可能是浏览器自动播放限制）:', error);
+                        // 如果自动播放失败，尝试在用户交互后播放
+                        var onceInteraction = function() {
+                            if (audio) {
+                                audio.play().catch(function() {});
+                            }
+                            document.removeEventListener('click', onceInteraction);
+                            document.removeEventListener('touchstart', onceInteraction);
+                            document.removeEventListener('keydown', onceInteraction);
+                        };
+                        document.addEventListener('click', onceInteraction, { once: true });
+                        document.addEventListener('touchstart', onceInteraction, { once: true });
+                        document.addEventListener('keydown', onceInteraction, { once: true });
+                    });
+                }
+            } catch (e) {
+                console.warn('播放音频时出错:', e);
+            }
+        }
+    }
+    
+    // 显示顶部通知
+    function showNotifyPopup(orderSn, orderId) {
+        var $popup = $('#inpack-notify-popup');
+        var $orderSnValue = $('#notify-order-sn-value');
+        
+        if ($orderSnValue.length) {
+            $orderSnValue.text(orderSn || '');
+        }
+        
+        // 设置跳转链接
+        var $gotoLink = $('#notify-goto-order');
+        if ($gotoLink.length && orderId) {
+            var orderUrl = BASE_URL + 'index.php?s=/store/tr_order/edit&id=' + orderId;
+            $gotoLink.attr('href', orderUrl);
+        }
+        
+        // 显示弹窗
+        $popup.fadeIn(300).addClass('show');
+        
+        // 自动关闭（5秒后）
+        setTimeout(function() {
+            hideNotifyPopup();
+        }, 5000);
+    }
+    
+    // 隐藏顶部通知
+    function hideNotifyPopup() {
+        var $popup = $('#inpack-notify-popup');
+        $popup.fadeOut(300, function() {
+            $(this).removeClass('show');
+        });
+    }
+    
+    // 检查是否有新订单
+    function checkNewInpack() {
+        // 检查设置是否启用（从后端获取，暂时默认启用）
+        // 这里可以通过AJAX获取设置，或者从页面变量中获取
+        // 为了简化，我们默认启用，如果需要可以在后端返回设置值
+        
+        // 只在页面可见时检查
+        if (document.hidden) {
+            return;
+        }
+        
+        $.ajax({
+            url: BASE_URL + 'index.php?s=/store/package.Index/getLatestInpackTime',
+            type: 'GET',
+            dataType: 'json',
+            timeout: 10000,
+            success: function(res) {
+                if (res.code == 1 && res.data) {
+                    // 检查是否启用提醒
+                    var notifyEnabled = res.data.notify_enabled !== false; // 默认为true
+                    
+                    if (!notifyEnabled) {
+                        // 如果未启用，直接返回，不进行后续检查
+                        return;
+                    }
+                    
+                    var latestTime = res.data.latest_time || 0;
+                    var latestId = res.data.latest_id || 0;
+                    var latestOrderSn = res.data.latest_order_sn || '';
+                    
+                    if (latestTime > 0 && latestId > 0) {
+                        // 获取本地存储的最后检查信息
+                        var lastCheck = localStorage.getItem(STORAGE_KEY);
+                        var lastCheckData = lastCheck ? JSON.parse(lastCheck) : { time: 0, id: 0 };
+                        
+                        // 检查是否有新订单
+                        if (latestTime > lastCheckData.time && latestId != lastCheckData.id) {
+                            // 有新订单，播放提醒
+                            playNotifySound();
+                            showNotifyPopup(latestOrderSn, latestId);
+                            
+                            // 更新本地存储
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        } else if (latestTime > lastCheckData.time) {
+                            // 时间更新了但ID相同，只更新时间
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        }
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                // 静默失败，不显示错误
+                console.warn('检查新订单失败:', status, error);
+            }
+        });
+    }
+    
+    // 初始化
+    $(document).ready(function() {
+        // 用户交互后初始化音频（解决浏览器自动播放限制）
+        var initOnInteraction = function() {
+            initAudio();
+            // 只初始化一次
+            $(document).off('click touchstart keydown', initOnInteraction);
+        };
+        $(document).on('click touchstart keydown', initOnInteraction);
+        
+        // 关闭通知按钮事件
+        $('#notify-close').on('click', function() {
+            hideNotifyPopup();
+        });
+        
+        // 点击通知区域外部也可关闭（可选）
+        $('#inpack-notify-popup').on('click', function(e) {
+            if ($(e.target).closest('#notify-goto-order, #notify-close').length === 0) {
+                // 点击通知内容区域，跳转到订单
+                var href = $('#notify-goto-order').attr('href');
+                if (href && href !== 'javascript:;') {
+                    window.location.href = href;
+                }
+            }
+        });
+        
+        // 首次检查（延迟2秒，避免页面加载时立即请求）
+        setTimeout(checkNewInpack, 2000);
+        
+        // 设置定时轮询
+        setInterval(checkNewInpack, POLL_INTERVAL);
+        
+        // 页面可见性变化时检查
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面变为可见时立即检查一次
+                setTimeout(checkNewInpack, 1000);
+            }
+        });
+    });
+})();
+</script>
+</body>
+
+</html>

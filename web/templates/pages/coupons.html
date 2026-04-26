@@ -1,0 +1,91 @@
+{{define "pages/coupons"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.coupons.title">優惠券管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.coupons.search_coupon" placeholder="搜尋優惠券代碼/名稱..."></div>
+        <select class="form-select form-select-sm" id="statusFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="common.status_active">啟用</option>
+            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+            <option value="expired" data-i18n="pages.coupons.status_expired">已過期</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.coupons.coupon_code">優惠券代碼</th><th data-i18n="common.name">名稱</th><th data-i18n="pages.coupons.discount_type">折扣類型</th><th data-i18n="pages.coupons.discount_value">折扣值</th><th data-i18n="pages.coupons.min_amount">最低金額</th><th data-i18n="pages.coupons.validity">有效期</th><th data-i18n="pages.coupons.usage_ratio">使用/上限</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.coupons.add_coupon">新增優惠券</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="itemForm"><input type="hidden" name="id">
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.coupon_code">優惠券代碼 <span class="text-danger">*</span></label><input type="text" class="form-control" name="code" required data-i18n-placeholder="pages.coupons.code_placeholder" placeholder="如: SHIP2025"></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="common.name">名稱 <span class="text-danger">*</span></label><input type="text" class="form-control" name="name" required></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.discount_type">折扣類型 <span class="text-danger">*</span></label><select class="form-select" name="discount_type" required><option value="percentage" data-i18n="pages.coupons.type_percentage">百分比折扣</option><option value="fixed" data-i18n="pages.coupons.type_fixed">固定金額</option></select></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.discount_value">折扣值 <span class="text-danger">*</span></label><input type="number" class="form-control" name="discount_value" step="0.01" data-type="number" required data-i18n-placeholder="pages.coupons.discount_hint" placeholder="百分比填如: 10, 固定填金額"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.min_amount">最低消費金額</label><input type="number" class="form-control" name="min_amount" step="0.01" data-type="number" data-i18n-placeholder="pages.coupons.no_limit_hint" placeholder="0 表示不限"></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.usage_limit">使用上限</label><input type="number" class="form-control" name="usage_limit" data-type="number" data-i18n-placeholder="pages.coupons.no_limit_hint" placeholder="0 表示不限"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.start_date">開始日期 <span class="text-danger">*</span></label><input type="date" class="form-control" name="start_date" required></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.coupons.end_date">結束日期 <span class="text-danger">*</span></label><input type="date" class="form-control" name="end_date" required></div>
+        </div>
+        <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" name="status"><option value="active" data-i18n="common.status_active">啟用</option><option value="inactive" data-i18n="common.status_inactive">停用</option></select></div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+</div></div></div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/coupons';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('statusFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const dtype = item.discount_type === 'percentage' ? _t('pages.coupons.type_percentage', '百分比') : _t('pages.coupons.type_fixed', '固定金額');
+    const dval = item.discount_type === 'percentage' ? `${item.discount_value||0}%` : formatMoney(item.discount_value);
+    const period = `${item.start_date||'--'} ~ ${item.end_date||'--'}`;
+    const usage = `${item.used_count||0} / ${item.usage_limit||'∞'}`;
+    const statusBadge = item.status === 'expired' ? `<span class="badge bg-secondary">${_t('pages.coupons.status_expired', '已過期')}</span>` : getStatusBadge(item.status);
+    return `<tr><td><strong>${item.code||'--'}</strong></td><td>${item.name||'--'}</td><td>${dtype}</td><td>${dval}</td><td>${item.min_amount ? formatMoney(item.min_amount) : '--'}</td><td><small>${period}</small></td><td>${usage}</td><td>${statusBadge}</td><td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+}
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.coupons.add_coupon', '新增優惠券');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.coupons.add_coupon');
+    resetForm('itemForm'); openModal('formModal');
+}
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.coupons.edit_coupon', '編輯優惠券');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.coupons.edit_coupon');
+    try { const res = await apiRequest('GET', API_PATH+'/'+id); populateForm('itemForm', res.data||res); openModal('formModal'); } catch(e){}
+}
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if(editingId){await apiRequest('PUT',API_PATH+'/'+editingId,data);showToast(_t('common.update_success','更新成功'));}
+        else{await apiRequest('POST',API_PATH,data);showToast(_t('common.create_success','建立成功'));}
+        closeModal('formModal'); loadData(currentPage);
+    } catch(e){}
+}
+async function deleteItem(id) {
+    if(!confirmDelete(_t('pages.coupons.confirm_delete','確定要刪除此優惠券嗎？')))return;
+    try{await apiRequest('DELETE',API_PATH+'/'+id);showToast(_t('common.delete_success','刪除成功'));loadData(currentPage);}catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

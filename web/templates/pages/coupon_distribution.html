@@ -1,0 +1,72 @@
+{{define "pages/coupon_distribution"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.coupon_distribution.title">優惠券發放設置</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="pages.coupon_distribution.add_rule">新增規則</span></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.coupon_distribution.rule_name">規則名稱</th><th data-i18n="pages.coupons.coupon_name">優惠券</th><th data-i18n="pages.coupon_distribution.trigger_condition">觸發條件</th><th data-i18n="pages.coupon_distribution.quantity">發放數量</th><th data-i18n="pages.coupon_distribution.distributed">已發放</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.coupon_distribution.add_rule">新增發放規則</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="dataForm"><input type="hidden" id="editId">
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.rule_name">規則名稱</label><input type="text" class="form-control" id="name" required></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.select_coupon">選擇優惠券</label><select class="form-select" id="coupon_id"><option value="" data-i18n="common.please_select">請選擇</option></select></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.trigger_condition">觸發條件</label><select class="form-select" id="trigger_type">
+                <option value="register" data-i18n="pages.coupon_distribution.trigger_register">新用戶註冊</option><option value="first_order" data-i18n="pages.coupon_distribution.trigger_first_order">首次下單</option><option value="birthday" data-i18n="pages.coupon_distribution.trigger_birthday">生日</option><option value="level_up" data-i18n="pages.coupon_distribution.trigger_level_up">等級升級</option><option value="manual" data-i18n="pages.coupon_distribution.trigger_manual">手動發放</option></select></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.quantity_per_user">發放數量(每人)</label><input type="number" class="form-control" id="quantity_per_user" value="1" min="1"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.total_limit">總數量限制(0=不限)</label><input type="number" class="form-control" id="total_limit" value="0" min="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status"><option value="active" data-i18n="common.status_active">啟用</option><option value="inactive" data-i18n="common.status_inactive">停用</option></select></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+    </div></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const API_PATH = '/coupon-receives'; let currentPage = 1; const limit = 20;
+async function loadCoupons() { try { const res = await apiRequest('GET', '/coupons?limit=100');
+    const sel = document.getElementById('coupon_id'); (res.data || []).forEach(c => { sel.innerHTML += `<option value="${c.id}">${c.name}</option>`; }); } catch(e) {} }
+function loadData(page) { currentPage = page; loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, ''); }
+function renderRow(item) {
+    const triggers = {
+        register: _t('pages.coupon_distribution.trigger_register','新用戶註冊'),
+        first_order: _t('pages.coupon_distribution.trigger_first_order','首次下單'),
+        birthday: _t('pages.coupon_distribution.trigger_birthday','生日'),
+        level_up: _t('pages.coupon_distribution.trigger_level_up','等級升級'),
+        manual: _t('pages.coupon_distribution.trigger_manual','手動')
+    };
+    return `<tr><td>${item.name || '--'}</td><td>${item.coupon_name || '--'}</td><td>${triggers[item.trigger_type] || item.trigger_type || '--'}</td>
+    <td>${item.quantity_per_user || 1}</td><td>${item.distributed_count || 0}${item.total_limit ? '/'+item.total_limit : ''}</td><td>${getStatusBadge(item.status)}</td>
+    <td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+}
+function openCreateModal() {
+    document.getElementById('modalTitle').textContent = _t('pages.coupon_distribution.add_rule', '新增發放規則');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.coupon_distribution.add_rule');
+    document.getElementById('editId').value = ''; resetForm('dataForm'); openModal('formModal');
+}
+async function editItem(id) {
+    try { const res = await apiRequest('GET', API_PATH + '/' + id); const d = res.data || res;
+    document.getElementById('editId').value = d.id; populateForm('dataForm', d);
+    document.getElementById('modalTitle').textContent = _t('pages.coupon_distribution.edit_rule', '編輯規則');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.coupon_distribution.edit_rule');
+    openModal('formModal'); } catch(e) {}
+}
+async function saveItem() {
+    const id = document.getElementById('editId').value; const data = getFormData('dataForm');
+    try { if (id) { await apiRequest('PUT', API_PATH + '/' + id, data); } else { await apiRequest('POST', API_PATH, data); }
+    showToast(_t('common.operation_success', '儲存成功'), 'success'); closeModal('formModal'); loadData(currentPage); } catch(e) {}
+}
+async function deleteItem(id) {
+    if (!confirmDelete()) return;
+    try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功'), 'success'); loadData(currentPage); } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { loadCoupons(); loadData(1); });
+</script>
+{{end}}

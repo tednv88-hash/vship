@@ -1,0 +1,133 @@
+{{define "pages/batch_create"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.batch_create.title">新增批次</h5>
+        <a href="/batches" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <form id="batchForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.batch_create.route">線路 <span class="text-danger">*</span></label>
+                    <select class="form-select" name="route_id" id="routeSelect" required>
+                        <option value="" data-i18n="pages.batch_create.select_route">請選擇線路</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.batch_create.logistics_company">物流公司</label>
+                    <select class="form-select" name="logistics_company_id" id="logisticsSelect">
+                        <option value="" data-i18n="common.please_select">請選擇</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.batch_create.tracking_number">物流單號</label>
+                    <input type="text" class="form-control" name="logistics_tracking_no">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.batch_create.estimated_ship_date">預計發貨日期</label>
+                    <input type="date" class="form-control" name="estimated_ship_date">
+                </div>
+                <div class="col-12">
+                    <label class="form-label" data-i18n="common.remark">備註</label>
+                    <textarea class="form-control" name="remark" rows="2"></textarea>
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <h6 class="mb-3" data-i18n="pages.batch_create.select_orders">選擇訂單</h6>
+            <div class="table-responsive mb-3">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;"><input type="checkbox" class="form-check-input" id="selectAll"></th>
+                            <th data-i18n="pages.batch_create.order_number">訂單編號</th>
+                            <th data-i18n="common.user">用戶</th>
+                            <th data-i18n="pages.batch_create.package_count">包裹數</th>
+                            <th data-i18n="pages.batch_create.total_weight">總重量</th>
+                            <th data-i18n="pages.batch_create.amount">金額</th>
+                            <th data-i18n="common.status">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <tr><td colspan="7" class="text-center py-3 text-muted" data-i18n="pages.batch_create.select_route_first">請先選擇線路</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i><span data-i18n="pages.batch_create.create_batch">建立批次</span>
+                </button>
+                <a href="/batches" class="btn btn-outline-secondary ms-2" data-i18n="common.cancel">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const routes = await apiRequest('GET', '/shipping-routes?limit=100');
+        const sel = document.getElementById('routeSelect');
+        (routes.data || routes || []).forEach(r => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${r.id}">${r.name}</option>`);
+        });
+    } catch (e) {}
+    try {
+        const companies = await apiRequest('GET', '/logistics-companies?limit=100');
+        const sel = document.getElementById('logisticsSelect');
+        (companies.data || companies || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+        });
+    } catch (e) {}
+});
+
+document.getElementById('routeSelect').addEventListener('change', async function () {
+    const routeId = this.value;
+    if (!routeId) return;
+    try {
+        const orders = await apiRequest('GET', `/orders?route_id=${routeId}&status=processing&limit=100`);
+        const items = orders.data || orders || [];
+        const tbody = document.getElementById('orderTableBody');
+        if (items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-3 text-muted">${_t('pages.batch_create.no_orders', '此線路暫無可用訂單')}</td></tr>`;
+        } else {
+            tbody.innerHTML = items.map(o => `<tr>
+                <td><input type="checkbox" class="form-check-input order-check" value="${o.id}"></td>
+                <td>${o.order_no || '--'}</td>
+                <td>${o.user_name || '--'}</td>
+                <td>${o.package_count || 0}</td>
+                <td>${o.total_weight || 0} kg</td>
+                <td>${formatMoney(o.total_amount)}</td>
+                <td>${getStatusBadge(o.status)}</td>
+            </tr>`).join('');
+        }
+    } catch (e) {
+        document.getElementById('orderTableBody').innerHTML = `<tr><td colspan="7" class="text-center py-3 text-danger">${_t('common.load_failed', '載入失敗')}</td></tr>`;
+    }
+});
+
+document.getElementById('selectAll').addEventListener('change', function () {
+    document.querySelectorAll('.order-check').forEach(cb => cb.checked = this.checked);
+});
+
+document.getElementById('batchForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const data = getFormData('batchForm');
+    data.order_ids = Array.from(document.querySelectorAll('.order-check:checked')).map(cb => cb.value);
+    if (data.order_ids.length === 0) {
+        showToast(_t('pages.batch_create.select_order_required', '請至少選擇一個訂單'), 'warning');
+        return;
+    }
+    try {
+        await apiRequest('POST', '/batches', data);
+        showToast(_t('pages.batch_create.create_success', '批次建立成功'), 'success');
+        window.location.href = '/batches';
+    } catch (e) {}
+});
+</script>
+{{end}}

@@ -1,0 +1,157 @@
+{{define "pages/order_create"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.order_create.title">新增訂單</h5>
+        <a href="/orders" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <form id="orderForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.order_create.user_id">用戶ID <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="user_id" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.order_create.route">線路 <span class="text-danger">*</span></label>
+                    <select class="form-select" name="route_id" id="routeSelect" required>
+                        <option value="" data-i18n="pages.order_create.please_select_route">請選擇線路</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.order_create.recipient_name">收件人姓名 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="recipient_name" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.order_create.recipient_phone">收件人電話 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="recipient_phone" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" data-i18n="pages.order_create.recipient_address">收件地址 <span class="text-danger">*</span></label>
+                    <textarea class="form-control" name="recipient_address" rows="2" required></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.order_create.destination_country">收件國家</label>
+                    <select class="form-select" name="destination_country_id" id="countrySelect">
+                        <option value="" data-i18n="common.please_select">請選擇</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.order_create.recipient_zip">收件郵編</label>
+                    <input type="text" class="form-control" name="recipient_zip">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.order_create.insurance">保險產品</label>
+                    <select class="form-select" name="insurance_id" id="insuranceSelect">
+                        <option value="" data-i18n="pages.order_create.no_insurance">不需要保險</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" data-i18n="common.remark">備註</label>
+                    <textarea class="form-control" name="remark" rows="2"></textarea>
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <h6 class="mb-3" data-i18n="pages.order_create.select_packages">選擇包裹</h6>
+            <div class="table-responsive mb-3">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;"><input type="checkbox" class="form-check-input" id="selectAll"></th>
+                            <th data-i18n="pages.order_detail.package_no">包裹編號</th>
+                            <th data-i18n="pages.order_detail.tracking_no">追蹤號</th>
+                            <th data-i18n="pages.order_detail.weight">重量</th>
+                            <th data-i18n="pages.orders_quick_pack.category">分類</th>
+                            <th data-i18n="common.status">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packageTableBody">
+                        <tr><td colspan="6" class="text-center py-3 text-muted" data-i18n="pages.order_create.select_user_first">請先選擇用戶</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i><span data-i18n="pages.order_create.create">建立訂單</span>
+                </button>
+                <a href="/orders" class="btn btn-outline-secondary ms-2" data-i18n="common.cancel">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const routes = await apiRequest('GET', '/shipping-routes?limit=100');
+        const sel = document.getElementById('routeSelect');
+        (routes.data || routes || []).forEach(r => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${r.id}">${r.name}</option>`);
+        });
+    } catch (e) {}
+    try {
+        const countries = await apiRequest('GET', '/countries?limit=200');
+        const sel = document.getElementById('countrySelect');
+        (countries.data || countries || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name_zh || c.name}</option>`);
+        });
+    } catch (e) {}
+    try {
+        const ins = await apiRequest('GET', '/insurance-products?limit=100');
+        const sel = document.getElementById('insuranceSelect');
+        (ins.data || ins || []).forEach(i => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${i.id}">${i.name} (${i.rate}%)</option>`);
+        });
+    } catch (e) {}
+});
+
+// Load user's packages when user_id changes
+document.querySelector('[name="user_id"]').addEventListener('change', debounce(async function () {
+    const userId = this.value;
+    if (!userId) return;
+    try {
+        const pkgs = await apiRequest('GET', `/packages?user_id=${userId}&status=in_warehouse&limit=100`);
+        const items = pkgs.data || pkgs || [];
+        const tbody = document.getElementById('packageTableBody');
+        if (items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">${_t('pages.order_create.no_available_packages', '此用戶暫無可用包裹')}</td></tr>`;
+        } else {
+            tbody.innerHTML = items.map(p => `<tr>
+                <td><input type="checkbox" class="form-check-input pkg-check" value="${p.id}"></td>
+                <td>${p.package_no || '--'}</td>
+                <td>${p.tracking_no || '--'}</td>
+                <td>${p.weight || 0} kg</td>
+                <td>${p.category_name || '--'}</td>
+                <td>${getStatusBadge(p.status)}</td>
+            </tr>`).join('');
+        }
+    } catch (e) {
+        document.getElementById('packageTableBody').innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">${_t('common.load_failed', '載入失敗')}</td></tr>`;
+    }
+}, 500));
+
+document.getElementById('selectAll').addEventListener('change', function () {
+    document.querySelectorAll('.pkg-check').forEach(cb => cb.checked = this.checked);
+});
+
+document.getElementById('orderForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const data = getFormData('orderForm');
+    data.package_ids = Array.from(document.querySelectorAll('.pkg-check:checked')).map(cb => cb.value);
+    if (data.package_ids.length === 0) {
+        showToast(_t('pages.order_create.please_select_package', '請至少選擇一個包裹'), 'warning');
+        return;
+    }
+    try {
+        await apiRequest('POST', '/orders', data);
+        showToast(_t('pages.order_create.order_created', '訂單建立成功'), 'success');
+        window.location.href = '/orders';
+    } catch (e) {}
+});
+</script>
+{{end}}

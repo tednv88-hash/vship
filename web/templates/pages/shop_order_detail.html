@@ -1,0 +1,202 @@
+{{define "pages/shop_order_detail"}}
+<div class="mb-3">
+    <a href="/shop-orders" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i><span data-i18n="pages.shop_order_detail.back_to_list">返回訂單列表</span>
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.order_info">訂單資訊</h5>
+                <span id="orderStatus"></span>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.shop_orders.order_no">訂單編號</div>
+                        <div class="detail-value" id="orderNo">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="common.created_at">建立時間</div>
+                        <div class="detail-value" id="createdAt">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="common.user">用戶</div>
+                        <div class="detail-value" id="userName">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.shop_order_detail.payment_method">支付方式</div>
+                        <div class="detail-value" id="paymentMethod">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.product_list">商品列表</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th data-i18n="pages.shop_order_detail.product_image">商品圖片</th><th data-i18n="pages.shop_order_detail.product_name">商品名稱</th><th data-i18n="pages.shop_order_detail.unit_price">單價</th><th data-i18n="pages.shop_order_detail.quantity">數量</th><th data-i18n="pages.shop_order_detail.subtotal">小計</th></tr></thead>
+                    <tbody id="itemsTableBody">
+                        <tr><td colspan="5" class="text-center py-3 text-muted" data-i18n="common.loading">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.shipping_info">收貨資訊</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="detail-label" data-i18n="pages.shop_order_detail.recipient">收件人</div>
+                        <div class="detail-value" id="recipientName">--</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-label" data-i18n="pages.shop_order_detail.phone">電話</div>
+                        <div class="detail-value" id="recipientPhone">--</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-label" data-i18n="pages.shop_order_detail.address">地址</div>
+                        <div class="detail-value" id="recipientAddress">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.cost_detail">費用明細</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" data-i18n="pages.shop_order_detail.product_amount">商品金額</span>
+                    <span id="totalAmount">--</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" data-i18n="pages.shop_order_detail.shipping_fee">運費</span>
+                    <span id="shippingFee">--</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" data-i18n="pages.shop_order_detail.discount">優惠折扣</span>
+                    <span class="text-danger" id="discount">--</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong data-i18n="pages.shop_order_detail.actual_payment">實付金額</strong>
+                    <strong class="text-primary fs-5" id="payAmount">--</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.logistics_info">物流資訊</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <div class="detail-label" data-i18n="pages.shop_orders.express_company">快遞公司</div>
+                    <div class="detail-value" id="expressCompany">--</div>
+                </div>
+                <div>
+                    <div class="detail-label" data-i18n="pages.shop_orders.express_no">快遞單號</div>
+                    <div class="detail-value" id="expressNo">--</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.shop_order_detail.order_actions">訂單操作</h5>
+            </div>
+            <div class="card-body d-grid gap-2" id="actionButtons">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shipModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" data-i18n="pages.shop_orders.ship">發貨</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="shipForm">
+        <div class="mb-3"><label class="form-label" data-i18n="pages.shop_orders.express_company">快遞公司 <span class="text-danger">*</span></label><input type="text" class="form-control" name="express_company" required></div>
+        <div class="mb-3"><label class="form-label" data-i18n="pages.shop_orders.express_no">快遞單號 <span class="text-danger">*</span></label><input type="text" class="form-control" name="express_no" required></div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="confirmShip()" data-i18n="pages.shop_orders.confirm_ship">確認發貨</button></div>
+</div></div></div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const orderId = window.location.pathname.split('/').filter(Boolean).pop();
+const API_PATH = '/shop-orders';
+
+document.addEventListener('DOMContentLoaded', loadOrderDetail);
+
+async function loadOrderDetail() {
+    if (!orderId) return;
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + orderId);
+        const o = res.data || res;
+
+        document.getElementById('orderNo').textContent = o.order_no || '--';
+        document.getElementById('createdAt').textContent = formatDate(o.created_at);
+        document.getElementById('userName').textContent = o.user_name || '--';
+        document.getElementById('paymentMethod').textContent = o.payment_method || '--';
+        document.getElementById('orderStatus').innerHTML = getStatusBadge(o.status);
+        document.getElementById('recipientName').textContent = o.recipient_name || '--';
+        document.getElementById('recipientPhone').textContent = o.recipient_phone || '--';
+        document.getElementById('recipientAddress').textContent = o.recipient_address || '--';
+        document.getElementById('totalAmount').textContent = formatMoney(o.total_amount);
+        document.getElementById('shippingFee').textContent = formatMoney(o.shipping_fee || 0);
+        document.getElementById('discount').textContent = '-' + formatMoney(o.discount || 0);
+        document.getElementById('payAmount').textContent = formatMoney(o.pay_amount);
+        document.getElementById('expressCompany').textContent = o.express_company || '--';
+        document.getElementById('expressNo').textContent = o.express_no || '--';
+
+        // Order items
+        const items = o.items || [];
+        const tbody = document.getElementById('itemsTableBody');
+        if (items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted" data-i18n="pages.shop_order_detail.no_products">${_t('pages.shop_order_detail.no_products', '暫無商品')}</td></tr>`;
+        } else {
+            tbody.innerHTML = items.map(it => {
+                const img = it.image_url ? `<img src="${it.image_url}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">` : '--';
+                return `<tr><td>${img}</td><td>${it.goods_name||'--'}</td><td>${formatMoney(it.price)}</td><td>${it.quantity||0}</td><td>${formatMoney(it.subtotal)}</td></tr>`;
+            }).join('');
+        }
+
+        // Action buttons
+        const actions = document.getElementById('actionButtons');
+        let btns = '';
+        if (o.status === 'paid') btns += `<button class="btn btn-info text-white" onclick="openShipModal()"><i class="fas fa-truck me-1"></i>${_t('pages.shop_orders.ship', '發貨')}</button>`;
+        if (o.status === 'shipped' || o.status === 'received') btns += `<button class="btn btn-success" onclick="completeOrder()"><i class="fas fa-check me-1"></i>${_t('pages.shop_order_detail.complete_order', '完成訂單')}</button>`;
+        if (o.status !== 'cancelled' && o.status !== 'completed') btns += `<button class="btn btn-outline-danger" onclick="cancelOrder()"><i class="fas fa-times me-1"></i>${_t('pages.shop_order_detail.cancel_order', '取消訂單')}</button>`;
+        actions.innerHTML = btns || `<span class="text-muted">${_t('pages.shop_order_detail.no_actions', '無可用操作')}</span>`;
+    } catch (e) {}
+}
+
+function openShipModal() { resetForm('shipForm'); openModal('shipModal'); }
+
+async function confirmShip() {
+    const data = getFormData('shipForm');
+    try { await apiRequest('PUT', API_PATH+'/'+orderId+'/ship', data); showToast(_t('pages.shop_orders.ship_success', '發貨成功')); closeModal('shipModal'); loadOrderDetail(); } catch(e){}
+}
+
+async function completeOrder() {
+    if (!confirm(_t('pages.shop_orders.confirm_complete', '確定要完成此訂單嗎？'))) return;
+    try { await apiRequest('PUT', API_PATH+'/'+orderId+'/complete'); showToast(_t('pages.shop_orders.order_completed', '訂單已完成')); loadOrderDetail(); } catch(e){}
+}
+
+async function cancelOrder() {
+    if (!confirm(_t('pages.shop_orders.confirm_cancel', '確定要取消此訂單嗎？'))) return;
+    try { await apiRequest('PUT', API_PATH+'/'+orderId+'/cancel'); showToast(_t('pages.shop_orders.order_cancelled', '已取消訂單')); loadOrderDetail(); } catch(e){}
+}
+</script>
+{{end}}

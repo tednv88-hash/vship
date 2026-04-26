@@ -1,0 +1,38 @@
+{{define "pages/recharge_orders"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.recharge_orders.title">充值訂單</h5>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.recharge_orders.search_order" placeholder="搜尋訂單號/用戶..."></div>
+        <select class="form-select form-select-sm" id="statusFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="pending" data-i18n="pages.recharge_orders.pending_pay">待支付</option>
+            <option value="paid" data-i18n="pages.recharge_orders.paid">已支付</option>
+            <option value="failed" data-i18n="pages.recharge_orders.failed">失敗</option>
+            <option value="cancelled" data-i18n="common.status_cancelled">已取消</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="common.order_no">訂單號</th><th data-i18n="common.user">用戶</th><th data-i18n="pages.recharge_orders.recharge_amount">充值金額</th><th data-i18n="pages.recharge_orders.bonus_amount">贈送金額</th><th data-i18n="pages.recharge_orders.payment_method">支付方式</th><th data-i18n="common.status">狀態</th><th data-i18n="common.time">時間</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+let currentPage = 1; const limit = 20; const API_PATH = '/recharge-orders';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('statusFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    return `<tr><td>${item.order_no||'--'}</td><td>${item.user_name||'--'}</td><td>${formatMoney(item.amount)}</td><td>${formatMoney(item.gift_amount)}</td><td>${item.payment_method||'--'}</td><td>${getStatusBadge(item.status)}</td><td>${formatDate(item.created_at)}</td></tr>`;
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

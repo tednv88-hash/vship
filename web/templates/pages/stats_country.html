@@ -1,0 +1,73 @@
+{{define "pages/stats_country"}}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.stats_country.title">國家統計</h5>
+        <div class="d-flex gap-2">
+            <input type="date" class="form-control" id="startDate" style="max-width:160px;">
+            <input type="date" class="form-control" id="endDate" style="max-width:160px;">
+            <button class="btn btn-primary btn-sm" onclick="loadStats()"><i class="fas fa-search me-1"></i><span data-i18n="pages.statistics.query">查詢</span></button>
+        </div>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card"><div class="card-body"><div id="pieChart" style="height:400px;"></div></div></div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"><div class="card-body"><div id="barChart" style="height:400px;"></div></div></div>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.stats_country.country">國家</th>
+                <th data-i18n="pages.stats_country.order_count">訂單數</th>
+                <th data-i18n="pages.stats_country.package_count">包裹數</th>
+                <th data-i18n="pages.stats_country.total_weight">總重量(kg)</th>
+                <th data-i18n="pages.stats_country.total_amount">總金額</th>
+                <th data-i18n="pages.stats_country.percentage">佔比</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let pieChart, barChart;
+function initCharts() { pieChart = echarts.init(document.getElementById('pieChart')); barChart = echarts.init(document.getElementById('barChart')); }
+function setDefaultDates() {
+    const end = new Date(); const start = new Date(); start.setDate(start.getDate() - 30);
+    document.getElementById('startDate').value = start.toISOString().split('T')[0];
+    document.getElementById('endDate').value = end.toISOString().split('T')[0];
+}
+async function loadStats() {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    try {
+        const res = await apiRequest('GET', '/statistics/countries?start_date=' + start + '&end_date=' + end);
+        const data = res.data || [];
+        const total = data.reduce((s, d) => s + (d.order_count || 0), 0);
+        pieChart.setOption({
+            title: { text: _t('pages.stats_country.order_country_distribution', '訂單國家分佈'), left: 'center' }, tooltip: { trigger: 'item' },
+            series: [{ type: 'pie', radius: '65%', data: data.map(d => ({ name: d.country_name, value: d.order_count })) }]
+        });
+        barChart.setOption({
+            title: { text: _t('pages.stats_country.country_amount_comparison', '各國金額對比'), left: 'center' }, tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: data.map(d => d.country_name), axisLabel: { rotate: 45 } },
+            yAxis: { type: 'value' },
+            series: [{ type: 'bar', data: data.map(d => d.total_amount), itemStyle: { color: '#05ce78' } }]
+        });
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.length ? data.map(d => `<tr>
+            <td>${d.country_name || '--'}</td><td>${d.order_count || 0}</td><td>${d.package_count || 0}</td>
+            <td>${(d.total_weight || 0).toFixed(2)}</td><td>${formatMoney(d.total_amount)}</td>
+            <td>${total ? ((d.order_count/total)*100).toFixed(1) + '%' : '0%'}</td>
+        </tr>`).join('') : `<tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.no_data">${_t('common.no_data', '暫無數據')}</td></tr>`;
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { initCharts(); setDefaultDates(); loadStats(); });
+window.addEventListener('resize', () => { pieChart && pieChart.resize(); barChart && barChart.resize(); });
+</script>
+{{end}}

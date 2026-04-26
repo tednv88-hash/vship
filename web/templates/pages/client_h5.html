@@ -1,0 +1,572 @@
+{{define "pages/client_h5"}}
+<style>
+.setting-preview-layout{display:flex;gap:24px;align-items:flex-start}
+.setting-preview-layout .setting-form-col{flex:1;min-width:0}
+.setting-preview-layout .preview-col{flex-shrink:0;width:377px}
+/* Phone mockup */
+.preview-phone{width:377px;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:1px solid #ddd;overflow:hidden;background:#f5f5f5}
+.preview-phone .phone-top{width:100%;height:66px;text-align:center;background:var(--primary)}
+.preview-phone .phone-top h4{margin:0;font-size:14px;font-weight:normal;white-space:nowrap;line-height:88px;color:#fff}
+.preview-phone .phone-main{height:580px;overflow-y:auto;background:#f5f5f5}
+.preview-phone .phone-main::-webkit-scrollbar{width:0;display:none}
+/* Banner */
+.pv-banner{position:relative;overflow:hidden}
+.pv-banner img{width:100%;display:block}
+.pv-banner img+img{display:none}
+.pv-banner .dots{height:16px;text-align:center;display:flex;justify-content:center;gap:4px;align-items:center;position:absolute;bottom:6px;left:50%;transform:translateX(-50%)}
+.pv-banner .dots span{display:inline-block;width:6px;height:6px;border-radius:50%}
+.pv-banner .dots span:first-child{width:14px;border-radius:3px}
+.pv-banner-ph{width:100%;height:170px;background:linear-gradient(135deg,var(--primary) 0%,#04b06a 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+/* Search */
+.pv-search{background:#f1f1f2;padding:10px}
+.pv-search .inner{height:30px;background:#fff;overflow:hidden}
+.pv-search .inner.radius{border-radius:5px}
+.pv-search .inner.round{border-radius:30px}
+.pv-search .inner.square{border-radius:0}
+.pv-search .search-input{height:30px;line-height:30px;color:#999;padding:0 10px;font-size:12px;display:flex;align-items:center;gap:6px}
+/* Notice */
+.pv-notice{display:flex;align-items:center;padding:10px;background:#fff}
+.pv-notice .notice-icon{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pv-notice .notice-text{flex:1;margin-left:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px}
+/* NavBar */
+.pv-navBar{padding:8px 0}
+.pv-navBar ul{list-style:none;display:flex;flex-wrap:wrap;margin:0;padding:0}
+.pv-navBar ul.cols-3 li{width:33.333%}
+.pv-navBar ul.cols-4 li{width:25%}
+.pv-navBar ul.cols-5 li{width:20%}
+.pv-navBar li{text-align:center;padding:6px 4px}
+.pv-navBar .item-image{width:44px;height:44px;margin:0 auto}
+.pv-navBar .item-image img{width:100%;height:100%;object-fit:contain}
+.pv-navBar .item-text{font-size:11px;margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pv-navBar .nav-ph{width:44px;height:44px;margin:0 auto;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px}
+/* Goods */
+.pv-goods{padding:0}
+.pv-goods .goods-list{list-style:none;margin:0;padding:6px;display:flex;flex-wrap:wrap;gap:6px}
+.pv-goods .goods-list.column__1 .goods-item{width:100%;display:flex;gap:10px;background:#fff;border-radius:6px;overflow:hidden}
+.pv-goods .goods-list.column__1 .goods-left{width:120px;height:120px;flex-shrink:0}
+.pv-goods .goods-list.column__1 .goods-left img{width:100%;height:100%;object-fit:cover}
+.pv-goods .goods-list.column__2 .goods-item{width:calc(50% - 3px);background:#fff;border-radius:6px;overflow:hidden}
+.pv-goods .goods-list.column__3 .goods-item{width:calc(33.333% - 4px);background:#fff;border-radius:6px;overflow:hidden}
+.pv-goods .goods-image{width:100%;aspect-ratio:1/1}
+.pv-goods .goods-image img{width:100%;height:100%;object-fit:cover}
+.pv-goods .detail{padding:6px 8px}
+.pv-goods .goods-name{font-size:12px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.pv-goods .goods-title{font-size:13px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pv-goods .goods-price{color:#ff4d4f;font-size:14px;font-weight:600}
+.pv-goods .goods-price::before{content:'¥';font-size:11px}
+.pv-goods .line-price{font-size:11px;color:#999;text-decoration:line-through;margin-left:4px}
+.pv-goods .selling-point{font-size:11px;color:#999;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pv-goods .goods-sales{font-size:11px;color:#999;margin-top:2px}
+.pv-goods .goods-ph{width:100%;aspect-ratio:1/1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:24px}
+/* ImageSingle */
+.pv-imageSingle{display:flex;flex-wrap:wrap}
+.pv-imageSingle img{width:100%;display:block}
+.pv-imageSingle-ph{width:100%;height:100px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:14px}
+/* Window */
+.pv-window{overflow:hidden}
+.pv-window img{width:100%;display:block}
+/* Video */
+.pv-video{text-align:center}
+.pv-video video{width:100%;max-height:200px;background:#000}
+.pv-video-ph{width:100%;height:180px;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:8px}
+.pv-video-ph i{font-size:36px;opacity:0.6}
+/* Article */
+.pv-article .article-item{padding:10px;border-bottom:1px solid #f0f0f0;background:#fff}
+.pv-article .article-item.show-type-10{display:flex;gap:10px}
+.pv-article .article-left{flex:1}
+.pv-article .article-title{font-size:13px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pv-article .article-image{width:80px;height:60px;flex-shrink:0;border-radius:4px;overflow:hidden}
+.pv-article .article-image img{width:100%;height:100%;object-fit:cover}
+.pv-article .show-type-20 .article-image{width:100%;height:auto;aspect-ratio:16/9;margin-top:8px}
+.pv-article .article-footer{font-size:11px;color:#999;margin-top:6px}
+/* Special */
+.pv-special{display:flex;align-items:center;padding:8px 10px;background:#fff}
+.pv-special .special-left{width:40px;height:20px;flex-shrink:0}
+.pv-special .special-left img{width:100%;height:100%;object-fit:contain}
+.pv-special .special-badge{background:#ff4d4f;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;width:40px;height:20px}
+.pv-special .special-content{flex:1;overflow:hidden;margin:0 8px}
+.pv-special .special-list{list-style:none;margin:0;padding:0}
+.pv-special .content-item{font-size:12px;color:#333;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pv-special .special-more{color:#999;font-size:12px;flex-shrink:0}
+/* Service */
+.pv-service{text-align:center;padding:12px;background:#fff}
+.pv-service .service-icon{font-size:32px;color:var(--primary)}
+.pv-service .service-text{font-size:12px;color:#666;margin-top:4px}
+/* OfficialAccount */
+.pv-oa{background:#fff;padding:12px;display:flex;align-items:center;gap:10px;border:1px solid #f0f0f0;margin:8px}
+.pv-oa .oa-icon{width:40px;height:40px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.pv-oa .oa-info{flex:1}
+.pv-oa .oa-name{font-size:13px;color:#333;font-weight:500}
+.pv-oa .oa-desc{font-size:11px;color:#999}
+.pv-oa .oa-btn{font-size:12px;color:var(--primary);border:1px solid var(--primary);padding:2px 10px;border-radius:3px}
+/* RichText */
+.pv-richText{padding:10px;background:#fff;font-size:13px;color:#333;line-height:1.6;word-break:break-all}
+/* Blank */
+.pv-blank{width:100%}
+/* Guide */
+.pv-guide{padding:0 10px}
+.pv-guide .guide-line{width:100%}
+/* Coupon */
+.pv-coupon{display:flex;justify-content:space-around;padding:10px 0;flex-wrap:wrap;gap:6px}
+.pv-coupon .coupon-item{display:flex;border-radius:6px;overflow:hidden;min-width:100px}
+.pv-coupon .left-content{padding:8px 12px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pv-coupon .content-top .unit{font-size:12px}
+.pv-coupon .content-top .price{font-size:20px;font-weight:700}
+.pv-coupon .content-bottom{font-size:10px;opacity:0.8;white-space:nowrap}
+.pv-coupon .right-receive{padding:8px 10px;background:rgba(255,255,255,0.2);color:#fff;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* No page */
+.preview-empty{padding:40px 20px;text-align:center;color:#94a3b8}
+.preview-empty i{font-size:48px;margin-bottom:12px;display:block;color:#e2e8f0}
+@media(max-width:1200px){
+    .setting-preview-layout{flex-direction:column}
+    .setting-preview-layout .preview-col{width:100%;display:flex;justify-content:center}
+}
+</style>
+
+<div class="setting-preview-layout" id="previewApp">
+    <!-- Left: Settings form -->
+    <div class="setting-form-col">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.client_h5.title">H5端設置</h5>
+            </div>
+            <div class="card-body">
+                <form id="settingForm">
+                    <!-- 公众号设置 -->
+                    <h6 class="mb-3 text-primary"><i class="fas fa-cog me-1"></i><span data-i18n="pages.client_h5.official_account_settings">公眾號設置</span></h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.official_account_name">公眾號名稱</label>
+                            <input type="text" class="form-control" name="mp_name" data-i18n-placeholder="pages.client_h5.official_account_name" placeholder="公眾號名稱">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.original_id">原始ID</label>
+                            <input type="text" class="form-control" name="mp_original_id" data-i18n-placeholder="pages.client_h5.official_original_id" placeholder="公眾號原始ID">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">AppID</label>
+                            <input type="text" class="form-control" name="h5_app_id" placeholder="公眾號AppID">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">AppSecret</label>
+                            <input type="text" class="form-control" name="h5_app_secret" placeholder="公眾號AppSecret">
+                        </div>
+                    </div>
+
+                    <hr>
+                    <!-- 服务器配置 -->
+                    <h6 class="mb-3 text-primary"><i class="fas fa-server me-1"></i><span data-i18n="pages.client_h5.server_config">服務器配置</span></h6>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_h5.server_url">服務器地址 (URL)</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light" name="server_url" readonly data-i18n-placeholder="pages.client_h5.auto_generated" placeholder="系統自動生成">
+                            <button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('server_url')">
+                                <i class="fas fa-copy"></i> <span data-i18n="pages.client_h5.copy">複製</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Token</label>
+                            <input type="text" class="form-control" name="h5_token" data-i18n-placeholder="pages.client_h5.custom_token" placeholder="自定義Token">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">EncodingAESKey</label>
+                            <input type="text" class="form-control" name="encoding_aes_key" data-i18n-placeholder="pages.client_h5.message_encryption_key" placeholder="消息加密密鑰">
+                        </div>
+                    </div>
+
+                    <hr>
+                    <!-- 微信开放平台 -->
+                    <h6 class="mb-3 text-primary"><i class="fab fa-weixin me-1"></i><span data-i18n="pages.client_h5.wechat_open_platform">微信開放平台</span></h6>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_h5.open_platform_applied">是否已申請微信開放平台</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="open_platform_applied" id="opApplied1" value="1">
+                            <label class="form-check-label" for="opApplied1" data-i18n="pages.client_h5.applied">已申請</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="open_platform_applied" id="opApplied0" value="0" checked>
+                            <label class="form-check-label" for="opApplied0" data-i18n="pages.client_h5.not_applied">未申請</label>
+                        </div>
+                    </div>
+                    <div class="row" id="openPlatformFields">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.open_platform_appid">開放平台 AppID</label>
+                            <input type="text" class="form-control" name="open_app_id" placeholder="開放平台AppID">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.open_platform_appsecret">開放平台 AppSecret</label>
+                            <input type="text" class="form-control" name="open_app_secret" placeholder="開放平台AppSecret">
+                        </div>
+                    </div>
+
+                    <hr>
+                    <!-- 站点设置 -->
+                    <h6 class="mb-3 text-primary"><i class="fas fa-globe me-1"></i><span data-i18n="pages.client_h5.site_settings">站點設置</span></h6>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_h5.h5_url">H5端訪問地址</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="h5_url" placeholder="https://your-h5-domain.com">
+                            <a class="btn btn-outline-primary" id="visitH5Btn" href="#" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> <span data-i18n="pages.client_h5.visit">訪問</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.icp_number">ICP備案號</label>
+                            <input type="text" class="form-control" name="icp_number" data-i18n-placeholder="pages.client_h5.icp_example" placeholder="例：京ICP備xxxxxxx號">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.copyright">版權信息</label>
+                            <input type="text" class="form-control" name="copyright" placeholder="Copyright 2025 ...">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.logo_image">Logo圖片</label>
+                            <input type="text" class="form-control" name="h5_logo_url" data-i18n-placeholder="pages.client_h5.logo_image_url" placeholder="Logo圖片URL">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.client_h5.wechat_qr_image">微信二維碼圖片</label>
+                            <input type="text" class="form-control" name="wechat_qr_url" data-i18n-placeholder="pages.client_h5.wechat_qr_url" placeholder="微信公眾號二維碼圖片URL">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="saveSetting()">
+                        <i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Phone Preview -->
+    <div class="preview-col">
+        <div style="position:sticky;top:80px">
+            <div class="mb-2 text-center">
+                <small class="text-muted"><i class="fas fa-mobile-alt me-1"></i><span data-i18n="pages.client_h5.home_preview">H5 首頁預覽</span></small>
+                <a v-if="homePage" :href="'/client/page-designs/' + homePage.id + '/edit'" class="btn btn-sm btn-outline-primary ms-2">
+                    <i class="fas fa-edit me-1"></i><span data-i18n="pages.client_h5.edit_home">編輯首頁</span>
+                </a>
+            </div>
+            <div class="preview-phone">
+                <div class="phone-top" :style="{background: pageStyle.titleBackgroundColor}">
+                    <h4 :style="{color: pageStyle.titleTextColor}">{{ "{{" }} pageTitle {{ "}}" }}</h4>
+                </div>
+                <div class="phone-main">
+                    <!-- No home page -->
+                    <div v-if="!homePage" class="preview-empty">
+                        <i class="fas fa-mobile-alt"></i>
+                        <p>尚未設置首頁</p>
+                        <a href="/client/page-designs" class="btn btn-sm btn-primary">前往頁面設計</a>
+                    </div>
+                    <!-- Render each component -->
+                    <template v-else>
+                        <div v-for="(item, idx) in items" :key="idx">
+                            <!-- Banner -->
+                            <template v-if="item.type === 'banner'">
+                                <div class="pv-banner">
+                                    <template v-if="item.data && item.data.length && item.data[0].imgUrl">
+                                        <img v-for="(b, bi) in item.data" :src="b.imgUrl" :key="bi">
+                                        <div class="dots" v-if="item.data.length > 1">
+                                            <span v-for="(b, bi) in item.data" :key="'d'+bi" :style="{background: (item.style && item.style.btnColor) || '#fff'}"></span>
+                                        </div>
+                                    </template>
+                                    <div v-else class="pv-banner-ph"><i class="fas fa-images me-2"></i>圖片輪播</div>
+                                </div>
+                            </template>
+                            <!-- Search -->
+                            <template v-else-if="item.type === 'search'">
+                                <div class="pv-search">
+                                    <div class="inner" :class="(item.style && item.style.searchStyle) || 'radius'">
+                                        <div class="search-input" :style="{textAlign: (item.style && item.style.textAlign) || 'left'}">
+                                            <i class="fas fa-search"></i>
+                                            <span>{{ "{{" }} (item.params && item.params.placeholder) || '搜索商品' {{ "}}" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Notice -->
+                            <template v-else-if="item.type === 'notice'">
+                                <div class="pv-notice" :style="{padding: ((item.style && item.style.paddingTop) || 0)+'px 10px', background: (item.style && item.style.background) || '#fff'}">
+                                    <div class="notice-icon"><i class="fas fa-bullhorn" style="color:#ff9800;font-size:14px"></i></div>
+                                    <div class="notice-text" :style="{color: (item.style && item.style.textColor) || '#333'}">{{ "{{" }} (item.params && item.params.text) || '公告內容' {{ "}}" }}</div>
+                                </div>
+                            </template>
+                            <!-- NavBar -->
+                            <template v-else-if="item.type === 'navBar'">
+                                <div class="pv-navBar" :style="{background: (item.style && item.style.background) || '#fff'}">
+                                    <ul :class="'cols-' + ((item.style && item.style.rowsNum) || 4)">
+                                        <li v-for="(nav, ni) in item.data" :key="ni">
+                                            <div class="item-image" v-if="nav.imgUrl"><img :src="nav.imgUrl"></div>
+                                            <div v-else class="nav-ph"><i class="fas fa-image"></i></div>
+                                            <p class="item-text" :style="{color: nav.color || '#333'}">{{ "{{" }} nav.text || '導航' {{ "}}" }}</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
+                            <!-- Goods -->
+                            <template v-else-if="item.type === 'goods'">
+                                <div class="pv-goods" :style="{background: (item.style && item.style.background) || '#f5f5f5'}">
+                                    <ul class="goods-list" :class="['column__' + ((item.style && item.style.column) || 2)]">
+                                        <li class="goods-item" v-for="(g, gi) in (item.data && item.data.length ? item.data : defaultGoods)" :key="gi">
+                                            <template v-if="(item.style && item.style.column) == 1">
+                                                <div style="display:flex">
+                                                    <div class="goods-left">
+                                                        <img v-if="g.image" :src="g.image"><div v-else class="goods-ph"><i class="fas fa-box"></i></div>
+                                                    </div>
+                                                    <div style="flex:1;padding:8px;display:flex;flex-direction:column;justify-content:space-between">
+                                                        <div v-if="showField(item,'goodsName')" class="goods-title">{{ "{{" }} g.goods_name {{ "}}" }}</div>
+                                                        <div>
+                                                            <div v-if="showField(item,'sellingPoint')" class="selling-point">{{ "{{" }} g.selling_point {{ "}}" }}</div>
+                                                            <div v-if="showField(item,'goodsSales')" class="goods-sales">已售{{ "{{" }} g.goods_sales {{ "}}" }}件</div>
+                                                            <div style="margin-top:4px">
+                                                                <span v-if="showField(item,'goodsPrice')" class="goods-price">{{ "{{" }} g.goods_price {{ "}}" }}</span>
+                                                                <span v-if="showField(item,'linePrice') && g.line_price > 0" class="line-price">¥{{ "{{" }} g.line_price {{ "}}" }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template v-else>
+                                                <div class="goods-image">
+                                                    <img v-if="g.image" :src="g.image"><div v-else class="goods-ph"><i class="fas fa-box"></i></div>
+                                                </div>
+                                                <div class="detail">
+                                                    <p v-if="showField(item,'goodsName')" class="goods-name">{{ "{{" }} g.goods_name {{ "}}" }}</p>
+                                                    <p style="margin-top:4px">
+                                                        <span v-if="showField(item,'goodsPrice')" class="goods-price">{{ "{{" }} g.goods_price {{ "}}" }}</span>
+                                                        <span v-if="showField(item,'linePrice') && g.line_price > 0" class="line-price">¥{{ "{{" }} g.line_price {{ "}}" }}</span>
+                                                    </p>
+                                                </div>
+                                            </template>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
+                            <!-- ImageSingle -->
+                            <template v-else-if="item.type === 'imageSingle'">
+                                <div class="pv-imageSingle" :style="{paddingBottom: ((item.style && item.style.paddingTop) || 0)+'px', background: (item.style && item.style.background) || 'transparent'}">
+                                    <div v-for="(img, ii) in item.data" :key="ii"
+                                         :style="{padding: ((item.style && item.style.paddingTop) || 0)+'px '+((item.style && item.style.paddingLeft) || 0)+'px 0', width:'100%'}">
+                                        <img v-if="img.imgUrl" :src="img.imgUrl">
+                                        <div v-else class="pv-imageSingle-ph">單圖組</div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Window -->
+                            <template v-else-if="item.type === 'window'">
+                                <div class="pv-window" :style="{background: (item.style && item.style.background) || 'transparent', padding: ((item.style && item.style.paddingTop) || 0)+'px '+((item.style && item.style.paddingLeft) || 0)+'px'}">
+                                    <div style="display:flex;flex-wrap:wrap">
+                                        <div v-for="(w, wi) in item.data" :key="wi"
+                                             :style="{width: (100/((item.style && item.style.layout) || 2))+'%', padding: ((item.style && item.style.paddingTop) || 0)+'px '+((item.style && item.style.paddingLeft) || 0)+'px'}">
+                                            <img v-if="w.imgUrl" :src="w.imgUrl" style="width:100%;display:block">
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Video -->
+                            <template v-else-if="item.type === 'video'">
+                                <div class="pv-video" :style="{padding: ((item.style && item.style.paddingTop) || 0)+'px 0'}">
+                                    <template v-if="item.params && item.params.videoUrl">
+                                        <video :src="item.params.videoUrl" :poster="item.params.poster"
+                                               :style="{height: ((item.style && item.style.height) || 200)+'px'}" controls style="width:100%"></video>
+                                    </template>
+                                    <div v-else class="pv-video-ph"><i class="fas fa-play-circle"></i><span style="font-size:12px">視頻</span></div>
+                                </div>
+                            </template>
+                            <!-- Article -->
+                            <template v-else-if="item.type === 'article'">
+                                <div class="pv-article">
+                                    <div class="article-item" v-for="(a, ai) in (item.data && item.data.length ? item.data : (item.defaultData || []))" :key="ai"
+                                         :class="{'show-type-10': a.show_type == 10, 'show-type-20': a.show_type == 20}">
+                                        <template v-if="a.show_type == 10">
+                                            <div class="article-left">
+                                                <div class="article-title">{{ "{{" }} a.article_title {{ "}}" }}</div>
+                                                <div class="article-footer">{{ "{{" }} a.views_num {{ "}}" }}次瀏覽</div>
+                                            </div>
+                                            <div class="article-image"><img :src="a.image"></div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="article-title">{{ "{{" }} a.article_title {{ "}}" }}</div>
+                                            <div class="article-image"><img :src="a.image"></div>
+                                            <div class="article-footer">{{ "{{" }} a.views_num {{ "}}" }}次瀏覽</div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Special -->
+                            <template v-else-if="item.type === 'special'">
+                                <div class="pv-special">
+                                    <div class="special-left" v-if="item.style && item.style.image"><img :src="item.style.image"></div>
+                                    <div v-else class="special-badge">快報</div>
+                                    <div class="special-content">
+                                        <ul class="special-list">
+                                            <li class="content-item" v-for="(s, si) in (item.data && item.data.length ? item.data : (item.defaultData || []))" :key="si">{{ "{{" }} s.article_title {{ "}}" }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="special-more"><i class="fas fa-chevron-right"></i></div>
+                                </div>
+                            </template>
+                            <!-- Service -->
+                            <template v-else-if="item.type === 'service'">
+                                <div class="pv-service">
+                                    <div class="service-icon"><i class="fas fa-headset"></i></div>
+                                    <div class="service-text">在線客服</div>
+                                </div>
+                            </template>
+                            <!-- Official Account -->
+                            <template v-else-if="item.type === 'officialAccount'">
+                                <div class="pv-oa">
+                                    <div class="oa-icon"><i class="fab fa-weixin"></i></div>
+                                    <div class="oa-info"><div class="oa-name">公眾號名稱</div><div class="oa-desc">關注公眾號</div></div>
+                                    <div class="oa-btn">關注</div>
+                                </div>
+                            </template>
+                            <!-- RichText -->
+                            <template v-else-if="item.type === 'richText'">
+                                <div class="pv-richText" v-html="(item.params && item.params.content) || '<p style=\'color:#999;text-align:center\'>富文本內容</p>'"></div>
+                            </template>
+                            <!-- Blank -->
+                            <template v-else-if="item.type === 'blank'">
+                                <div class="pv-blank" :style="{height: ((item.style && item.style.height) || 30)+'px', background: (item.style && item.style.background) || 'transparent'}"></div>
+                            </template>
+                            <!-- Guide -->
+                            <template v-else-if="item.type === 'guide'">
+                                <div class="pv-guide" :style="{background: (item.style && item.style.background) || 'transparent', padding: ((item.style && item.style.paddingTop) || 0)+'px 10px'}">
+                                    <div class="guide-line" :style="{borderTop: ((item.style && item.style.lineHeight) || 1)+'px '+((item.style && item.style.lineStyle) || 'solid')+' '+((item.style && item.style.lineColor) || '#ddd')}"></div>
+                                </div>
+                            </template>
+                            <!-- Coupon -->
+                            <template v-else-if="item.type === 'coupon'">
+                                <div class="pv-coupon">
+                                    <div class="coupon-item" v-for="(cp, ci) in (item.data || [])" :key="ci"
+                                         :style="{background: (cp.color || (item.style && item.style.background) || '#ff4d4f')}">
+                                        <div class="left-content">
+                                            <div class="content-top"><span class="unit">¥</span><span class="price">{{ "{{" }} cp.reduce_price || '0' {{ "}}" }}</span></div>
+                                            <div class="content-bottom">滿{{ "{{" }} cp.min_price || '0' {{ "}}" }}可用</div>
+                                        </div>
+                                        <div class="right-receive">領取</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+<script>
+const API_PATH = '/app-settings';
+const SETTING_TYPE = 'h5';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function copyToClipboard(fieldName) {
+    const input = document.querySelector('[name="' + fieldName + '"]');
+    if (input && input.value) {
+        navigator.clipboard.writeText(input.value).then(() => showToast(_t('pages.client_h5.copied', '已複製到剪貼板'), 'success'));
+    }
+}
+
+function toggleOpenPlatformFields() {
+    const applied = document.querySelector('input[name="open_platform_applied"]:checked');
+    const fields = document.getElementById('openPlatformFields');
+    if (fields) {
+        fields.style.display = (applied && applied.value === '1') ? '' : 'none';
+    }
+}
+
+async function loadSetting() {
+    try {
+        const res = await apiRequest('GET', API_PATH + '?setting_type=' + SETTING_TYPE);
+        const data = res.data || res;
+        if (data && typeof data === 'object') {
+            populateForm('settingForm', data);
+            if (data.open_platform_applied) {
+                const radio = document.getElementById('opApplied' + data.open_platform_applied);
+                if (radio) radio.checked = true;
+            }
+            if (data.h5_url) {
+                document.getElementById('visitH5Btn').href = data.h5_url;
+            }
+        }
+    } catch (e) {}
+    toggleOpenPlatformFields();
+}
+
+async function saveSetting() {
+    const data = getFormData('settingForm');
+    data.setting_type = SETTING_TYPE;
+    const radio = document.querySelector('input[name="open_platform_applied"]:checked');
+    data.open_platform_applied = radio ? radio.value : '0';
+    try {
+        await apiRequest('POST', API_PATH, data);
+        showToast(_t('common.save_success', '儲存成功'), 'success');
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSetting();
+    document.querySelectorAll('input[name="open_platform_applied"]').forEach(r => {
+        r.addEventListener('change', toggleOpenPlatformFields);
+    });
+
+    // Init Vue preview
+    new Vue({
+        el: '#previewApp',
+        data() {
+            return {
+                homePage: null,
+                pageTitle: '首頁',
+                pageStyle: {
+                    titleBackgroundColor: '#05ce78',
+                    titleTextColor: '#ffffff'
+                },
+                items: [],
+                defaultGoods: [
+                    { goods_name: '商品名稱示例', goods_price: '99.00', line_price: '199.00', selling_point: '品質保證', goods_sales: 128, image: '' },
+                    { goods_name: '商品名稱示例', goods_price: '59.00', line_price: '99.00', selling_point: '', goods_sales: 56, image: '' }
+                ]
+            };
+        },
+        methods: {
+            showField(item, field) {
+                return item.style && item.style.show && item.style.show[field];
+            },
+            async loadHomePage() {
+                try {
+                    const res = await apiRequest('GET', '/page-designs?is_default=true&limit=1');
+                    const list = res.data || [];
+                    if (list.length > 0) {
+                        this.homePage = list[0];
+                        const pd = list[0].page_data;
+                        if (pd) {
+                            if (pd.page) {
+                                this.pageTitle = (pd.page.params && pd.page.params.title) || '首頁';
+                                if (pd.page.style) {
+                                    this.pageStyle.titleBackgroundColor = pd.page.style.titleBackgroundColor || '#05ce78';
+                                    this.pageStyle.titleTextColor = pd.page.style.titleTextColor || '#ffffff';
+                                }
+                            }
+                            this.items = pd.items || [];
+                        }
+                    }
+                } catch (e) {
+                    console.error('Failed to load home page:', e);
+                }
+            }
+        },
+        mounted() {
+            this.loadHomePage();
+        }
+    });
+});
+</script>
+{{end}}

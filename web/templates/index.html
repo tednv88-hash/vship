@@ -1,0 +1,587 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vShip - 跨境集運管理系統</title>
+    <meta name="description" content="vShip 跨境集運管理系統 — 一站式包裹集運、路線管理、倉儲管理、物流追蹤解決方案。">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/static/css/home.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <div class="brand-icon"><i class="bi bi-truck"></i></div>
+            <span class="brand-text">vShip</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" id="navToggler">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="#features">功能特色</a></li>
+                <li class="nav-item"><a class="nav-link" href="#how-it-works">如何運作</a></li>
+                <li class="nav-item"><a class="nav-link" href="#use-cases">應用場景</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">方案價格</a></li>
+            </ul>
+            <div class="nav-actions d-flex align-items-center gap-2" id="navActions">
+                <!-- Logged out state (default) -->
+                <div id="navLoggedOut">
+                    <a href="/login" class="btn btn-outline-light btn-sm me-2">登入</a>
+                    <a href="/login?reg=1" class="btn btn-cta btn-sm">免費試用</a>
+                </div>
+                <!-- Logged in state -->
+                <div id="navLoggedIn" class="d-none">
+                    <a href="/dashboard" class="btn btn-cta btn-sm">前往系統</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile sidebar -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-sidebar" id="mobileSidebar">
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <span class="fw-700 fs-5">vShip</span>
+        <button class="btn-close" id="mobileClose"></button>
+    </div>
+    <nav class="p-3">
+        <a href="#features" class="mobile-nav-link">功能特色</a>
+        <a href="#how-it-works" class="mobile-nav-link">如何運作</a>
+        <a href="#use-cases" class="mobile-nav-link">應用場景</a>
+        <a href="#pricing" class="mobile-nav-link">方案價格</a>
+        <hr>
+        <div id="mobileLoggedOut">
+            <a href="/login" class="btn btn-outline-dark w-100 mb-2">登入</a>
+            <a href="/login?reg=1" class="btn btn-cta w-100">免費試用</a>
+        </div>
+        <div id="mobileLoggedIn" class="d-none">
+            <a href="/dashboard" class="btn btn-cta w-100">前往系統</a>
+        </div>
+    </nav>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <div class="hero-bg-shapes">
+        <div class="hero-shape shape-1"></div>
+        <div class="hero-shape shape-2"></div>
+        <div class="hero-shape shape-3"></div>
+    </div>
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-hero">
+            <div class="col-lg-6">
+                <div class="hero-badge mb-3">
+                    <i class="bi bi-lightning-charge-fill"></i> 全新跨境集運解決方案
+                </div>
+                <h1 class="hero-title">
+                    跨境集運<br>
+                    <span class="text-gradient">智能管理系統</span>
+                </h1>
+                <p class="hero-desc">
+                    vShip 為跨境物流提供一站式集運管理 — 從包裹入庫、智能分揀、路線優化到全程追蹤，幫助您高效管理每一個包裹的旅程。
+                </p>
+                <div class="hero-actions d-flex flex-wrap gap-3">
+                    <a href="/login?reg=1" class="btn btn-cta btn-lg" id="heroCta">
+                        <i class="bi bi-rocket-takeoff me-2"></i>免費開始使用
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-play-circle me-2"></i>了解更多
+                    </a>
+                </div>
+                <div class="hero-stats d-flex gap-4 mt-4">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">99.9%</div>
+                        <div class="hero-stat-label">系統穩定性</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">50+</div>
+                        <div class="hero-stat-label">支援國家</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">24/7</div>
+                        <div class="hero-stat-label">技術支援</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-visual">
+                    <div class="hero-card card-1">
+                        <i class="bi bi-box-seam text-success"></i>
+                        <div>
+                            <div class="fw-600">包裹 #TW-20260301</div>
+                            <div class="text-muted small">已入庫 — 東京倉庫</div>
+                        </div>
+                    </div>
+                    <div class="hero-card card-2">
+                        <i class="bi bi-airplane text-primary"></i>
+                        <div>
+                            <div class="fw-600">批次 BT-0089</div>
+                            <div class="text-muted small">運輸中 — 東京 → 台北</div>
+                        </div>
+                    </div>
+                    <div class="hero-card card-3">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <div>
+                            <div class="fw-600">訂單已完成</div>
+                            <div class="text-muted small">3 件包裹已送達</div>
+                        </div>
+                    </div>
+                    <div class="hero-globe">
+                        <i class="bi bi-globe-asia-australia"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section-padding" id="features">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">核心功能</span>
+            <h2 class="section-title">全方位集運管理功能</h2>
+            <p class="section-desc">從包裹接收到最終配送，覆蓋集運業務的每一個環節</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h3 class="feature-title">包裹管理</h3>
+                    <p class="feature-desc">支援包裹預報、入庫登記、上架管理、質檢驗貨等全流程操作，每個包裹都有唯一追蹤碼。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-signpost-split"></i>
+                    </div>
+                    <h3 class="feature-title">路線管理</h3>
+                    <p class="feature-desc">靈活設置運輸路線和定價體系，支援階梯計價、首重續重、體積重量等多種計費方式。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h3 class="feature-title">倉儲管理</h3>
+                    <p class="feature-desc">多倉庫管理、貨架定位、庫位分配，支援掃碼操作，輕鬆管理海量包裹。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <h3 class="feature-title">集運訂單</h3>
+                    <p class="feature-desc">合併多個包裹為一個集運訂單，自動計算運費、保險、增值服務費用，一鍵下單。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h3 class="feature-title">批次發貨</h3>
+                    <p class="feature-desc">將多筆訂單打包為發貨批次，統一出庫、追蹤物流軌跡，提高發貨效率。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="feature-title">數據統計</h3>
+                    <p class="feature-desc">即時營收報表、路線分析、國家統計、包裹趨勢圖表，讓數據驅動業務決策。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section-padding bg-light" id="how-it-works">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">運作流程</span>
+            <h2 class="section-title">四步完成集運</h2>
+            <p class="section-desc">簡潔高效的操作流程，讓集運業務運轉如飛</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i class="bi bi-inbox"></i></div>
+                    <h4 class="step-title">包裹入庫</h4>
+                    <p class="step-desc">客戶預報包裹，倉庫掃碼入庫並自動上架歸位</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i class="bi bi-layers"></i></div>
+                    <h4 class="step-title">合併訂單</h4>
+                    <p class="step-desc">客戶選擇包裹建立集運訂單，系統自動計費</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i class="bi bi-send"></i></div>
+                    <h4 class="step-title">批次發貨</h4>
+                    <p class="step-desc">多筆訂單統一打包出庫，分配物流渠道</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <h4 class="step-title">追蹤送達</h4>
+                    <p class="step-desc">全程物流追蹤，自動更新狀態至客戶簽收</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== USE CASES ===== -->
+<section class="section-padding" id="use-cases">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">應用場景</span>
+            <h2 class="section-title">適用於多種跨境物流場景</h2>
+            <p class="section-desc">無論您的業務模式，vShip 都能完美適配</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-shop"></i></div>
+                    <h4 class="usecase-title">跨境電商集運</h4>
+                    <p class="usecase-desc">為跨境電商賣家提供多平台包裹統一集運服務，降低物流成本，提升配送效率。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-bag-heart"></i></div>
+                    <h4 class="usecase-title">代購轉運</h4>
+                    <p class="usecase-desc">支援代購業務的收貨、驗貨、拍照、合併打包，讓代購流程更加透明高效。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-buildings"></i></div>
+                    <h4 class="usecase-title">集運倉儲</h4>
+                    <p class="usecase-desc">專業集運倉庫管理，支援多客戶、多倉庫、多路線，打造高效集運中心。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-globe-americas"></i></div>
+                    <h4 class="usecase-title">國際物流</h4>
+                    <p class="usecase-desc">多國路線管理、國際運費計算、海關申報輔助，輕鬆開展國際物流業務。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-people"></i></div>
+                    <h4 class="usecase-title">會員集運</h4>
+                    <p class="usecase-desc">會員等級體系、專屬運費折扣、積分獎勵，建立客戶忠誠度計畫。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="usecase-card">
+                    <div class="usecase-icon"><i class="bi bi-boxes"></i></div>
+                    <h4 class="usecase-title">批量貿易</h4>
+                    <p class="usecase-desc">支援 B2B 批量貨物集運、整櫃/拼櫃管理，完善的財務對帳體系。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section-padding bg-light" id="pricing">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">方案價格</span>
+            <h2 class="section-title">選擇適合您的方案</h2>
+            <p class="section-desc">靈活的定價方案，從初創到企業級都能滿足</p>
+        </div>
+        <!-- Billing toggle -->
+        <div class="text-center mb-4">
+            <div class="billing-toggle d-inline-flex align-items-center gap-2 bg-white rounded-pill px-3 py-2 shadow-sm">
+                <span class="billing-label" id="monthlyLabel">月付</span>
+                <div class="form-check form-switch m-0">
+                    <input class="form-check-input" type="checkbox" id="billingToggle">
+                </div>
+                <span class="billing-label" id="yearlyLabel">年付 <span class="badge bg-success ms-1">省20%</span></span>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <!-- Free -->
+            <div class="col-md-6 col-lg-3">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h4 class="pricing-name">免費版</h4>
+                        <div class="pricing-price">
+                            <span class="pricing-currency">$</span>
+                            <span class="pricing-amount" data-monthly="0" data-yearly="0">0</span>
+                            <span class="pricing-period">/月</span>
+                        </div>
+                        <p class="pricing-desc">適合個人或小型初創</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-lg"></i> 100 個包裹/月</li>
+                        <li><i class="bi bi-check-lg"></i> 1 個倉庫</li>
+                        <li><i class="bi bi-check-lg"></i> 3 條路線</li>
+                        <li><i class="bi bi-check-lg"></i> 基本數據統計</li>
+                        <li><i class="bi bi-check-lg"></i> 電郵支援</li>
+                    </ul>
+                    <a href="/login?reg=1" class="btn btn-outline-dark w-100">開始使用</a>
+                </div>
+            </div>
+            <!-- Starter -->
+            <div class="col-md-6 col-lg-3">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h4 class="pricing-name">入門版</h4>
+                        <div class="pricing-price">
+                            <span class="pricing-currency">$</span>
+                            <span class="pricing-amount" data-monthly="299" data-yearly="239">299</span>
+                            <span class="pricing-period">/月</span>
+                        </div>
+                        <p class="pricing-desc">適合成長中的業務</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-lg"></i> 1,000 個包裹/月</li>
+                        <li><i class="bi bi-check-lg"></i> 3 個倉庫</li>
+                        <li><i class="bi bi-check-lg"></i> 10 條路線</li>
+                        <li><i class="bi bi-check-lg"></i> 完整數據統計</li>
+                        <li><i class="bi bi-check-lg"></i> 優先支援</li>
+                    </ul>
+                    <a href="/login?reg=1" class="btn btn-cta w-100">立即升級</a>
+                </div>
+            </div>
+            <!-- Pro -->
+            <div class="col-md-6 col-lg-3">
+                <div class="pricing-card pricing-popular">
+                    <div class="popular-badge">最受歡迎</div>
+                    <div class="pricing-header">
+                        <h4 class="pricing-name">專業版</h4>
+                        <div class="pricing-price">
+                            <span class="pricing-currency">$</span>
+                            <span class="pricing-amount" data-monthly="699" data-yearly="559">699</span>
+                            <span class="pricing-period">/月</span>
+                        </div>
+                        <p class="pricing-desc">適合專業集運企業</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-lg"></i> 無限包裹</li>
+                        <li><i class="bi bi-check-lg"></i> 無限倉庫</li>
+                        <li><i class="bi bi-check-lg"></i> 無限路線</li>
+                        <li><i class="bi bi-check-lg"></i> 進階分析報表</li>
+                        <li><i class="bi bi-check-lg"></i> API 存取</li>
+                        <li><i class="bi bi-check-lg"></i> 專屬客戶經理</li>
+                    </ul>
+                    <a href="/login?reg=1" class="btn btn-cta w-100">立即升級</a>
+                </div>
+            </div>
+            <!-- Enterprise -->
+            <div class="col-md-6 col-lg-3">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h4 class="pricing-name">企業版</h4>
+                        <div class="pricing-price">
+                            <span class="pricing-amount" style="font-size:1.5rem;">聯繫我們</span>
+                        </div>
+                        <p class="pricing-desc">為大型企業量身定制</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-lg"></i> 一切專業版功能</li>
+                        <li><i class="bi bi-check-lg"></i> 私有部署</li>
+                        <li><i class="bi bi-check-lg"></i> 客製化開發</li>
+                        <li><i class="bi bi-check-lg"></i> SLA 保障</li>
+                        <li><i class="bi bi-check-lg"></i> 24/7 支援</li>
+                    </ul>
+                    <a href="mailto:contact@vsys.co" class="btn btn-outline-dark w-100">聯繫銷售</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section">
+    <div class="container text-center">
+        <h2 class="cta-title">準備好開始您的集運業務了嗎？</h2>
+        <p class="cta-desc">免費註冊，即刻體驗 vShip 的強大功能</p>
+        <a href="/login?reg=1" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-rocket-takeoff me-2"></i>免費開始使用
+        </a>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="footer-brand d-flex align-items-center gap-2 mb-3">
+                    <div class="brand-icon"><i class="bi bi-truck"></i></div>
+                    <span class="brand-text text-white">vShip</span>
+                </div>
+                <p class="footer-desc">vShip 是 V-sys Limited 旗下的跨境集運管理系統，致力於為全球物流業者提供高效、智能的集運解決方案。</p>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">產品</h6>
+                <ul class="footer-links">
+                    <li><a href="#features">功能特色</a></li>
+                    <li><a href="#pricing">方案價格</a></li>
+                    <li><a href="#use-cases">應用場景</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">公司</h6>
+                <ul class="footer-links">
+                    <li><a href="#">關於我們</a></li>
+                    <li><a href="#">聯絡我們</a></li>
+                    <li><a href="#">隱私政策</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">支援</h6>
+                <ul class="footer-links">
+                    <li><a href="#">幫助中心</a></li>
+                    <li><a href="#">API 文件</a></li>
+                    <li><a href="#">系統狀態</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">其他產品</h6>
+                <ul class="footer-links">
+                    <li><a href="#">vWork</a></li>
+                    <li><a href="#">vOffice</a></li>
+                    <li><a href="#">vAI</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 V-sys Limited. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function() {
+    // ---- Auth state detection ----
+    function checkAuth() {
+        const token = document.cookie.match(/(^|;\s*)token=([^;]*)/);
+        if (!token || !token[2]) return;
+        fetch('/api/v1/user/me', {
+            headers: { 'Authorization': 'Bearer ' + token[2] }
+        }).then(r => {
+            if (r.ok) {
+                document.getElementById('navLoggedOut').classList.add('d-none');
+                document.getElementById('navLoggedIn').classList.remove('d-none');
+                document.getElementById('mobileLoggedOut').classList.add('d-none');
+                document.getElementById('mobileLoggedIn').classList.remove('d-none');
+                // Change hero CTA
+                var heroCta = document.getElementById('heroCta');
+                if (heroCta) {
+                    heroCta.href = '/dashboard';
+                    heroCta.innerHTML = '<i class="bi bi-speedometer2 me-2"></i>前往系統';
+                }
+            }
+        }).catch(function(){});
+    }
+    checkAuth();
+
+    // ---- Navbar scroll effect ----
+    var nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+
+    // ---- Mobile menu ----
+    var toggler = document.getElementById('navToggler');
+    var overlay = document.getElementById('mobileOverlay');
+    var sidebar = document.getElementById('mobileSidebar');
+    var closeBtn = document.getElementById('mobileClose');
+
+    function openMobile() {
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMobile() {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    toggler.addEventListener('click', openMobile);
+    overlay.addEventListener('click', closeMobile);
+    closeBtn.addEventListener('click', closeMobile);
+    sidebar.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', closeMobile);
+    });
+
+    // ---- Smooth scroll ----
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                var offset = 80;
+                var pos = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                window.scrollTo({ top: pos, behavior: 'smooth' });
+            }
+        });
+    });
+
+    // ---- Billing toggle ----
+    var toggle = document.getElementById('billingToggle');
+    if (toggle) {
+        toggle.addEventListener('change', function() {
+            var isYearly = this.checked;
+            document.querySelectorAll('.pricing-amount[data-monthly]').forEach(function(el) {
+                el.textContent = isYearly ? el.dataset.yearly : el.dataset.monthly;
+            });
+            document.getElementById('monthlyLabel').style.fontWeight = isYearly ? '400' : '600';
+            document.getElementById('yearlyLabel').style.fontWeight = isYearly ? '600' : '400';
+        });
+    }
+
+    // ---- Scroll animations ----
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .step-card, .usecase-card, .pricing-card').forEach(function(el) {
+        el.classList.add('animate-target');
+        observer.observe(el);
+    });
+})();
+</script>
+
+</body>
+</html>
+{{end}}

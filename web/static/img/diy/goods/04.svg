@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 商品4: 封箱膠帶 Packing Tape -->
+  <defs>
+    <linearGradient id="g4bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7"/>
+      <stop offset="100%" style="stop-color:#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#g4bg)"/>
+  <!-- Tape roll - outer ring -->
+  <circle cx="150" cy="120" r="70" fill="#d97706" opacity="0.2"/>
+  <circle cx="150" cy="120" r="70" fill="none" stroke="#d97706" stroke-width="3"/>
+  <!-- Inner circle (core) -->
+  <circle cx="150" cy="120" r="30" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <!-- Tape body -->
+  <circle cx="150" cy="120" r="70" fill="none" stroke="#f59e0b" stroke-width="38" stroke-dasharray="180 220" opacity="0.7"/>
+  <!-- Tape pull strip -->
+  <path d="M215,140 Q235,145 230,165 L220,160 Q225,145 210,138" fill="#f59e0b" stroke="#d97706" stroke-width="1"/>
+  <!-- Label -->
+  <rect x="100" y="140" width="100" height="22" rx="3" fill="#92400e" opacity="0.8"/>
+  <text x="150" y="156" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#fff" font-weight="bold">大發貨運</text>
+  <!-- Price tag -->
+  <rect x="180" y="220" width="90" height="35" rx="4" fill="#ef4444"/>
+  <text x="225" y="243" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#fff" font-weight="bold">¥5.90</text>
+  <text x="150" y="270" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#666">品牌封箱膠帶</text>
+</svg>

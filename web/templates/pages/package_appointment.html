@@ -1,0 +1,111 @@
+{{define "pages/package_appointment"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_appointment.title">預約件</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadPackages(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.package_appointment.search_placeholder" placeholder="搜尋快遞單號/用戶...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:160px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="pending" data-i18n="common.status_pending">待處理</option>
+            <option value="confirmed" data-i18n="pages.package_appointment.status_confirmed">已確認</option>
+            <option value="picked_up" data-i18n="pages.package_appointment.status_picked_up">已取件</option>
+            <option value="cancelled" data-i18n="common.status_cancelled">已取消</option>
+        </select>
+        <input type="date" class="form-control" id="filterDate" style="max-width:160px;">
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.package_appointment.tracking_no">快遞單號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.package_appointment.appointment_date">預約日期</th>
+                    <th data-i18n="pages.package_appointment.appointment_time">預約時段</th>
+                    <th data-i18n="pages.package_appointment.pickup_address">取件地址</th>
+                    <th data-i18n="pages.package_appointment.item_description">物品描述</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1;
+const limit = 20;
+
+function loadPackages(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const date = document.getElementById('filterDate').value;
+    const params = buildQueryParams({ search, status: status || 'appointment', appointment_date: date });
+    loadTableData('/packages', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.tracking_no || '--'}</td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.appointment_date || '--'}</td>
+        <td>${item.appointment_time || '--'}</td>
+        <td>${item.pickup_address || '--'}</td>
+        <td>${item.description || '--'}</td>
+        <td>${getStatusBadge(item.appointment_status || item.status)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-success" onclick="confirmAppointment('${item.id}')" title="${_t('pages.package_appointment.confirm', '確認')}"><i class="fas fa-check"></i></button>
+                <button class="btn btn-sm btn-outline-info" onclick="markPickedUp('${item.id}')" title="${_t('pages.package_appointment.picked_up', '已取件')}"><i class="fas fa-truck-pickup"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="cancelAppointment('${item.id}')" title="${_t('common.cancel', '取消')}"><i class="fas fa-times"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+async function confirmAppointment(id) {
+    if (!confirm(_t('pages.package_appointment.confirm_appointment', '確定確認此預約嗎？'))) return;
+    try {
+        await apiRequest('PUT', '/packages/' + id, { appointment_status: 'confirmed' });
+        showToast(_t('pages.package_appointment.confirmed_success', '已確認預約'), 'success');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+async function markPickedUp(id) {
+    if (!confirm(_t('pages.package_appointment.confirm_picked_up', '確定標記為已取件嗎？'))) return;
+    try {
+        await apiRequest('PUT', '/packages/' + id, { appointment_status: 'picked_up', status: 'received' });
+        showToast(_t('pages.package_appointment.picked_up_success', '已標記為已取件'), 'success');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+async function cancelAppointment(id) {
+    if (!confirm(_t('pages.package_appointment.confirm_cancel', '確定取消此預約嗎？'))) return;
+    try {
+        await apiRequest('PUT', '/packages/' + id, { appointment_status: 'cancelled' });
+        showToast(_t('pages.package_appointment.cancelled_success', '已取消預約'), 'success');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadPackages(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadPackages(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadPackages(1));
+document.getElementById('filterDate').addEventListener('change', () => loadPackages(1));
+</script>
+{{end}}

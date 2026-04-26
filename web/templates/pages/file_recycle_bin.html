@@ -1,0 +1,60 @@
+{{define "pages/file_recycle_bin"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.file_recycle_bin.title">文件回收站</h5>
+        <div>
+            <button class="btn btn-outline-danger btn-sm me-2" onclick="emptyRecycleBin()"><i class="fas fa-trash me-1"></i><span data-i18n="pages.file_recycle_bin.clear_all">清空回收站</span></button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="loadFiles(1)"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.file_recycle_bin.search_file" placeholder="搜尋文件名...">
+        </div>
+        <select class="form-select" id="filterType" style="max-width:150px;">
+            <option value="" data-i18n="pages.file_recycle_bin.all_types">全部類型</option>
+            <option value="image" data-i18n="pages.file_recycle_bin.image">圖片</option>
+            <option value="document" data-i18n="pages.file_recycle_bin.document">文檔</option>
+            <option value="video" data-i18n="pages.file_recycle_bin.video">影片</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr><th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th><th data-i18n="pages.file_recycle_bin.filename">文件名</th><th data-i18n="pages.file_recycle_bin.file_type">類型</th><th data-i18n="pages.file_recycle_bin.size">大小</th><th data-i18n="pages.file_recycle_bin.delete_time">刪除時間</th><th data-i18n="common.actions">操作</th></tr>
+            </thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <button class="btn btn-success btn-sm" onclick="batchRestore()"><i class="fas fa-undo me-1"></i><span data-i18n="pages.file_recycle_bin.batch_restore">批量還原</span></button>
+        <div id="pagination"></div>
+    </div>
+</div>
+<script>
+let currentPage = 1; const limit = 20;
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+function loadFiles(page) { currentPage = page; const search = document.getElementById('searchInput').value; const type = document.getElementById('filterType').value;
+    const params = buildQueryParams({ search, file_type: type, trashed: true }); loadTableData('/files', 'tableBody', renderRow, 'pagination', page, limit, params); }
+function renderRow(item) { return `<tr><td><input type="checkbox" class="row-check" value="${item.id}"></td>
+    <td>${item.file_name || item.name || '--'}</td><td>${item.file_type || '--'}</td>
+    <td>${formatFileSize(item.file_size || 0)}</td><td>${formatDate(item.trashed_at || item.deleted_at)}</td>
+    <td><div class="action-buttons"><button class="btn btn-sm btn-outline-success" onclick="restoreFile('${item.id}')" title="${_t('pages.file_recycle_bin.restore','還原')}"><i class="fas fa-undo"></i></button>
+    <button class="btn btn-sm btn-outline-danger" onclick="permanentDelete('${item.id}')" title="${_t('pages.file_recycle_bin.permanent_delete','永久刪除')}"><i class="fas fa-trash"></i></button></div></td></tr>`; }
+function formatFileSize(bytes) { if (bytes === 0) return '0 B'; const k = 1024; const sizes = ['B','KB','MB','GB']; const i = Math.floor(Math.log(bytes)/Math.log(k)); return parseFloat((bytes/Math.pow(k,i)).toFixed(2)) + ' ' + sizes[i]; }
+function toggleSelectAll() { const checked = document.getElementById('selectAll').checked; document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked); }
+async function restoreFile(id) { if (!confirm(_t('pages.file_recycle_bin.confirm_restore', '確定還原此文件嗎？'))) return;
+    try { await apiRequest('PUT', '/files/' + id, { trashed_at: null }); showToast(_t('pages.file_recycle_bin.restore_success', '還原成功'), 'success'); loadFiles(currentPage); } catch(e) {} }
+async function permanentDelete(id) { if (!confirm(_t('pages.file_recycle_bin.confirm_permanent_delete', '確定永久刪除此文件嗎？此操作不可撤銷！'))) return;
+    try { await apiRequest('DELETE', '/files/' + id); showToast(_t('pages.file_recycle_bin.permanently_deleted', '已永久刪除'), 'success'); loadFiles(currentPage); } catch(e) {} }
+async function batchRestore() { const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.value);
+    if (ids.length === 0) { showToast(_t('pages.file_recycle_bin.select_file', '請選擇文件'), 'warning'); return; }
+    for (const id of ids) { try { await apiRequest('PUT', '/files/' + id, { trashed_at: null }); } catch(e) {} }
+    showToast(_t('pages.file_recycle_bin.batch_restore_complete', '批量還原完成'), 'success'); loadFiles(currentPage); }
+async function emptyRecycleBin() { if (!confirm(_t('pages.file_recycle_bin.confirm_clear_all', '確定清空回收站嗎？所有文件將被永久刪除！'))) return;
+    try { await apiRequest('DELETE', '/files?trashed=true'); showToast(_t('pages.file_recycle_bin.recycle_bin_cleared', '回收站已清空'), 'success'); loadFiles(1); } catch(e) {} }
+document.addEventListener('DOMContentLoaded', () => loadFiles(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadFiles(1)));
+document.getElementById('filterType').addEventListener('change', () => loadFiles(1));
+</script>
+{{end}}

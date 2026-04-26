@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- 運費充值 Recharge/Top-up Icon -->
+  <defs>
+    <linearGradient id="rechargeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="45" r="30" fill="url(#rechargeGrad)" stroke="#047857" stroke-width="1.5"/>
+  <text x="50" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#fff" font-weight="bold">$</text>
+  <line x1="50" y1="50" x2="50" y2="62" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <polyline points="42,55 50,63 58,55" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="62" y="18" width="18" height="18" rx="9" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+  <text x="71" y="31" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#fff" font-weight="bold">+</text>
+  <text x="50" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#333">運費充值</text>
+</svg>

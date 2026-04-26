@@ -1,0 +1,87 @@
+{{define "pages/user_client_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.user_client_settings.title">用戶端設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.user_client_settings.client_name">用戶端名稱</label>
+                <input type="text" class="form-control" name="client_name" data-i18n-placeholder="pages.user_client_settings.client_name_placeholder" placeholder="請輸入用戶端名稱">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.user_client_settings.client_logo">用戶端Logo</label>
+                <div class="border rounded p-4 text-center" id="logoUploadArea" style="cursor:pointer; min-height:120px;">
+                    <img id="logoPreview" src="" alt="" style="max-height:80px; display:none;">
+                    <div id="logoPlaceholder"><i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i><br><span class="text-muted" data-i18n="pages.user_client_settings.upload_logo">點擊或拖拽上傳Logo</span></div>
+                    <input type="file" id="logoFile" name="logo" accept="image/*" style="display:none;">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.user_client_settings.default_language">默認語言</label>
+                <select class="form-select" name="default_language">
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="zh-CN">簡體中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="openRegistration" name="open_registration">
+                    <label class="form-check-label" for="openRegistration" data-i18n="pages.user_client_settings.open_registration">是否開放註冊</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.user_client_settings.registration_method">註冊方式</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="regPhone" name="reg_phone" value="phone">
+                        <label class="form-check-label" for="regPhone" data-i18n="pages.user_client_settings.reg_phone">手機號</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="regEmail" name="reg_email" value="email">
+                        <label class="form-check-label" for="regEmail" data-i18n="pages.user_client_settings.reg_email">郵箱</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="regWechat" name="reg_wechat" value="wechat">
+                        <label class="form-check-label" for="regWechat" data-i18n="pages.user_client_settings.reg_wechat">微信</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.user_client_settings.user_agreement">用戶協議</label>
+                <textarea class="form-control" name="user_agreement" rows="6" data-i18n-placeholder="pages.user_client_settings.agreement_placeholder" placeholder="請輸入用戶協議內容"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">保存設置</span></button>
+        </form>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+const API_PATH = '/settings/user-client';
+async function loadSettings() {
+    try {
+        const data = await apiRequest('GET', API_PATH);
+        if (data) populateForm('settingsForm', data);
+    } catch(e){}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try { await apiRequest('PUT', API_PATH, data); showToast(_t('common.save_success', '保存成功')); } catch(e){}
+}
+document.getElementById('logoUploadArea').addEventListener('click', () => document.getElementById('logoFile').click());
+document.getElementById('logoFile').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('logoPreview').src = e.target.result;
+            document.getElementById('logoPreview').style.display = 'block';
+            document.getElementById('logoPlaceholder').style.display = 'none';
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

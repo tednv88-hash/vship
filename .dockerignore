@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+bin
+*.exe
+*.log
+*.zip
+miniprogram/node_modules
+miniprogram/dist
+node_modules
+tmp
+temp
+coverage
+dist
+Downloads

@@ -1,0 +1,211 @@
+{{define "pages/client_webmenu"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.client_webmenu.title">網站菜單</h5>
+        <div>
+            <button class="btn btn-success btn-sm me-2" onclick="saveSortOrder()">
+                <i class="fas fa-sort me-1"></i><span data-i18n="pages.client_webmenu.save_sort">保存排序</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+                <i class="fas fa-plus me-1"></i><span data-i18n="pages.client_webmenu.add_menu">新增菜單</span>
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.client_webmenu.menu_name">菜單名稱</th>
+                    <th data-i18n="pages.client_webmenu.menu_type">菜單類型</th>
+                    <th style="width:100px;" data-i18n="common.sort">排序</th>
+                    <th style="width:150px;" data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="4" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.client_webmenu.add_menu">新增菜單</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.parent_menu">上級菜單</label>
+                        <select class="form-select" name="parent_id" id="parentSelect">
+                            <option value="" data-i18n="pages.client_webmenu.top_level_menu">頂級菜單</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.menu_name">菜單名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.menu_type">菜單類型</label>
+                        <select class="form-select" name="type" id="menuType">
+                            <option value="10" data-i18n="pages.client_webmenu.single_page">單頁</option>
+                            <option value="20" data-i18n="pages.client_webmenu.list">列表</option>
+                            <option value="30" data-i18n="pages.client_webmenu.about_us">關於我們</option>
+                            <option value="40" data-i18n="pages.client_webmenu.warehouse_address">倉庫地址</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.related_content_id">關聯內容ID</label>
+                        <input type="text" class="form-control" name="link_id" data-i18n-placeholder="pages.client_webmenu.related_content_desc" placeholder="關聯的文章或分類ID">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.sort">排序</label>
+                        <input type="number" class="form-control" name="sort_order" value="0" min="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 50; let editingId = null;
+const API_PATH = '/web-menus';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const typeLabels = {
+    10: () => _t('pages.client_webmenu.single_page', '單頁'),
+    20: () => _t('pages.client_webmenu.list', '列表'),
+    30: () => _t('pages.client_webmenu.about_us', '關於我們'),
+    40: () => _t('pages.client_webmenu.warehouse_address', '倉庫地址')
+};
+let allMenus = [];
+
+async function loadData() {
+    try {
+        const res = await apiRequest('GET', API_PATH + '?limit=200');
+        const items = res.data || res.items || [];
+        allMenus = items;
+        renderTree(items);
+        populateParentSelect(items);
+    } catch (e) {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    }
+}
+
+function renderTree(items) {
+    const topLevel = items.filter(i => !i.parent_id);
+    topLevel.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    let html = '';
+    topLevel.forEach(item => {
+        html += renderMenuRow(item, 0);
+        const children = items.filter(i => i.parent_id === item.id);
+        children.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        children.forEach(child => {
+            html += renderMenuRow(child, 1);
+        });
+    });
+    if (!html) html = '<tr><td colspan="4" class="text-center text-muted py-4">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    document.getElementById('tableBody').innerHTML = html;
+}
+
+function renderMenuRow(item, level) {
+    const indent = level > 0 ? '<span class="text-muted me-2">├─</span>' : '';
+    const labelFn = typeLabels[item.type];
+    const typeLabel = labelFn ? labelFn() : (item.type || '--');
+    const typeBadge = `<span class="badge bg-info">${typeLabel}</span>`;
+    return `<tr data-id="${item.id}">
+        <td>${'&nbsp;'.repeat(level * 4)}${indent}${item.name || '--'}</td>
+        <td>${typeBadge}</td>
+        <td><input type="number" class="form-control form-control-sm sort-input" value="${item.sort_order || 0}" data-id="${item.id}" style="width:80px;"></td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function populateParentSelect(items) {
+    const sel = document.getElementById('parentSelect');
+    sel.innerHTML = '<option value="">' + _t('pages.client_webmenu.top_level_menu', '頂級菜單') + '</option>';
+    const topLevel = items.filter(i => !i.parent_id);
+    topLevel.forEach(item => {
+        sel.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+    });
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.client_webmenu.add_menu', '新增菜單');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_webmenu.add_menu');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.client_webmenu.edit_menu', '編輯菜單');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_webmenu.edit_menu');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const data = res.data || res;
+        populateForm('itemForm', data);
+        if (data.parent_id) {
+            document.getElementById('parentSelect').value = data.parent_id;
+        }
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    if (!data.parent_id) delete data.parent_id;
+    data.type = parseInt(data.type) || 10;
+    data.sort_order = parseInt(data.sort_order) || 0;
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData();
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.client_webmenu.confirm_delete', '確定要刪除此菜單嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData();
+    } catch (e) {}
+}
+
+async function saveSortOrder() {
+    const inputs = document.querySelectorAll('.sort-input');
+    const updates = [];
+    inputs.forEach(input => {
+        updates.push({ id: input.dataset.id, sort_order: parseInt(input.value) || 0 });
+    });
+    try {
+        await apiRequest('POST', API_PATH + '/sort', { items: updates });
+        showToast(_t('pages.client_webmenu.sort_saved', '排序已保存'), 'success');
+        loadData();
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData());
+</script>
+{{end}}

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>集运系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="assets/common/i/favicon.ico"/>
+    <link href="assets/common/css/animate.compat.css" rel="stylesheet">
+    <meta name="apple-mobile-web-app-title" content="集运系统"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.datetimepicker.css"/>
+    
+    <!--原始背景-->
+        <!--蓝色背景-->
+        <!--静态图背景-->
+        <!--数字粒子背景-->
+        <link rel="stylesheet" href="assets/store/css/app_shu1/app_shu.css?v=2.2.55"/>
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_783249_m68ye1gfnza.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3768063_yu9jg4vyhs.css">
+    <script src="assets/common/js/jquery.min.js"></script>
+    <script src="assets/common/js/base.js"></script>
+    <script src="assets/common/js/amazeui.datetimepicker.min.js"></script>
+    <script src="//at.alicdn.com/t/font_783249_e5yrsf08rap.js"></script>
+    <script>
+        BASE_URL = 'https://zhuanyun.sllowly.cn/';
+        STORE_URL = 'index.php?s=/store';
+    </script>
+</head>
+
+<body data-type="">
+<div class="am-g tpl-g">
+    <!-- 头部 -->
+    <header class="tpl-header">
+        <!-- 右侧内容 -->
+        <div class="tpl-header-fluid">
+            <!-- 侧边切换 -->
+            <div class="am-fl tpl-header-button switch-button">
+                <i class="iconfont icon-menufold"></i>
+            </div>
+            <!-- 刷新页面 -->
+            <div class="am-fl tpl-header-button refresh-button">
+                <i class="iconfont icon-refresh"></i>
+            </div>
+            <!-- 其它功能-->
+            <div class="am-fr tpl-header-navbar">
+                <ul>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tr_order/payment_audit" style="color: #ff0000;    font-weight: 900;">
+                            <span >线下支付审核 (4)</span>
+                        </a>
+                    </li>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/setting.certificate/index" style="color: #ff0000;    font-weight: 900;">
+                            <span >汇款凭证审核 (32)</span>
+                        </a>
+                    </li>
+                                        <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tools/guide"><span>使用指南</span></a>
+                    </li>
+                                        <li style="margin-top:10px" class="am-text-sm tpl-header-navbar-welcome">
+                        <div class="am-dropdown" data-am-dropdown>
+                              <button class="am-btn am-btn-danger am-dropdown-toggle" data-am-dropdown-toggle>待处理 <span class="am-icon-caret-down"></span></button>
+                              <ul class="am-dropdown-content">
+                                <li class="am-dropdown-header"><a style="line-height:20px;" href="index.php?s=/store/tr_order/exceedorder" >超时订单 <span class="tipsspan"> 4 </span></a></li>
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >问题包裹 <span class="tipsspan">1</span></a></li>-->
+                              </ul>
+                            </div>
+                    </li>
+                                        <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="javascript:;">有限期：<span>2030-02-01</span>
+                        </a>
+                    </li>
+                    <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/store.user/renew">欢迎你，<span>admin</span>
+                        </a>
+                    </li>
+                    <!-- 退出 -->
+                    <li class="am-text-sm">
+                        <a href="index.php?s=/store/passport/logout">
+                            <i class="iconfont icon-tuichu"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!-- 侧边导航栏 -->
+    <div class="left-sidebar dis-flex" id="particles-js">
+                    <canvas class="particles-js-canvas-el" style="width: 100%; height: 100%;" width="472" height="625"></canvas>
+                    <div class="sidebar-scroll ">
+            <!-- 一级菜单 -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-heading">集运系统</li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-home"
+                                   style=""></i>
+                                                        总览                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/package.index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-miaosha"
+                                   style=""></i>
+                                                        包裹管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tr_order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        集运订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-user"
+                                   style=""></i>
+                                                        用户管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/shop/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shop"
+                                   style=""></i>
+                                                        仓库管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/batch/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        批次管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/goods/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-goods"
+                                   style=""></i>
+                                                        商品管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        商城订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/content.article/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        内容管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/market.coupon/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-marketing"
+                                   style=""></i>
+                                                        营销管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/statistics.data/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-qushitu"
+                                   style=""></i>
+                                                        数据统计                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/wxapp/setting"
+                           class="active">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wxapp"
+                                   style="color:#36b313;"></i>
+                                                        客户端                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/apps.dealer.apply/index"
+                           class="">
+                                                            <svg class="icon sidebar-nav-link-logo" aria-hidden="true">
+                                    <use xlink:href="#icon-application"></use>
+                                </svg>
+                                                        应用中心                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/store.user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        管理员                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/setting/store"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-setting"
+                                   style=""></i>
+                                                        设置                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tools/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        工具箱                        </a>
+                    </li>
+                            </ul>
+        </div>
+        <!-- 子级菜单-->
+                    <div class="sidebar-second-scroll">
+                <ul class="left-sidebar-second">
+                    <li class="sidebar-second-title">客户端</li>
+                    <li class="sidebar-second-item">
+                                                        <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp/setting"
+                                   class=""
+                                   >
+                                    小程序设置                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp/h5"
+                                   class=""
+                                   >
+                                    H5端设置                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp/lang"
+                                   class=""
+                                   >
+                                    语言设置                                </a>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title active">
+                                        <i class="iconfont icon-caret"></i>
+                                        PC端设置                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp/web"
+                                                   >
+                                                    PC端管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp/webmenu"
+                                                   target="_blank">
+                                                    网站菜单</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp/weblink"
+                                                   >
+                                                    友情链接</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title active">
+                                        <i class="iconfont icon-caret"></i>
+                                        微信公众号                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp/mp"
+                                                   >
+                                                    菜单管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp/wechat"
+                                                   >
+                                                    自动回复</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title active">
+                                        <i class="iconfont icon-caret"></i>
+                                        页面管理                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp.page/index"
+                                                   target="_blank">
+                                                    页面设计</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/wxapp.page/category"
+                                                   >
+                                                    分类模板</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp.page/links"
+                                   class=""
+                                   >
+                                    页面链接                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp.submsg/index"
+                                   class="active"
+                                   >
+                                    订阅消息                                </a>
+                                                            <!-- 二级菜单-->
+                                <a href="index.php?s=/store/wxapp.help/index"
+                                   class=""
+                                   >
+                                    帮助中心                                </a>
+                                                </li>
+                </ul>
+            </div>
+            </div>
+
+    <!-- 内容区域 start -->
+    <div class="tpl-content-wrapper ">
+        <div class="row-content am-cf">
+    <div class="row">
+        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+            <div class="widget am-cf">
+                <form id="my-form" class="am-form tpl-form-line-form" method="post">
+                    <div class="widget-body">
+                        <fieldset>
+                            <div class="tips am-margin-top-sm">
+                                <div class="pre">
+                                    <p class="">
+                                        1. 订阅消息仅支持小程序 "<strong>物流服务/仓储服务</strong>" 类目，请登录 "<a
+                                                href="https://mp.weixin.qq.com" target="_blank">小程序运营平台</a>"，左侧菜单栏 "设置"
+                                        - "基本设置" - "服务类目" 中添加
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">订阅消息通知</div>
+                            </div>
+                            
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 包裹入库通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                     <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][enter][is_enable]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][enter][is_enable]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                       
+                                    </label>
+                    
+                                </div>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 模板ID </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input" name="submsg[order][enter][template_id]"
+                                           value="7MPKO4h3DWuG2yp0Pop3ORaJdbxomdBCWzET1GmqZ4U">
+                                    <div class="help-block">
+                                        <small>关键词：[包裹编号、物流单号、仓库名称、入库时间、备注]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 订单发货通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                     <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][delivery][is_enable]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][delivery][is_enable]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                       
+                                    </label>
+                    
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 模板ID </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input"
+                                           name="submsg[order][delivery][template_id]"
+                                           value="Jj6bStyeNBIaEcrkhunDpSgO0PZe3Oaey0tr39n1Mqo">
+                                    <div class="help-block">
+                                        <small>关键词：[订单编号、发货时间、快递公司、快递单号]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 物流状态更新通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                     <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][logistics][is_enable]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="submsg[order][logistics][is_enable]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                       
+                                    </label>
+                    
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 模板ID </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input" name="submsg[order][logistics][template_id]"
+                                           value="">
+                                    <div class="help-block">
+                                        <small>关键词：[运单号、包裹单号、包裹动态、更新时间]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                              <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">分销商消息通知</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 分销商入驻审核通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input" name="submsg[dealer][apply][template_id]"
+                                           value="G4Yw6oJDeyqPBivCo60aiBMO4H0QTqdMqwBXOpV4BrM">
+                                    <div class="help-block">
+                                        <small>关键词：[申请时间、审核状态、审核时间、备注信息]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 提现成功通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input"
+                                           name="submsg[dealer][withdraw_01][template_id]"
+                                           value="Bf7h-pG7UcyElb-wyF3hIwYzm5mgKUBiYVMKkvO1Qn0">
+                                    <div class="help-block">
+                                        <small>关键词：[提现金额、打款方式、打款原因]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-u-lg-2 am-form-label form-require"> 提现失败通知 </label>
+                                <div class="am-u-sm-9 am-u-md-6 am-u-lg-5 am-u-end">
+                                    <input type="text" class="tpl-form-input"
+                                           name="submsg[dealer][withdraw_02][template_id]"
+                                           value="w-1OzZIZNYpzh-_4AMJqUe9mE8uFrpF3nWZj-zQGu5s">
+                                    <div class="help-block">
+                                        <small>关键词：[提现金额、申请时间、原因]</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="shuttle" class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3 am-margin-top-lg">
+                                    
+                                    <button type="submit"
+                                            class="j-submit am-btn am-btn-sm am-btn-secondary am-margin-right-sm">保存
+                                    </button>
+                                  
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+
+        // 一键配置
+        $('.j-shuttle').on('click', function () {
+            var url = "index.php?s=/store/wxapp.submsg/shuttle";
+            var load = layer.load();
+            layer.confirm('该操作将自动为您的小程序添加订阅消息<br>请先确保 "订阅消息" - "我的模板" 中没有记录<br>确定添加吗？', {
+                title: '友情提示'
+            }, function (index) {
+                $.post(url, {}, function (result) {
+                    result.code === 1 ? $.show_success(result.msg, result.url)
+                        : $.show_error(result.msg);
+                    layer.close(load);
+                });
+                layer.close(index);
+            });
+        });
+
+        /**
+         * 表单验证提交
+         * @type {*}
+         */
+        $('#my-form').superForm();
+
+    });
+</script>
+
+    </div>
+    <!-- 内容区域 end -->
+    
+    <!-- 订单提醒弹窗 -->
+    <div id="inpack-notify-popup" style="display:none; position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 15px 20px; z-index: 99999; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="iconfont icon-lingdang" style="font-size: 24px; margin-right: 15px; animation: bell-ring 0.5s ease-in-out infinite;"></i>
+                <div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">你有新集运订单需要处理</div>
+                    <div style="font-size: 14px; opacity: 0.9;" id="notify-order-sn">订单号：<span id="notify-order-sn-value"></span></div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="javascript:;" id="notify-goto-order" style="color: #fff; text-decoration: none; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 4px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">查看订单</a>
+                <a href="javascript:;" id="notify-close" style="color: #fff; text-decoration: none; font-size: 20px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes bell-ring {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        #inpack-notify-popup.show {
+            animation: slideDown 0.3s ease-out;
+        }
+    </style>
+
+</div>
+<script src="assets/common/plugins/layer/layer.js"></script>
+<script src="assets/common/js/jquery.form.min.js"></script>
+<script src="assets/common/js/amazeui.min.js"></script>
+<script src="assets/common/js/webuploader.html5only.js"></script>
+<script src="assets/common/js/art-template.js"></script>
+<script src="assets/store/js/app.js?v=2.2.55"></script>
+<script src="assets/store/js/file.library.js?v=2.2.55"></script>
+        <script src="assets/store/css/app_shu1/jiyunbg.js"></script>
+    <script src="assets/store/css/app_shu1/jiyunApp.js"></script>
+    <script>
+// 菜单链接打开方式：根据配置文件中的 open_new_tab 参数决定
+// 如果菜单项设置了 target="_blank"，则在新标签页打开，否则在当前页打开
+$(document).ready(function() {
+    // 一级菜单：在当前页面跳转
+    $('.sidebar-nav a').on('click', function(e) {
+        var href = $(this).attr('href');
+        // 如果不是 javascript:void(0) 这样的伪链接
+        if (href && href !== 'javascript:void(0);' && href.indexOf('javascript:') !== 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = href; // 当前页面跳转
+        }
+    });
+    
+    // 注意：二级、三级菜单现在由 HTML 的 target 属性控制
+    // 如果菜单配置中有 'open_new_tab' => true，会自动添加 target="_blank"
+});
+
+// 订单提醒功能
+(function() {
+    'use strict';
+    
+    // 配置
+    var POLL_INTERVAL = 30000; // 30秒轮询间隔
+    var STORAGE_KEY = 'inpack_notify_last_check';
+    var AUDIO_PATH = 'assets/store/order.MP3';
+    
+    // 音频对象（延迟加载，等待用户交互）
+    var audio = null;
+    var audioInitialized = false;
+    
+    // 初始化音频对象
+    function initAudio() {
+        if (audioInitialized || audio) return;
+        
+        try {
+            audio = new Audio(AUDIO_PATH);
+            audio.preload = 'auto';
+            audio.volume = 0.8;
+            
+            // 处理音频加载错误
+            audio.addEventListener('error', function(e) {
+                console.warn('订单提醒音频加载失败:', e);
+                audio = null;
+            });
+            
+            audioInitialized = true;
+        } catch (e) {
+            console.warn('初始化音频对象失败:', e);
+        }
+    }
+    
+    // 播放提醒音频
+    function playNotifySound() {
+        if (!audio) {
+            initAudio();
+        }
+        
+        if (audio && audioInitialized) {
+            try {
+                // 重置音频到开始位置
+                audio.currentTime = 0;
+                var playPromise = audio.play();
+                
+                // 处理播放错误
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        console.warn('音频播放失败（可能是浏览器自动播放限制）:', error);
+                        // 如果自动播放失败，尝试在用户交互后播放
+                        var onceInteraction = function() {
+                            if (audio) {
+                                audio.play().catch(function() {});
+                            }
+                            document.removeEventListener('click', onceInteraction);
+                            document.removeEventListener('touchstart', onceInteraction);
+                            document.removeEventListener('keydown', onceInteraction);
+                        };
+                        document.addEventListener('click', onceInteraction, { once: true });
+                        document.addEventListener('touchstart', onceInteraction, { once: true });
+                        document.addEventListener('keydown', onceInteraction, { once: true });
+                    });
+                }
+            } catch (e) {
+                console.warn('播放音频时出错:', e);
+            }
+        }
+    }
+    
+    // 显示顶部通知
+    function showNotifyPopup(orderSn, orderId) {
+        var $popup = $('#inpack-notify-popup');
+        var $orderSnValue = $('#notify-order-sn-value');
+        
+        if ($orderSnValue.length) {
+            $orderSnValue.text(orderSn || '');
+        }
+        
+        // 设置跳转链接
+        var $gotoLink = $('#notify-goto-order');
+        if ($gotoLink.length && orderId) {
+            var orderUrl = BASE_URL + 'index.php?s=/store/tr_order/edit&id=' + orderId;
+            $gotoLink.attr('href', orderUrl);
+        }
+        
+        // 显示弹窗
+        $popup.fadeIn(300).addClass('show');
+        
+        // 自动关闭（5秒后）
+        setTimeout(function() {
+            hideNotifyPopup();
+        }, 5000);
+    }
+    
+    // 隐藏顶部通知
+    function hideNotifyPopup() {
+        var $popup = $('#inpack-notify-popup');
+        $popup.fadeOut(300, function() {
+            $(this).removeClass('show');
+        });
+    }
+    
+    // 检查是否有新订单
+    function checkNewInpack() {
+        // 检查设置是否启用（从后端获取，暂时默认启用）
+        // 这里可以通过AJAX获取设置，或者从页面变量中获取
+        // 为了简化，我们默认启用，如果需要可以在后端返回设置值
+        
+        // 只在页面可见时检查
+        if (document.hidden) {
+            return;
+        }
+        
+        $.ajax({
+            url: BASE_URL + 'index.php?s=/store/package.Index/getLatestInpackTime',
+            type: 'GET',
+            dataType: 'json',
+            timeout: 10000,
+            success: function(res) {
+                if (res.code == 1 && res.data) {
+                    // 检查是否启用提醒
+                    var notifyEnabled = res.data.notify_enabled !== false; // 默认为true
+                    
+                    if (!notifyEnabled) {
+                        // 如果未启用，直接返回，不进行后续检查
+                        return;
+                    }
+                    
+                    var latestTime = res.data.latest_time || 0;
+                    var latestId = res.data.latest_id || 0;
+                    var latestOrderSn = res.data.latest_order_sn || '';
+                    
+                    if (latestTime > 0 && latestId > 0) {
+                        // 获取本地存储的最后检查信息
+                        var lastCheck = localStorage.getItem(STORAGE_KEY);
+                        var lastCheckData = lastCheck ? JSON.parse(lastCheck) : { time: 0, id: 0 };
+                        
+                        // 检查是否有新订单
+                        if (latestTime > lastCheckData.time && latestId != lastCheckData.id) {
+                            // 有新订单，播放提醒
+                            playNotifySound();
+                            showNotifyPopup(latestOrderSn, latestId);
+                            
+                            // 更新本地存储
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        } else if (latestTime > lastCheckData.time) {
+                            // 时间更新了但ID相同，只更新时间
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        }
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                // 静默失败，不显示错误
+                console.warn('检查新订单失败:', status, error);
+            }
+        });
+    }
+    
+    // 初始化
+    $(document).ready(function() {
+        // 用户交互后初始化音频（解决浏览器自动播放限制）
+        var initOnInteraction = function() {
+            initAudio();
+            // 只初始化一次
+            $(document).off('click touchstart keydown', initOnInteraction);
+        };
+        $(document).on('click touchstart keydown', initOnInteraction);
+        
+        // 关闭通知按钮事件
+        $('#notify-close').on('click', function() {
+            hideNotifyPopup();
+        });
+        
+        // 点击通知区域外部也可关闭（可选）
+        $('#inpack-notify-popup').on('click', function(e) {
+            if ($(e.target).closest('#notify-goto-order, #notify-close').length === 0) {
+                // 点击通知内容区域，跳转到订单
+                var href = $('#notify-goto-order').attr('href');
+                if (href && href !== 'javascript:;') {
+                    window.location.href = href;
+                }
+            }
+        });
+        
+        // 首次检查（延迟2秒，避免页面加载时立即请求）
+        setTimeout(checkNewInpack, 2000);
+        
+        // 设置定时轮询
+        setInterval(checkNewInpack, POLL_INTERVAL);
+        
+        // 页面可见性变化时检查
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面变为可见时立即检查一次
+                setTimeout(checkNewInpack, 1000);
+            }
+        });
+    });
+})();
+</script>
+</body>
+
+</html>

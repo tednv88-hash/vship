@@ -1,0 +1,145 @@
+{{define "pages/orders_problems"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.orders_problems.title">問題件</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadOrders(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.order_sub.search_order_user" placeholder="搜尋訂單編號/用戶...">
+        </div>
+        <select class="form-select" id="filterProblemType" style="max-width:180px;">
+            <option value="" data-i18n="common.filter_all_problem_type">全部問題類型</option>
+            <option value="weight_diff" data-i18n="pages.orders_problems.weight_diff">重量差異</option>
+            <option value="damaged" data-i18n="pages.orders_problems.damaged">破損</option>
+            <option value="contraband" data-i18n="pages.orders_problems.contraband">違禁品</option>
+            <option value="address_error" data-i18n="pages.orders_problems.address_error">地址錯誤</option>
+            <option value="other" data-i18n="pages.orders_problems.other">其他</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.orders.order_number">訂單編號</th>
+                    <th data-i18n="pages.orders.user">用戶</th>
+                    <th data-i18n="pages.orders.route">線路</th>
+                    <th data-i18n="pages.orders_problems.problem_type">問題類型</th>
+                    <th data-i18n="pages.orders_problems.problem_description">問題描述</th>
+                    <th data-i18n="pages.orders.amount">金額</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.created_at">建立時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- 處理問題 Modal -->
+<div class="modal fade" id="resolveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-i18n="pages.orders_problems.resolve_title">處理問題件</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="resolveForm">
+                    <input type="hidden" id="resolveOrderId">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.orders_problems.resolve_action">處理方式</label>
+                        <select class="form-select" id="resolveAction" required>
+                            <option value="" data-i18n="common.please_select">請選擇</option>
+                            <option value="continue" data-i18n="pages.orders_problems.action_continue">繼續發貨</option>
+                            <option value="return" data-i18n="pages.orders_problems.action_return">退回</option>
+                            <option value="destroy" data-i18n="pages.orders_problems.action_destroy">銷毀</option>
+                            <option value="hold" data-i18n="pages.orders_problems.action_hold">暫扣</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.orders_problems.resolve_remark">處理備注</label>
+                        <textarea class="form-control" id="resolveRemark" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitResolve()" data-i18n="pages.orders_problems.confirm_resolve">確定處理</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+const limit = 20;
+
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function loadOrders(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const problem_type = document.getElementById('filterProblemType').value;
+    const params = buildQueryParams({ search, status: 'problem', problem_type });
+    loadTableData('/orders', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    const problemTypes = {
+        weight_diff: _t('pages.orders_problems.weight_diff', '重量差異'),
+        damaged: _t('pages.orders_problems.damaged', '破損'),
+        contraband: _t('pages.orders_problems.contraband', '違禁品'),
+        address_error: _t('pages.orders_problems.address_error', '地址錯誤'),
+        other: _t('pages.orders_problems.other', '其他')
+    };
+    return `<tr>
+        <td><a href="/orders/${item.id}">${item.order_no || '--'}</a></td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.route_name || '--'}</td>
+        <td><span class="badge bg-warning text-dark">${problemTypes[item.problem_type] || item.problem_type || '--'}</span></td>
+        <td>${item.problem_remark || '--'}</td>
+        <td>${formatMoney(item.total_amount)}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <a href="/orders/${item.id}" class="btn btn-sm btn-outline-primary" title="${_t('common.view', '查看')}"><i class="fas fa-eye"></i></a>
+                <button class="btn btn-sm btn-outline-success" onclick="openResolve('${item.id}')" title="${_t('pages.orders_problems.resolve', '處理')}"><i class="fas fa-wrench"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openResolve(id) {
+    document.getElementById('resolveOrderId').value = id;
+    document.getElementById('resolveAction').value = '';
+    document.getElementById('resolveRemark').value = '';
+    openModal('resolveModal');
+}
+
+async function submitResolve() {
+    const id = document.getElementById('resolveOrderId').value;
+    const action = document.getElementById('resolveAction').value;
+    const remark = document.getElementById('resolveRemark').value;
+    if (!action) { showToast(_t('pages.orders_problems.please_select_action', '請選擇處理方式'), 'error'); return; }
+    try {
+        await apiRequest('PUT', '/orders/' + id, { status: action === 'continue' ? 'pending_ship' : action, problem_remark: remark });
+        showToast(_t('pages.orders_problems.resolve_success', '處理成功'), 'success');
+        closeModal('resolveModal');
+        loadOrders(currentPage);
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadOrders(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadOrders(1)));
+document.getElementById('filterProblemType').addEventListener('change', () => loadOrders(1));
+</script>
+{{end}}

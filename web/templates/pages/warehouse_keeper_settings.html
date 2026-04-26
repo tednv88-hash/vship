@@ -1,0 +1,63 @@
+{{define "pages/warehouse_keeper_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouse_keeper_settings.title">倉管端設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="enableWarehouseKeeper" name="enabled">
+                    <label class="form-check-label" for="enableWarehouseKeeper" data-i18n="pages.warehouse_keeper_settings.enable">是否啟用倉管端</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_keeper_settings.name">倉管端名稱</label>
+                <input type="text" class="form-control" name="keeper_name" data-i18n-placeholder="pages.warehouse_keeper_settings.name_placeholder" placeholder="請輸入倉管端名稱">
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="allowSelfRegister" name="allow_self_register">
+                    <label class="form-check-label" for="allowSelfRegister" data-i18n="pages.warehouse_keeper_settings.allow_register">是否允許倉管自主注冊</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="scanInAutoConfirm" name="scan_in_auto_confirm">
+                    <label class="form-check-label" for="scanInAutoConfirm" data-i18n="pages.warehouse_keeper_settings.auto_confirm_in">掃碼入庫自動確認</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="scanOutAutoConfirm" name="scan_out_auto_confirm">
+                    <label class="form-check-label" for="scanOutAutoConfirm" data-i18n="pages.warehouse_keeper_settings.auto_confirm_out">掃碼出庫自動確認</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_keeper_settings.default_share_rate">默認分成比例(%)</label>
+                <input type="number" class="form-control" name="commission_rate" min="0" max="100" step="1" data-i18n-placeholder="pages.warehouse_keeper_settings.share_rate_placeholder" placeholder="0-100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_keeper_settings.settlement_cycle">結算週期(天)</label>
+                <input type="number" class="form-control" name="settlement_cycle" min="1" data-i18n-placeholder="pages.warehouse_keeper_settings.settlement_cycle_placeholder" placeholder="請輸入結算週期天數">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="pages.warehouse_keeper_settings.save_settings">保存設置</span></button>
+        </form>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const API_PATH = '/settings/warehouse-keeper';
+async function loadSettings() {
+    try {
+        const data = await apiRequest('GET', API_PATH);
+        if (data) populateForm('settingsForm', data);
+    } catch(e){}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try { await apiRequest('PUT', API_PATH, data); showToast(_t('pages.warehouse_keeper_settings.save_success', '保存成功')); } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

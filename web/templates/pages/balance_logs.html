@@ -1,0 +1,52 @@
+{{define "pages/balance_logs"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.balance_logs.title">餘額明細</h5>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.balance_logs.search_placeholder" placeholder="搜尋用戶名..."></div>
+        <select class="form-select form-select-sm" id="typeFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="pages.balance_logs.all_types">全部類型</option>
+            <option value="recharge" data-i18n="pages.balance_logs.type_recharge">充值</option>
+            <option value="spend" data-i18n="pages.balance_logs.type_spend">消費</option>
+            <option value="refund" data-i18n="pages.balance_logs.type_refund">退款</option>
+            <option value="adjust" data-i18n="pages.balance_logs.type_adjust">調整</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.balance_logs.user">用戶</th>
+                <th data-i18n="pages.balance_logs.change_amount">變動金額</th>
+                <th data-i18n="pages.balance_logs.balance">餘額</th>
+                <th data-i18n="pages.balance_logs.type">類型</th>
+                <th data-i18n="common.description">描述</th>
+                <th data-i18n="common.time">時間</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+let currentPage = 1; const limit = 20; const API_PATH = '/balance/logs';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const typeMap = { recharge:'充值', spend:'消費', refund:'退款', adjust:'調整' };
+const typeKeys = { recharge:'pages.balance_logs.type_recharge', spend:'pages.balance_logs.type_spend', refund:'pages.balance_logs.type_refund', adjust:'pages.balance_logs.type_adjust' };
+const typeColors = { recharge:'text-success', spend:'text-danger', refund:'text-info', adjust:'text-warning' };
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, type: document.getElementById('typeFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const type = _t(typeKeys[item.type], typeMap[item.type] || item.type || '--');
+    const color = typeColors[item.type] || '';
+    const changeVal = item.change > 0 ? `<span class="text-success">+${formatMoney(item.change)}</span>` : `<span class="text-danger">${formatMoney(item.change)}</span>`;
+    return `<tr><td>${item.user_name||'--'}</td><td>${changeVal}</td><td>${formatMoney(item.balance)}</td><td><span class="${color}">${type}</span></td><td>${item.description||'--'}</td><td>${formatDate(item.created_at)}</td></tr>`;
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

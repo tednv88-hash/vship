@@ -1,0 +1,107 @@
+{{define "pages/client_page_links"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.client_page_links.title">頁面鏈接</h5>
+        <small class="text-muted" data-i18n="pages.client_page_links.subtitle">小程序頁面路徑參考列表，可用於菜單配置和頁面跳轉。</small>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th data-i18n="pages.client_page_links.page_name">頁面名稱</th>
+                        <th data-i18n="pages.client_page_links.page_path">頁面路徑</th>
+                        <th style="width:80px;" data-i18n="common.actions">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td data-i18n="pages.client_page_links.link_miniprogram_home">小程序首頁</td><td><code>/pages/index/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/index/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>2</td><td data-i18n="pages.client_page_links.link_category">分類頁</td><td><code>/pages/category/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/category/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>3</td><td data-i18n="pages.client_page_links.link_cart">購物車</td><td><code>/pages/cart/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/cart/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>4</td><td data-i18n="pages.client_page_links.link_profile">個人中心</td><td><code>/pages/user/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/user/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>5</td><td data-i18n="pages.client_page_links.link_package_query">包裹查詢</td><td><code>/pages/package/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/package/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>6</td><td data-i18n="pages.client_page_links.link_package_detail">包裹詳情</td><td><code>/pages/package/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/package/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>7</td><td data-i18n="pages.client_page_links.link_consolidation_order">集運下單</td><td><code>/pages/order/create</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/order/create')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>8</td><td data-i18n="pages.client_page_links.link_my_orders">我的訂單</td><td><code>/pages/order/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/order/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>9</td><td data-i18n="pages.client_page_links.link_order_detail">訂單詳情</td><td><code>/pages/order/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/order/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>10</td><td data-i18n="pages.client_page_links.link_logistics_query">物流查詢</td><td><code>/pages/tracking/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/tracking/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>11</td><td data-i18n="pages.client_page_links.link_address_management">地址管理</td><td><code>/pages/address/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/address/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>12</td><td data-i18n="pages.client_page_links.link_add_address">新增地址</td><td><code>/pages/address/edit</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/address/edit')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>13</td><td data-i18n="pages.client_page_links.link_recharge_center">充值中心</td><td><code>/pages/recharge/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/recharge/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>14</td><td data-i18n="pages.client_page_links.link_balance_detail">餘額明細</td><td><code>/pages/balance/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/balance/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>15</td><td data-i18n="pages.client_page_links.link_points_detail">積分明細</td><td><code>/pages/points/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/points/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>16</td><td data-i18n="pages.client_page_links.link_coupons">優惠券</td><td><code>/pages/coupon/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/coupon/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>17</td><td data-i18n="pages.client_page_links.link_my_coupons">我的優惠券</td><td><code>/pages/coupon/my</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/coupon/my')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>18</td><td data-i18n="pages.client_page_links.link_help_center">幫助中心</td><td><code>/pages/help/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/help/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>19</td><td data-i18n="pages.client_page_links.link_help_detail">幫助詳情</td><td><code>/pages/help/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/help/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>20</td><td data-i18n="pages.client_page_links.link_article_list">文章列表</td><td><code>/pages/article/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/article/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>21</td><td data-i18n="pages.client_page_links.link_article_detail">文章詳情</td><td><code>/pages/article/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/article/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>22</td><td data-i18n="pages.client_page_links.link_about_us">關於我們</td><td><code>/pages/about/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/about/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>23</td><td data-i18n="pages.client_page_links.link_service_center">客服中心</td><td><code>/pages/service/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/service/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>24</td><td data-i18n="pages.client_page_links.link_settings">設置</td><td><code>/pages/setting/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/setting/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>25</td><td data-i18n="pages.client_page_links.link_login_register">登入/註冊</td><td><code>/pages/login/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/login/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>26</td><td data-i18n="pages.client_page_links.link_bind_phone">綁定手機</td><td><code>/pages/login/bindPhone</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/login/bindPhone')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>27</td><td data-i18n="pages.client_page_links.link_product_list">商品列表</td><td><code>/pages/goods/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/goods/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>28</td><td data-i18n="pages.client_page_links.link_product_detail">商品詳情</td><td><code>/pages/goods/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/goods/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>29</td><td data-i18n="pages.client_page_links.link_shop_orders">商城訂單</td><td><code>/pages/shop-order/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/shop-order/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>30</td><td data-i18n="pages.client_page_links.link_shop_order_detail">商城訂單詳情</td><td><code>/pages/shop-order/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/shop-order/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>31</td><td data-i18n="pages.client_page_links.link_buy_membership">購買會員</td><td><code>/pages/mys/userVip/userVip</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/mys/userVip/userVip')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>32</td><td data-i18n="pages.client_page_links.link_warehouse_address">倉庫地址</td><td><code>/pages/warehouse/address</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/warehouse/address')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>33</td><td data-i18n="pages.client_page_links.link_price_calculator">估價計算</td><td><code>/pages/estimate/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/estimate/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>34</td><td data-i18n="pages.client_page_links.link_distribution_center">分銷中心</td><td><code>/pages/dealer/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/dealer/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>35</td><td data-i18n="pages.client_page_links.link_distribution_apply">分銷申請</td><td><code>/pages/dealer/apply</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/dealer/apply')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>36</td><td data-i18n="pages.client_page_links.link_distribution_orders">分銷訂單</td><td><code>/pages/dealer/orders</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/dealer/orders')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>37</td><td data-i18n="pages.client_page_links.link_withdrawal_records">提現記錄</td><td><code>/pages/dealer/withdraw</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/dealer/withdraw')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>38</td><td data-i18n="pages.client_page_links.link_my_team">我的團隊</td><td><code>/pages/dealer/team</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/dealer/team')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>39</td><td data-i18n="pages.client_page_links.link_notification_messages">通知消息</td><td><code>/pages/message/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/message/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>40</td><td data-i18n="pages.client_page_links.link_check_in">簽到頁</td><td><code>/pages/signin/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/signin/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>41</td><td data-i18n="pages.client_page_links.link_favorites">收藏列表</td><td><code>/pages/favorite/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/favorite/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>42</td><td data-i18n="pages.client_page_links.link_browsing_history">瀏覽記錄</td><td><code>/pages/history/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/history/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>43</td><td data-i18n="pages.client_page_links.link_route_list">線路列表</td><td><code>/pages/route/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/route/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>44</td><td data-i18n="pages.client_page_links.link_route_detail">線路詳情</td><td><code>/pages/route/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/route/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>45</td><td data-i18n="pages.client_page_links.link_payment_page">支付頁面</td><td><code>/pages/payment/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/payment/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>46</td><td data-i18n="pages.client_page_links.link_payment_result">支付結果</td><td><code>/pages/payment/result</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/payment/result')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>47</td><td data-i18n="pages.client_page_links.link_after_sales">售後服務</td><td><code>/pages/refund/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/refund/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>48</td><td data-i18n="pages.client_page_links.link_after_sales_detail">售後詳情</td><td><code>/pages/refund/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/refund/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>49</td><td data-i18n="pages.client_page_links.link_review_list">評價列表</td><td><code>/pages/review/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/review/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>50</td><td data-i18n="pages.client_page_links.link_write_review">發表評價</td><td><code>/pages/review/create</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/review/create')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>51</td><td data-i18n="pages.client_page_links.link_notice_list">公告列表</td><td><code>/pages/notice/list</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/notice/list')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>52</td><td data-i18n="pages.client_page_links.link_notice_detail">公告詳情</td><td><code>/pages/notice/detail</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/notice/detail')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>53</td><td data-i18n="pages.client_page_links.link_search_page">搜索頁</td><td><code>/pages/search/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/search/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>54</td><td data-i18n="pages.client_page_links.link_transit_forecast">轉運預報</td><td><code>/pages/forecast/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/forecast/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>55</td><td data-i18n="pages.client_page_links.link_add_forecast">新增預報</td><td><code>/pages/forecast/create</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/forecast/create')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>56</td><td data-i18n="pages.client_page_links.link_consolidation">合箱/拆箱</td><td><code>/pages/package/merge</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/package/merge')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>57</td><td data-i18n="pages.client_page_links.link_value_added">增值服務</td><td><code>/pages/service/value-added</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/service/value-added')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>58</td><td data-i18n="pages.client_page_links.link_insurance">保險服務</td><td><code>/pages/service/insurance</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/service/insurance')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>59</td><td data-i18n="pages.client_page_links.link_prohibited_items">禁運品列表</td><td><code>/pages/prohibited/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/prohibited/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>60</td><td data-i18n="pages.client_page_links.link_identity_verification">身份認證</td><td><code>/pages/identity/verify</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/identity/verify')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>61</td><td data-i18n="pages.client_page_links.link_invite_friends">邀請好友</td><td><code>/pages/invite/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/invite/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>62</td><td data-i18n="pages.client_page_links.link_feedback">意見反饋</td><td><code>/pages/feedback/index</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/feedback/index')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>63</td><td data-i18n="pages.client_page_links.link_privacy_policy">隱私政策</td><td><code>/pages/policy/privacy</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/policy/privacy')"><i class="fas fa-copy"></i></button></td></tr>
+                    <tr><td>64</td><td data-i18n="pages.client_page_links.link_user_agreement">用戶協議</td><td><code>/pages/policy/terms</code></td><td><button class="btn btn-sm btn-outline-secondary" onclick="copyPath('/pages/policy/terms')"><i class="fas fa-copy"></i></button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function copyPath(path) {
+    navigator.clipboard.writeText(path).then(() => {
+        showToast(_t('pages.client_page_links.path_copied', '路徑已複製:') + ' ' + path, 'success');
+    }).catch(() => {
+        // Fallback
+        const input = document.createElement('input');
+        input.value = path;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        showToast(_t('pages.client_page_links.path_copied', '路徑已複製:') + ' ' + path, 'success');
+    });
+}
+</script>
+{{end}}

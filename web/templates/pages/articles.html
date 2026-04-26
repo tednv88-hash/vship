@@ -1,0 +1,69 @@
+{{define "pages/articles"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.articles.title">文章管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.articles.search_title" placeholder="搜尋文章標題..."></div>
+        <select class="form-select form-select-sm" id="categoryFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="pages.articles.all_categories">全部分類</option>
+            <option value="notice" data-i18n="pages.articles.cat_notice">公告</option>
+            <option value="help" data-i18n="pages.articles.cat_help">幫助</option>
+            <option value="news" data-i18n="pages.articles.cat_news">新聞</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.articles.article_title">標題</th><th data-i18n="pages.articles.category">分類</th><th data-i18n="common.sort">排序</th><th data-i18n="common.status">狀態</th><th data-i18n="common.add_time">建立時間</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.articles.add_article">新增文章</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="itemForm"><input type="hidden" name="id">
+        <div class="mb-3"><label class="form-label" data-i18n="pages.articles.article_title">標題 <span class="text-danger">*</span></label><input type="text" class="form-control" name="title" required></div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.articles.category">分類</label><select class="form-select" name="category"><option value="notice" data-i18n="pages.articles.cat_notice">公告</option><option value="help" data-i18n="pages.articles.cat_help">幫助</option><option value="news" data-i18n="pages.articles.cat_news">新聞</option></select></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="common.sort">排序</label><input type="number" class="form-control" name="sort_order" data-type="number" value="0"></div>
+        </div>
+        <div class="mb-3"><label class="form-label" data-i18n="pages.articles.content">內容 <span class="text-danger">*</span></label><textarea class="form-control" name="content" rows="10" required></textarea></div>
+        <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" name="status"><option value="active" data-i18n="pages.articles.published">發佈</option><option value="draft" data-i18n="pages.articles.draft">草稿</option><option value="inactive" data-i18n="common.disable">停用</option></select></div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+</div></div></div>
+<script>
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/articles';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const categoryMap = { notice: '公告', help: '幫助', news: '新聞' };
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, category: document.getElementById('categoryFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const cat = categoryMap[item.category] || item.category || '--';
+    const statusBadge = item.status === 'draft' ? `<span class="badge bg-secondary">${_t('pages.articles.draft', '草稿')}</span>` : getStatusBadge(item.status);
+    return `<tr><td>${item.title||'--'}</td><td>${cat}</td><td>${item.sort_order||0}</td><td>${statusBadge}</td><td>${formatDate(item.created_at)}</td><td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+}
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.articles.add_article', '新增文章');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.articles.add_article');
+    resetForm('itemForm'); openModal('formModal');
+}
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.articles.edit_article', '編輯文章');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.articles.edit_article');
+    try { const res = await apiRequest('GET', API_PATH+'/'+id); populateForm('itemForm', res.data||res); openModal('formModal'); } catch(e){}
+}
+async function saveItem() { const data = getFormData('itemForm'); try { if(editingId){await apiRequest('PUT',API_PATH+'/'+editingId,data);showToast(_t('common.update_success','更新成功'));}else{await apiRequest('POST',API_PATH,data);showToast(_t('common.create_success','建立成功'));} closeModal('formModal'); loadData(currentPage); } catch(e){} }
+async function deleteItem(id) { if(!confirmDelete(_t('pages.articles.confirm_delete','確定要刪除此文章嗎？')))return; try{await apiRequest('DELETE',API_PATH+'/'+id);showToast(_t('common.delete_success','刪除成功'));loadData(currentPage);}catch(e){} }
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

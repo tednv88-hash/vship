@@ -1,0 +1,62 @@
+{{define "pages/package_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.package_settings.title">包裹設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.package_settings.package_no_prefix">包裹編號前綴</label>
+                <input type="text" class="form-control" name="package_no_prefix" data-i18n-placeholder="pages.package_settings.prefix_example" placeholder="例: PKG">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="auto_calc_volume_weight" id="autoCalcVolumeWeight" value="true">
+                <label class="form-check-label" for="autoCalcVolumeWeight" data-i18n="pages.package_settings.auto_calc_volume_weight">自動計算體積重</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.package_settings.volume_weight_factor">體積重係數</label>
+                <input type="number" class="form-control" name="volume_weight_factor" data-type="number" step="1" value="5000">
+                <div class="form-text" data-i18n="pages.package_settings.volume_weight_formula">體積重 = 長 x 寬 x 高 / 係數</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.package_settings.default_currency">默認幣種</label>
+                <select class="form-select" name="default_currency" id="currencySelect">
+                    <option value="CNY">CNY - 人民幣</option>
+                    <option value="TWD">TWD - 新台幣</option>
+                    <option value="USD">USD - 美元</option>
+                    <option value="HKD">HKD - 港幣</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()" data-i18n="common.save_settings">儲存設置</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'package_setting';
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+            document.getElementById('autoCalcVolumeWeight').checked = !!val.auto_calc_volume_weight;
+        }
+    } catch (e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    data.auto_calc_volume_weight = document.getElementById('autoCalcVolumeWeight').checked;
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

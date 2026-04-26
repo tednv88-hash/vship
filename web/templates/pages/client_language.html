@@ -1,0 +1,240 @@
+{{define "pages/client_language"}}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.client_language.default_language">默認語言</h5>
+    </div>
+    <div class="card-body">
+        <form id="defaultLangForm">
+            <div class="mb-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_lang" id="langZhHans" value="zhHans">
+                    <label class="form-check-label" for="langZhHans" data-i18n="pages.client_language.simplified_chinese">简体中文</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_lang" id="langZhHant" value="zhHant" checked>
+                    <label class="form-check-label" for="langZhHant" data-i18n="pages.client_language.traditional_chinese">繁體中文</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_lang" id="langEn" value="en">
+                    <label class="form-check-label" for="langEn">English</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_lang" id="langRussia" value="russia">
+                    <label class="form-check-label" for="langRussia">Русский</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_lang" id="langKor" value="kor">
+                    <label class="form-check-label" for="langKor">한국어</label>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveDefaultLang()">
+                <i class="fas fa-save me-1"></i><span data-i18n="pages.client_language.save_default_language">儲存默認語言</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.client_language.language_list">語言列表</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="pages.client_language.add_language">新增語言</span>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.client_language.language_name">語言名稱</th>
+                    <th data-i18n="pages.client_language.english_name">英文名</th>
+                    <th data-i18n="pages.client_language.ai_translation_code">AI翻譯代碼</th>
+                    <th data-i18n="pages.client_language.is_enabled">是否啟用</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.client_language.add_language">新增語言</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_language.language_name">語言名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required data-i18n-placeholder="pages.client_language.language_name_placeholder" placeholder="例：日語">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_language.ai_translation_target">AI翻譯目標語言</label>
+                        <select class="form-select" name="langto">
+                            <option value="" data-i18n="common.please_select">請選擇</option>
+                            <option value="en">English (en)</option>
+                            <option value="jp">日本語 (jp)</option>
+                            <option value="fra">Français (fra)</option>
+                            <option value="kor">한국어 (kor)</option>
+                            <option value="ara">العربية (ara)</option>
+                            <option value="th">ไทย (th)</option>
+                            <option value="vie">Tiếng Việt (vie)</option>
+                            <option value="ru">Русский (ru)</option>
+                            <option value="spa">Español (spa)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_language.english_name_full">英文名稱</label>
+                        <input type="text" class="form-control" name="enname" data-i18n-placeholder="pages.client_language.english_name_placeholder" placeholder="例：Japanese">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.status">狀態</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" checked>
+                            <label class="form-check-label" for="statusActive" data-i18n="common.enable">啟用</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive">
+                            <label class="form-check-label" for="statusInactive" data-i18n="common.disable">停用</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/languages';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+// Default language settings
+async function loadDefaultLang() {
+    try {
+        const res = await apiRequest('GET', '/app-settings?setting_type=language');
+        const list = Array.isArray(res.data) ? res.data : [];
+        if (list.length > 0) {
+            const cfg = list[0].config || {};
+            const lang = cfg.default_lang || cfg.default_language;
+            const radio = document.querySelector(`input[name="default_lang"][value="${lang}"]`);
+            if (radio) radio.checked = true;
+        }
+    } catch (e) {}
+}
+
+async function saveDefaultLang() {
+    const radio = document.querySelector('input[name="default_lang"]:checked');
+    const selected = radio ? radio.value : 'zhHant';
+    try {
+        const res = await apiRequest('GET', '/app-settings?setting_type=language');
+        const list = Array.isArray(res.data) ? res.data : [];
+        if (list.length > 0) {
+            await apiRequest('PUT', '/app-settings/' + list[0].id, {
+                config: { default_lang: selected }
+            });
+        } else {
+            await apiRequest('POST', '/app-settings', {
+                setting_type: 'language',
+                config: { default_lang: selected }
+            });
+        }
+        showToast(_t('pages.client_language.default_language_saved', '默認語言已保存'), 'success');
+    } catch (e) {}
+}
+
+// Language list CRUD
+function loadData(page) {
+    currentPage = page;
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit);
+}
+
+function renderRow(item) {
+    const statusBadge = item.status === 'active'
+        ? `<span class="badge bg-success">${_t('common.enable', '啟用')}</span>`
+        : `<span class="badge bg-secondary">${_t('common.disable', '停用')}</span>`;
+    return `<tr>
+        <td>${item.name || '--'}</td>
+        <td>${item.enname || '--'}</td>
+        <td><code>${item.langto || '--'}</code></td>
+        <td>${statusBadge}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-info" onclick="goTranslation('${item.id}')"><i class="fas fa-language"></i> <span>${_t('pages.client_language.set_translation', '設置翻譯')}</span></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.client_language.add_language', '新增語言');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_language.add_language');
+    resetForm('itemForm');
+    document.getElementById('statusActive').checked = true;
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.client_language.edit_language', '編輯語言');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_language.edit_language');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const data = res.data || res;
+        populateForm('itemForm', data);
+        if (data.status === 'active') document.getElementById('statusActive').checked = true;
+        else document.getElementById('statusInactive').checked = true;
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    const statusRadio = document.querySelector('input[name="status"]:checked');
+    data.status = statusRadio ? statusRadio.value : 'active';
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.client_language.confirm_delete', '確定要刪除此語言嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+function goTranslation(id) {
+    showToast(_t('pages.client_language.translation_in_progress', '翻譯設置功能開發中'), 'info');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadDefaultLang();
+    loadData(1);
+});
+</script>
+{{end}}

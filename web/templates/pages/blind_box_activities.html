@@ -1,0 +1,70 @@
+{{define "pages/blind_box_activities"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.blind_box.title">盲盒活動</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.blind_box.search_activity" placeholder="搜尋活動名稱..."></div>
+        <select class="form-select form-select-sm" id="statusFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="pages.blind_box.in_progress">進行中</option>
+            <option value="inactive" data-i18n="pages.blind_box.inactive">已停用</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.blind_box.activity_name">活動名稱</th><th data-i18n="pages.blind_box.cost_points">消耗積分</th><th data-i18n="pages.blind_box.total_draws">總抽獎次數</th><th data-i18n="common.status">狀態</th><th data-i18n="common.time">時間</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.blind_box.add_activity">新增活動</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="itemForm"><input type="hidden" name="id">
+        <div class="mb-3"><label class="form-label" data-i18n="pages.blind_box.activity_name">活動名稱 <span class="text-danger">*</span></label><input type="text" class="form-control" name="name" required></div>
+        <div class="mb-3"><label class="form-label" data-i18n="pages.blind_box.activity_description">活動描述</label><textarea class="form-control" name="description" rows="3"></textarea></div>
+        <div class="mb-3"><label class="form-label" data-i18n="pages.blind_box.image_url">活動圖片 URL</label><input type="text" class="form-control" name="image_url" placeholder="https://..."></div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.blind_box.cost_points">消耗積分</label><input type="number" class="form-control" name="cost_points" data-type="number"></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" name="status"><option value="active" data-i18n="pages.blind_box.in_progress">進行中</option><option value="inactive" data-i18n="pages.blind_box.disabled">停用</option></select></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.blind_box.start_time">開始時間</label><input type="datetime-local" class="form-control" name="start_at"></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.blind_box.end_time">結束時間</label><input type="datetime-local" class="form-control" name="end_at"></div>
+        </div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+</div></div></div>
+<script>
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/blind-box/activities';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('statusFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const period = `${item.start_at ? formatDate(item.start_at) : '--'} ~ ${item.end_at ? formatDate(item.end_at) : '--'}`;
+    return `<tr><td>${item.name||'--'}</td><td>${item.cost_points||0}</td><td>${item.total_draws||0}</td><td>${getStatusBadge(item.status)}</td><td><small>${period}</small></td><td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+}
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.blind_box.add_activity', '新增活動');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.blind_box.add_activity');
+    resetForm('itemForm'); openModal('formModal');
+}
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.blind_box.edit_activity', '編輯活動');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.blind_box.edit_activity');
+    try { const res = await apiRequest('GET', API_PATH+'/'+id); populateForm('itemForm', res.data||res); openModal('formModal'); } catch(e){}
+}
+async function saveItem() { const data = getFormData('itemForm'); try { if(editingId){await apiRequest('PUT',API_PATH+'/'+editingId,data);showToast(_t('common.update_success','更新成功'));}else{await apiRequest('POST',API_PATH,data);showToast(_t('common.create_success','建立成功'));} closeModal('formModal'); loadData(currentPage); } catch(e){} }
+async function deleteItem(id) { if(!confirmDelete())return; try{await apiRequest('DELETE',API_PATH+'/'+id);showToast(_t('common.delete_success','刪除成功'));loadData(currentPage);}catch(e){} }
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

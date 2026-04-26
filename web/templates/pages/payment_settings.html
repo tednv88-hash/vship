@@ -1,0 +1,142 @@
+{{define "pages/payment_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.payment_settings.title">支付設置</h5>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="paymentTabs">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('wechat_pay', event)" data-i18n="pages.payment_settings.wechat_pay">微信支付</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('alipay', event)" data-i18n="pages.payment_settings.alipay">支付寶</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('offline', event)" data-i18n="pages.payment_settings.offline_payment">線下支付</a></li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <!-- 微信支付 -->
+            <div class="tab-pane" id="tab-wechat_pay">
+                <form id="form-wechat_pay">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="enabled" id="wechatPayEnabled" value="true">
+                        <label class="form-check-label" for="wechatPayEnabled" data-i18n="pages.payment_settings.enable_wechat">啟用微信支付</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.merchant_id">商戶號 (Mch ID)</label>
+                        <input type="text" class="form-control" name="mch_id">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-control" name="api_key">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Secret</label>
+                        <input type="password" class="form-control" name="api_secret">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.cert_path">證書路徑</label>
+                        <input type="text" class="form-control" name="cert_path">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="savePayment('wechat_pay')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- 支付寶 -->
+            <div class="tab-pane d-none" id="tab-alipay">
+                <form id="form-alipay">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="enabled" id="alipayEnabled" value="true">
+                        <label class="form-check-label" for="alipayEnabled" data-i18n="pages.payment_settings.enable_alipay">啟用支付寶</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">App ID</label>
+                        <input type="text" class="form-control" name="app_id">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.app_private_key">應用私鑰</label>
+                        <textarea class="form-control" name="private_key" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.alipay_public_key">支付寶公鑰</label>
+                        <textarea class="form-control" name="public_key" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="savePayment('alipay')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+
+            <!-- 線下支付 -->
+            <div class="tab-pane d-none" id="tab-offline">
+                <form id="form-offline">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="enabled" id="offlineEnabled" value="true">
+                        <label class="form-check-label" for="offlineEnabled" data-i18n="pages.payment_settings.enable_offline">啟用線下支付</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.payee_name">收款帳戶名</label>
+                        <input type="text" class="form-control" name="account_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.payee_bank">收款銀行</label>
+                        <input type="text" class="form-control" name="bank_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.payee_account">收款帳號</label>
+                        <input type="text" class="form-control" name="account_number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.payment_settings.payment_instructions">付款說明</label>
+                        <textarea class="form-control" name="instructions" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="savePayment('offline')" data-i18n="common.save">儲存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'payment_setting';
+let currentTab = 'wechat_pay';
+let settingsData = {};
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function switchTab(tab, event) {
+    if (event) event.preventDefault();
+    document.querySelectorAll('#paymentTabs .nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('d-none'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.remove('d-none');
+    currentTab = tab;
+    loadTabData(tab);
+}
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            settingsData = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+        }
+        loadTabData('wechat_pay');
+    } catch (e) {}
+}
+
+function loadTabData(tab) {
+    const tabData = settingsData[tab] || {};
+    populateForm('form-' + tab, tabData);
+    const enabledMap = { wechat_pay: 'wechatPayEnabled', alipay: 'alipayEnabled', offline: 'offlineEnabled' };
+    const el = document.getElementById(enabledMap[tab]);
+    if (el) el.checked = !!tabData.enabled;
+}
+
+async function savePayment(tab) {
+    const data = getFormData('form-' + tab);
+    const enabledMap = { wechat_pay: 'wechatPayEnabled', alipay: 'alipayEnabled', offline: 'offlineEnabled' };
+    data.enabled = document.getElementById(enabledMap[tab]).checked;
+    settingsData[tab] = data;
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(settingsData) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

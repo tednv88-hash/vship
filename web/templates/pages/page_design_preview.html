@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif; background: #f5f5f5; }
+        
+        /* Phone frame for desktop */
+        .phone-frame {
+            max-width: 420px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 32px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        @media (max-width: 480px) {
+            .phone-frame { margin: 0; border-radius: 0; box-shadow: none; }
+        }
+
+        /* Title bar */
+        .title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .title-bar img { height: 28px; }
+        .title-bar h1 { font-size: 18px; margin: 0; }
+
+        /* Search bar */
+        .diy-search {
+            padding: 8px 16px;
+        }
+        .diy-search-inner {
+            display: flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            color: #999;
+            font-size: 14px;
+        }
+        .diy-search-inner::before { content: '🔍'; margin-right: 8px; font-size: 14px; }
+
+        /* Banner */
+        .diy-banner {
+            position: relative;
+            overflow: hidden;
+        }
+        .diy-banner .slides {
+            display: flex;
+            animation: bannerSlide var(--slide-duration, 8.4s) infinite;
+        }
+        .diy-banner .slides img {
+            min-width: 100%;
+            width: 100%;
+            display: block;
+        }
+        .diy-banner .dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+        .diy-banner .dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+        .diy-banner .dots span:first-child { opacity: 1; }
+
+        /* Notice */
+        .diy-notice {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            font-size: 13px;
+            gap: 8px;
+        }
+        .diy-notice .notice-icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .diy-notice .notice-text { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        /* NavBar grid */
+        .diy-navbar {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 16px 8px 8px;
+            background: #fff;
+        }
+        .diy-navbar .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            cursor: pointer;
+        }
+        .diy-navbar .nav-item img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 6px;
+            object-fit: contain;
+        }
+        .diy-navbar .nav-item span {
+            font-size: 11px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Image Single */
+        .diy-image-single img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Goods grid */
+        .diy-goods-section {
+            padding: 12px;
+        }
+        .diy-goods-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .diy-goods-header h3 { font-size: 16px; font-weight: bold; color: #333; }
+        .diy-goods-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .diy-goods-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .goods-col-1 .diy-goods-card { width: 100%; }
+        .goods-col-2 .diy-goods-card { width: calc(50% - 5px); }
+        .goods-col-3 .diy-goods-card { width: calc(33.33% - 7px); }
+        .diy-goods-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        .diy-goods-card .goods-info {
+            padding: 8px 10px 12px;
+        }
+        .diy-goods-card .goods-name {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .diy-goods-card .goods-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e64340;
+            margin-top: 4px;
+        }
+        .diy-goods-card .goods-line-price {
+            font-size: 11px;
+            color: #ccc;
+            text-decoration: line-through;
+            margin-left: 6px;
+        }
+        .diy-goods-card .goods-sales {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        /* List display for goods */
+        .goods-display-list .diy-goods-card {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+        .goods-display-list .diy-goods-card img {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+        }
+        .goods-display-list .diy-goods-card .goods-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Blank */
+        .diy-blank { background: transparent; }
+
+        /* Rich text */
+        .diy-richtext { padding: 12px 16px; }
+        .diy-richtext img { max-width: 100%; }
+
+        /* Article */
+        .diy-article { padding: 12px 16px; }
+
+        /* Bottom safe area */
+        .safe-bottom { height: 80px; }
+
+        /* Banner animation */
+        @keyframes bannerSlide {
+            0%, 30% { transform: translateX(0); }
+            33.33%, 63.33% { transform: translateX(-100%); }
+            66.66%, 96.66% { transform: translateX(-200%); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="app">
+    </div>
+
+    <script>
+        const PAGE_ID = "{{.PageID}}";
+        const API_BASE = "";
+
+        async function loadPageDesign() {
+            try {
+                // Try public MP endpoint first (no auth needed)
+                let resp = await fetch(`${API_BASE}/api/v1/mp/page-designs?type=home&is_default=true`);
+                let data;
+                if (resp.ok) {
+                    data = await resp.json();
+                    // The list endpoint returns array or paginated result
+                    if (Array.isArray(data)) {
+                        data = data.find(d => d.id === PAGE_ID) || data[0];
+                    } else if (data.list) {
+                        data = data.list.find(d => d.id === PAGE_ID) || data.list[0];
+                    } else if (data.items) {
+                        data = data.items.find(d => d.id === PAGE_ID) || data.items[0];
+                    }
+                }
+                
+                if (!data || !data.page_data) {
+                    // Fallback: try with auth token from localStorage
+                    const token = localStorage.getItem('auth_token');
+                    if (token && PAGE_ID) {
+                        resp = await fetch(`${API_BASE}/api/v1/page-designs/${PAGE_ID}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (resp.ok) {
+                            data = await resp.json();
+                        }
+                    }
+                }
+
+                if (data && data.page_data) {
+                    renderPage(data.page_data);
+                } else {
+                    document.getElementById('app').innerHTML = '<div style="padding:40px;text-align:center;color:#999;">無法載入頁面設計資料</div>';
+                }
+            } catch (err) {
+                console.error('Failed to load page design:', err);
+                document.getElementById('app').innerHTML = '<div style="padding:40px;text-align:center;color:#999;">載入失敗: ' + err.message + '</div>';
+            }
+        }
+
+        function renderPage(pageData) {
+            const container = document.getElementById('app');
+            let html = '';
+
+            // Title bar
+            const page = pageData.page || {};
+            const params = page.params || {};
+            const style = page.style || {};
+            const bgColor = style.titleBackgroundColor || '#0f3a57';
+            const textColor = style.titleTextColor || 'white';
+            
+            html += `<div class="title-bar" style="background:${bgColor}">`;
+            html += `<img src="/static/img/diy/logo/logo.svg" alt="${params.title || ''}">`;
+            html += `</div>`;
+
+            // Render items
+            const items = pageData.items || [];
+            for (const item of items) {
+                html += renderItem(item);
+            }
+
+            html += '<div class="safe-bottom"></div>';
+            container.innerHTML = html;
+
+            // Initialize banner slideshow
+            initBannerSlideshow();
+        }
+
+        function renderItem(item) {
+            switch (item.type) {
+                case 'banner': return renderBanner(item);
+                case 'notice': return renderNotice(item);
+                case 'navBar': return renderNavBar(item);
+                case 'imageSingle': return renderImageSingle(item);
+                case 'goods': return renderGoods(item);
+                case 'search': return renderSearch(item);
+                case 'blank': return renderBlank(item);
+                case 'richText': return renderRichText(item);
+                default: return '';
+            }
+        }
+
+        function renderBanner(item) {
+            const data = item.data || [];
+            if (!data.length) return '';
+            const btnColor = (item.style || {}).btnColor || '#fff';
+            const interval = parseInt((item.params || {}).interval) || 2800;
+            const totalDuration = interval * data.length;
+
+            let html = `<div class="diy-banner" style="--slide-duration:${totalDuration}ms">`;
+            html += '<div class="slides">';
+            for (const slide of data) {
+                html += `<img src="${slide.imgUrl}" alt="">`;
+            }
+            html += '</div>';
+            if (data.length > 1) {
+                html += '<div class="dots">';
+                for (let i = 0; i < data.length; i++) {
+                    html += `<span style="background:${btnColor}"></span>`;
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderNotice(item) {
+            const p = item.params || {};
+            const s = item.style || {};
+            const bg = s.background || '#fffbe8';
+            const textColor = s.textColor || '#666';
+            let html = `<div class="diy-notice" style="background:${bg}">`;
+            if (p.icon) {
+                html += `<img class="notice-icon" src="${p.icon}" alt="">`;
+            }
+            html += `<span class="notice-text" style="color:${textColor}">${p.text || ''}</span>`;
+            html += '</div>';
+            return html;
+        }
+
+        function renderNavBar(item) {
+            const data = item.data || [];
+            const s = item.style || {};
+            const bg = s.background || '#fff';
+            const cols = parseInt(s.rowsNum) || 5;
+            const itemWidth = (100 / cols) + '%';
+
+            let html = `<div class="diy-navbar" style="background:${bg}">`;
+            for (const nav of data) {
+                html += `<div class="nav-item" style="width:${itemWidth}">`;
+                html += `<img src="${nav.imgUrl}" alt="${nav.text}">`;
+                html += `<span style="color:${nav.color || '#333'}">${nav.text}</span>`;
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderImageSingle(item) {
+            const data = item.data || [];
+            const s = item.style || {};
+            if (!data.length) return '';
+            let html = `<div class="diy-image-single" style="background:${s.background || '#fff'};padding:${s.paddingTop||0}px ${s.paddingLeft||0}px">`;
+            for (const img of data) {
+                html += `<img src="${img.imgUrl}" alt="">`;
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderGoods(item) {
+            const s = item.style || {};
+            const show = s.show || {};
+            const col = parseInt(s.column) || 2;
+            const display = s.display || 'grid';
+            const bg = s.background || '#f5f5f5';
+            const data = (item.data && item.data.length) ? item.data : (item.defaultData || []);
+            if (!data.length) return '';
+
+            const displayClass = display === 'list' ? 'goods-display-list' : '';
+
+            let html = `<div class="diy-goods-section" style="background:${bg}">`;
+            html += `<div class="diy-goods-grid goods-col-${col} ${displayClass}">`;
+            for (const g of data) {
+                html += '<div class="diy-goods-card">';
+                html += `<img src="${g.image || g.goods_image || ''}" alt="${g.goods_name || ''}">`;
+                html += '<div class="goods-info">';
+                if (show.goodsName !== '0') {
+                    html += `<div class="goods-name">${g.goods_name || ''}</div>`;
+                }
+                if (show.goodsPrice !== '0') {
+                    html += `<div><span class="goods-price">¥${g.goods_price || '0'}</span>`;
+                    if (show.linePrice !== '0' && g.line_price && parseFloat(g.line_price) > 0) {
+                        html += `<span class="goods-line-price">¥${g.line_price}</span>`;
+                    }
+                    html += '</div>';
+                }
+                if (show.goodsSales !== '0' && g.goods_sales) {
+                    html += `<div class="goods-sales">已售 ${g.goods_sales}</div>`;
+                }
+                if (show.sellingPoint !== '0' && g.selling_point) {
+                    html += `<div class="goods-sales" style="color:#e64340">${g.selling_point}</div>`;
+                }
+                html += '</div></div>';
+            }
+            html += '</div></div>';
+            return html;
+        }
+
+        function renderSearch(item) {
+            const s = item.style || {};
+            return `<div class="diy-search" style="background:${s.background || '#fff'}">
+                <div class="diy-search-inner" style="background:${s.searchBackground || '#f0f0f0'}">
+                    ${s.placeholder || '搜尋商品'}
+                </div>
+            </div>`;
+        }
+
+        function renderBlank(item) {
+            const s = item.style || {};
+            const height = parseInt(s.height) || 20;
+            return `<div class="diy-blank" style="height:${height}px;background:${s.background || 'transparent'}"></div>`;
+        }
+
+        function renderRichText(item) {
+            const p = item.params || {};
+            return `<div class="diy-richtext">${p.content || ''}</div>`;
+        }
+
+        function initBannerSlideshow() {
+            const banners = document.querySelectorAll('.diy-banner');
+            banners.forEach(banner => {
+                const slides = banner.querySelector('.slides');
+                const images = slides ? slides.querySelectorAll('img') : [];
+                const dots = banner.querySelectorAll('.dots span');
+                if (images.length <= 1) return;
+
+                let current = 0;
+                const count = images.length;
+                const duration = parseInt(getComputedStyle(banner).getPropertyValue('--slide-duration')) || 8400;
+                const interval = duration / count;
+
+                // Remove CSS animation, use JS instead
+                slides.style.animation = 'none';
+                slides.style.transition = 'transform 0.5s ease';
+
+                setInterval(() => {
+                    current = (current + 1) % count;
+                    slides.style.transform = `translateX(-${current * 100}%)`;
+                    dots.forEach((dot, i) => {
+                        dot.style.opacity = i === current ? '1' : '0.5';
+                    });
+                }, interval);
+            });
+        }
+
+        // Load on page ready
+        loadPageDesign();
+    </script>
+</body>
+</html>

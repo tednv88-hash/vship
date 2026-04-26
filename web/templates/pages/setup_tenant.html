@@ -1,0 +1,203 @@
+{{define "pages/setup_tenant"}}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">建立您的公司 - vShip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/static/css/login.css" rel="stylesheet">
+    <style>
+        .vlogin-lang-switcher {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+        }
+        .vlogin-lang-switcher .dropdown-toggle {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: #5f6368;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .vlogin-lang-switcher .dropdown-toggle:hover {
+            background: #fff;
+            border-color: #bdc1c6;
+        }
+        .vlogin-lang-switcher .dropdown-menu {
+            min-width: 160px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            border: 1px solid #dadce0;
+        }
+        .vlogin-lang-switcher .dropdown-item {
+            font-size: 13px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .vlogin-lang-switcher .dropdown-item .lang-check {
+            display: none;
+            color: #05ce78;
+        }
+        .vlogin-lang-switcher .dropdown-item.active .lang-check {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="vlogin-lang-switcher dropdown">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-globe2"></i>
+            <span id="currentLangLabel">繁體中文</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item lang-option" href="javascript:void(0)" data-lang="zh">繁體中文 <i class="bi bi-check-lg lang-check"></i></a></li>
+            <li><a class="dropdown-item lang-option" href="javascript:void(0)" data-lang="zh-CN">简体中文 <i class="bi bi-check-lg lang-check"></i></a></li>
+            <li><a class="dropdown-item lang-option" href="javascript:void(0)" data-lang="en">English <i class="bi bi-check-lg lang-check"></i></a></li>
+        </ul>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <h1 class="login-title" data-i18n="setup_tenant.title">歡迎使用 vShip</h1>
+                <p class="login-subtitle" data-i18n="setup_tenant.subtitle">只需一步，即可開始您的集運業務</p>
+            </div>
+            <form id="tenantForm" autocomplete="on">
+                <div class="mb-3">
+                    <label for="tenantName" class="form-label" data-i18n="setup_tenant.company_name">公司/團隊名稱</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-building"></i></span>
+                        <input type="text" class="form-control" id="tenantName" name="name" data-i18n-placeholder="setup_tenant.company_placeholder" placeholder="例如：V-sys 集運" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="tenantSubdomain" class="form-label" data-i18n="setup_tenant.subdomain_label">公司代碼 (Subdomain)</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="tenantSubdomain" name="subdomain" data-i18n-placeholder="setup_tenant.subdomain_placeholder" placeholder="英數小寫，例如：vsys" required pattern="[a-z0-9-]+" minlength="3">
+                        <span class="input-group-text">.vship.com</span>
+                    </div>
+                    <div class="form-text" data-i18n="setup_tenant.subdomain_help">這是您公司的專屬網址，設定後不能更改。</div>
+                </div>
+                <div id="tenantError" class="alert alert-danger d-none" role="alert"></div>
+                <button type="submit" class="btn btn-login w-100" id="submitBtn">
+                    <span class="btn-text" data-i18n="setup_tenant.submit_btn">建立並進入系統</span>
+                    <span class="btn-loading d-none">
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span><span data-i18n="setup_tenant.creating">建立中...</span>
+                    </span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/i18n.js"></script>
+    <script>
+        // Helper: get translated string with fallback
+        function _t(key, fallback) {
+            if (typeof I18n !== 'undefined' && I18n.t) {
+                return I18n.t(key, fallback);
+            }
+            return fallback || key;
+        }
+
+        // ===== Language switcher =====
+        (function initLangSwitcher() {
+            var langLabels = { 'zh': '繁體中文', 'zh-CN': '简体中文', 'en': 'English' };
+            var currentLang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : 'zh';
+            var labelEl = document.getElementById('currentLangLabel');
+            if (labelEl) labelEl.textContent = langLabels[currentLang] || '繁體中文';
+
+            document.querySelectorAll('.lang-option').forEach(function(item) {
+                if (item.getAttribute('data-lang') === currentLang) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+                item.addEventListener('click', function() {
+                    var lang = this.getAttribute('data-lang');
+                    if (typeof I18n !== 'undefined') {
+                        I18n.setLang(lang);
+                    }
+                });
+            });
+        })();
+
+        // Update page title
+        if (typeof I18n !== 'undefined') {
+            I18n.whenReady(function() {
+                var titleEl = document.getElementById('pageTitle');
+                if (titleEl) titleEl.textContent = _t('setup_tenant.page_title', '建立您的公司 - vShip');
+            });
+        }
+
+        function setBtnLoading(btn, loading) {
+            btn.querySelector('.btn-text').classList.toggle('d-none', loading);
+            btn.querySelector('.btn-loading').classList.toggle('d-none', !loading);
+            btn.disabled = loading;
+        }
+
+        document.getElementById('tenantSubdomain').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        });
+
+        document.getElementById('tenantForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const errBox = document.getElementById('tenantError');
+            const name = document.getElementById('tenantName').value.trim();
+            const subdomain = document.getElementById('tenantSubdomain').value.trim();
+            const token = document.cookie.match(/(^|;\s*)token=([^;]*)/)?.[2] || '';
+
+            setBtnLoading(btn, true);
+            errBox.classList.add('d-none');
+
+            if (!name || !subdomain) {
+                errBox.textContent = _t('setup_tenant.fill_all_fields', '請填寫所有欄位');
+                errBox.classList.remove('d-none');
+                setBtnLoading(btn, false);
+                return;
+            }
+
+            try {
+                const resp = await fetch('/api/v1/user/setup-tenant', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    body: JSON.stringify({ name, subdomain }),
+                });
+                const data = await resp.json();
+                if (resp.ok && data.token) {
+                    document.cookie = 'token=' + data.token + '; path=/; SameSite=Strict';
+                    window.location.href = '/dashboard';
+                } else {
+                    errBox.textContent = data.error || data.message || _t('setup_tenant.create_failed', '建立失敗，請重試');
+                    errBox.classList.remove('d-none');
+                }
+            } catch (err) {
+                errBox.textContent = _t('setup_tenant.network_error', '網路錯誤，請稍後再試');
+                errBox.classList.remove('d-none');
+            } finally {
+                setBtnLoading(btn, false);
+            }
+        });
+    </script>
+</body>
+</html>
+{{end}}

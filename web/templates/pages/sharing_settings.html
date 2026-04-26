@@ -1,0 +1,58 @@
+{{define "pages/sharing_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.sharing_settings.title">分享設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sharing_settings.enable_sharing">是否開啟分享</label>
+                <select class="form-select" name="enabled">
+                    <option value="true" data-i18n="pages.sharing_settings.open">開啟</option>
+                    <option value="false" data-i18n="pages.sharing_settings.close">關閉</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sharing_settings.commission_rate">分享佣金比例 (%)</label>
+                <input type="number" class="form-control" name="commission_rate" step="0.01" min="0" max="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sharing_settings.settlement_method">佣金結算方式</label>
+                <select class="form-select" name="settlement_type">
+                    <option value="auto" data-i18n="pages.sharing_settings.auto_settlement">自動結算</option>
+                    <option value="manual" data-i18n="pages.sharing_settings.manual_settlement">手動結算</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sharing_settings.validity_days">分享有效期 (天)</label>
+                <input type="number" class="form-control" name="validity_days" min="1">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                <i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span>
+            </button>
+        </form>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'sharing_setting';
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings?key=' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const settings = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', settings);
+        }
+    } catch(e) {}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings', { key: SETTING_KEY, value: data });
+        showToast(_t('pages.sharing_settings.settings_saved', '設置已儲存'), 'success');
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

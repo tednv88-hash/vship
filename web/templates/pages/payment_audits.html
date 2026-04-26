@@ -1,0 +1,130 @@
+{{define "pages/payment_audits"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.payment_audits.title">付款審核</h5>
+        <div>
+            <span class="badge bg-warning me-2" id="pendingCount" data-i18n="pages.payment_audits.pending_count">待審核: --</span>
+            <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.payment_audits.search_placeholder" placeholder="搜尋訂單號/用戶..."></div>
+        <select class="form-select form-select-sm" id="statusFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.all_status">全部狀態</option>
+            <option value="pending" selected data-i18n="pages.payment_audits.status_pending">待審核</option>
+            <option value="approved" data-i18n="pages.payment_audits.status_approved">已通過</option>
+            <option value="rejected" data-i18n="pages.payment_audits.status_rejected">已拒絕</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.payment_audits.order_no">訂單號</th>
+                <th data-i18n="pages.payment_audits.user">用戶</th>
+                <th data-i18n="common.amount">金額</th>
+                <th data-i18n="pages.payment_audits.payment_method">付款方式</th>
+                <th data-i18n="pages.payment_audits.submit_time">提交時間</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Detail / Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" data-i18n="pages.payment_audits.audit_detail">付款審核詳情</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <table class="table table-sm table-borderless">
+                <tr><td class="text-muted" style="width:100px" data-i18n="pages.payment_audits.order_no">訂單號</td><td id="detailOrderNo">--</td></tr>
+                <tr><td class="text-muted" data-i18n="pages.payment_audits.user">用戶</td><td id="detailUser">--</td></tr>
+                <tr><td class="text-muted" data-i18n="common.amount">金額</td><td id="detailAmount">--</td></tr>
+                <tr><td class="text-muted" data-i18n="pages.payment_audits.payment_method">付款方式</td><td id="detailMethod">--</td></tr>
+                <tr><td class="text-muted" data-i18n="pages.payment_audits.submit_time">提交時間</td><td id="detailTime">--</td></tr>
+                <tr><td class="text-muted" data-i18n="pages.payment_audits.current_status">目前狀態</td><td id="detailStatus">--</td></tr>
+            </table>
+        </div>
+        <div class="mb-3" id="remarkSection">
+            <label class="form-label" data-i18n="common.remark">備註</label>
+            <textarea class="form-control" id="auditRemark" rows="2" data-i18n-placeholder="pages.payment_audits.remark_placeholder" placeholder="審核備註（選填）"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer" id="reviewActions">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.close">關閉</button>
+        <button type="button" class="btn btn-danger" onclick="auditAction('rejected')"><i class="fas fa-times me-1"></i><span data-i18n="pages.payment_audits.reject">拒絕</span></button>
+        <button type="button" class="btn btn-success" onclick="auditAction('approved')"><i class="fas fa-check me-1"></i><span data-i18n="pages.payment_audits.approve">通過</span></button>
+    </div>
+</div></div></div>
+
+<script>
+let currentPage = 1; const limit = 20; let reviewingId = null; const API_PATH = '/payment-audits';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const paymentMethodMap = { bank_transfer: '銀行轉帳', credit_card: '信用卡', alipay: '支付寶', wechat: '微信支付', cash: '現金' };
+const payMethodKeys = { bank_transfer: 'pages.payment_flows.method_bank', credit_card: 'pages.payment_flows.method_credit_card', alipay: 'pages.payment_flows.method_alipay', wechat: 'pages.payment_settings.wechat_pay', cash: 'pages.payment_audits.method_cash' };
+
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('statusFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+    loadPendingCount();
+}
+async function loadPendingCount() {
+    try {
+        const res = await apiRequest('GET', API_PATH + '/count?status=pending');
+        document.getElementById('pendingCount').textContent = _t('pages.payment_audits.pending_label', '待審核') + ': ' + ((res.data && res.data.count) || res.count || 0);
+    } catch(e) {}
+}
+function getAuditStatusBadge(status) {
+    const map = {
+        pending: '<span class="badge bg-warning text-dark">' + _t('pages.payment_audits.status_pending', '待審核') + '</span>',
+        approved: '<span class="badge bg-success">' + _t('pages.payment_audits.status_approved', '已通過') + '</span>',
+        rejected: '<span class="badge bg-danger">' + _t('pages.payment_audits.status_rejected', '已拒絕') + '</span>'
+    };
+    return map[status] || getStatusBadge(status);
+}
+function renderRow(item) {
+    const method = _t(payMethodKeys[item.payment_method], paymentMethodMap[item.payment_method] || item.payment_method || '--');
+    const actions = item.status === 'pending'
+        ? `<button class="btn btn-sm btn-outline-success me-1" onclick="openReview('${item.id}')"><i class="fas fa-clipboard-check"></i> ${_t('pages.payment_audits.audit', '審核')}</button>`
+        : `<button class="btn btn-sm btn-outline-secondary" onclick="openReview('${item.id}')"><i class="fas fa-eye"></i> ${_t('common.view', '查看')}</button>`;
+    return `<tr><td><strong>${item.order_no||'--'}</strong></td><td>${item.user_name||'--'}</td><td>${formatMoney(item.amount)}</td><td>${method}</td><td>${formatDate(item.submitted_at||item.created_at)}</td><td>${getAuditStatusBadge(item.status)}</td><td><div class="action-buttons">${actions}</div></td></tr>`;
+}
+async function openReview(id) {
+    reviewingId = id;
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const item = res.data || res;
+        document.getElementById('detailOrderNo').textContent = item.order_no || '--';
+        document.getElementById('detailUser').textContent = item.user_name || '--';
+        document.getElementById('detailAmount').textContent = formatMoney(item.amount);
+        document.getElementById('detailMethod').textContent = _t(payMethodKeys[item.payment_method], paymentMethodMap[item.payment_method] || item.payment_method || '--');
+        document.getElementById('detailTime').textContent = formatDate(item.submitted_at || item.created_at);
+        document.getElementById('detailStatus').innerHTML = getAuditStatusBadge(item.status);
+        document.getElementById('auditRemark').value = item.remark || '';
+        const isPending = item.status === 'pending';
+        document.getElementById('remarkSection').style.display = isPending ? 'block' : 'none';
+        document.getElementById('reviewActions').innerHTML = isPending
+            ? `<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">${_t('common.close', '關閉')}</button><button type="button" class="btn btn-danger" onclick="auditAction('rejected')"><i class="fas fa-times me-1"></i>${_t('pages.payment_audits.reject', '拒絕')}</button><button type="button" class="btn btn-success" onclick="auditAction('approved')"><i class="fas fa-check me-1"></i>${_t('pages.payment_audits.approve', '通過')}</button>`
+            : `<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">${_t('common.close', '關閉')}</button>`;
+        openModal('reviewModal');
+    } catch(e) {}
+}
+async function auditAction(action) {
+    if (!reviewingId) return;
+    const remark = document.getElementById('auditRemark').value;
+    const actionText = action === 'approved' ? _t('pages.payment_audits.approve', '通過') : _t('pages.payment_audits.reject', '拒絕');
+    if (!confirm(_t('pages.payment_audits.confirm_audit', '確定要') + actionText + _t('pages.payment_audits.confirm_audit_suffix', '此付款嗎？'))) return;
+    try {
+        await apiRequest('PUT', API_PATH + '/' + reviewingId + '/audit', { status: action, remark });
+        showToast(_t('pages.payment_audits.audit_success_prefix', '審核') + actionText + _t('pages.payment_audits.audit_success_suffix', '成功'));
+        closeModal('reviewModal');
+        loadData(currentPage);
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

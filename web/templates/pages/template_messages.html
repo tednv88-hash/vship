@@ -1,0 +1,122 @@
+{{define "pages/template_messages"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.template_messages.title">模板消息</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-1"></i><span data-i18n="pages.template_messages.config_hint">配置各類消息模板的開關和模板ID，模板ID需在微信公眾平台或小程式後台獲取。</span>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.order_payment_success">訂單支付成功通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="order_paid_enabled" id="orderPaidEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="order_paid_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.shipping_notification">發貨通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="shipping_enabled" id="shippingEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="shipping_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.package_storage_notification">包裹入庫通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="package_received_enabled" id="packageReceivedEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="package_received_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.refund_notification">退款通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="refund_enabled" id="refundEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="refund_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.batch_shipping_notification">批次發貨通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="batch_shipped_enabled" id="batchShippedEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="batch_shipped_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0" data-i18n="pages.template_messages.level_change_notification">會員等級變更通知</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="level_change_enabled" id="levelChangeEnabled" value="true">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="level_change_template_id" data-i18n-placeholder="pages.template_messages.template_id" placeholder="模板ID">
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="saveSettings()" data-i18n="common.save_settings">儲存設置</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'template_message_setting';
+const checkboxIds = ['orderPaidEnabled', 'shippingEnabled', 'packageReceivedEnabled', 'refundEnabled', 'batchShippedEnabled', 'levelChangeEnabled'];
+const checkboxNames = ['order_paid_enabled', 'shipping_enabled', 'package_received_enabled', 'refund_enabled', 'batch_shipped_enabled', 'level_change_enabled'];
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+            checkboxIds.forEach((id, i) => {
+                document.getElementById(id).checked = !!val[checkboxNames[i]];
+            });
+        }
+    } catch (e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    checkboxIds.forEach((id, i) => {
+        data[checkboxNames[i]] = document.getElementById(id).checked;
+    });
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

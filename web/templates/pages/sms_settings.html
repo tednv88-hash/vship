@@ -1,0 +1,55 @@
+{{define "pages/sms_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.sms_settings.title">短信設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sms_settings.sms_platform">短信平台</label>
+                <select class="form-select" name="platform">
+                    <option value="" data-i18n="common.please_select">請選擇</option>
+                    <option value="aliyun" data-i18n="pages.sms_settings.aliyun_sms">阿里雲短信</option>
+                    <option value="tencent" data-i18n="pages.sms_settings.tencent_sms">騰訊雲短信</option>
+                    <option value="twilio">Twilio</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">API Key</label>
+                <input type="text" class="form-control" name="api_key">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">API Secret</label>
+                <input type="password" class="form-control" name="api_secret">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.sms_settings.signature">簽名</label>
+                <input type="text" class="form-control" name="sign_name" data-i18n-placeholder="pages.sms_settings.sms_signature" placeholder="短信簽名">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span></button>
+        </form>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'sms_setting';
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+        }
+    } catch (e) {}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('pages.sms_settings.save_success', '儲存成功'));
+    } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

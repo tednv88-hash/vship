@@ -1,0 +1,45 @@
+{{define "pages/sharing_orders"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.sharing_orders.title">分享訂單</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.sharing_orders.search" placeholder="搜尋用戶/訂單號..."></div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="pending" data-i18n="pages.sharing_orders.pending_settlement">待結算</option>
+            <option value="settled" data-i18n="pages.sharing_orders.settled">已結算</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="common.user">用戶</th><th data-i18n="pages.sharing_orders.sharer">分享人</th><th data-i18n="common.order">訂單</th><th data-i18n="pages.sharing_orders.order_type">訂單類型</th><th data-i18n="pages.sharing_orders.commission_amount">佣金金額</th><th data-i18n="common.status">狀態</th><th data-i18n="common.time">時間</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+let currentPage = 1; const limit = 20; const API_PATH = '/sharing/orders';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    return `<tr>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.sharer_name || '--'}</td>
+        <td>${item.order_no || '--'}</td>
+        <td>${item.order_type || '--'}</td>
+        <td>${formatMoney(item.commission_amount)}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.created_at)}</td>
+    </tr>`;
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

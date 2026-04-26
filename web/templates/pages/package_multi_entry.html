@@ -1,0 +1,147 @@
+{{define "pages/package_multi_entry"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="fas fa-copy me-2"></i><span data-i18n="pages.package_multi.title">一票多件錄入</span></h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label class="form-label" data-i18n="pages.package_entry.tracking_no">快遞單號 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="trackingNo" data-i18n-placeholder="pages.package_multi.enter_main_tracking" placeholder="輸入主快遞單號" autofocus>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-i18n="pages.package_entry.warehouse">倉庫 <span class="text-danger">*</span></label>
+                <select class="form-select" id="warehouseId"><option value="" data-i18n="pages.package_entry.select_warehouse">請選擇倉庫</option></select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-i18n="pages.packages.category">包裹分類</label>
+                <select class="form-select" id="categoryId"><option value="" data-i18n="pages.package_entry.select_category">請選擇分類</option></select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" data-i18n="pages.packages.pieces">件數 <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="pieceCount" value="2" min="2" max="99">
+            </div>
+        </div>
+        <button class="btn btn-outline-primary mb-3" onclick="generatePieces()"><i class="fas fa-th-list me-1"></i><span data-i18n="pages.package_multi.generate_table">生成子件表格</span></button>
+
+        <div id="piecesContainer" class="d-none">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th data-i18n="pages.package_multi.sub_piece">子件 #</th>
+                            <th data-i18n="pages.package_multi.sub_tracking">子單號</th>
+                            <th data-i18n="pages.package_entry.weight_kg">重量(kg)</th>
+                            <th data-i18n="pages.package_entry.length_cm">長(cm)</th>
+                            <th data-i18n="pages.package_entry.width_cm">寬(cm)</th>
+                            <th data-i18n="pages.package_entry.height_cm">高(cm)</th>
+                            <th data-i18n="common.remark">備注</th>
+                        </tr>
+                    </thead>
+                    <tbody id="piecesBody"></tbody>
+                </table>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-primary" onclick="submitAll()"><i class="fas fa-save me-1"></i><span data-i18n="pages.package_multi.submit_all">全部入庫</span></button>
+                <button class="btn btn-outline-secondary" onclick="clearPieces()"><i class="fas fa-redo me-1"></i><span data-i18n="pages.orders_quick_pack.clear">清空</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="mb-0" data-i18n="pages.package_multi.recent_records">最近一票多件記錄</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead><tr>
+                <th data-i18n="pages.package_multi.main_tracking">主單號</th>
+                <th data-i18n="pages.package_multi.sub_count">子件數</th>
+                <th data-i18n="pages.orders_quick_pack.total_weight">總重量</th>
+                <th data-i18n="pages.package_multi.entry_time">錄入時間</th>
+            </tr></thead>
+            <tbody id="recentBody">
+                <tr><td colspan="4" class="text-center py-3 text-muted" data-i18n="common.no_records">暫無記錄</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadDropdowns() {
+    try {
+        const [wRes, cRes] = await Promise.all([
+            apiRequest('GET', '/warehouses?limit=100'),
+            apiRequest('GET', '/package-categories?limit=100')
+        ]);
+        const wSel = document.getElementById('warehouseId');
+        (wRes.data || []).forEach(w => { wSel.innerHTML += `<option value="${w.id}">${w.name}</option>`; });
+        const cSel = document.getElementById('categoryId');
+        (cRes.data || []).forEach(c => { cSel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+    } catch(e) {}
+}
+
+function generatePieces() {
+    const trackingNo = document.getElementById('trackingNo').value.trim();
+    const count = parseInt(document.getElementById('pieceCount').value) || 2;
+    if (!trackingNo) { showToast(_t('pages.package_multi.enter_main_tracking', '請輸入主快遞單號'), 'error'); return; }
+
+    const tbody = document.getElementById('piecesBody');
+    tbody.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+        tbody.innerHTML += `<tr>
+            <td>${i}</td>
+            <td><input type="text" class="form-control form-control-sm" value="${trackingNo}-${i}" data-field="tracking_no"></td>
+            <td><input type="number" class="form-control form-control-sm" step="0.01" min="0" data-field="weight"></td>
+            <td><input type="number" class="form-control form-control-sm" step="0.1" min="0" data-field="length"></td>
+            <td><input type="number" class="form-control form-control-sm" step="0.1" min="0" data-field="width"></td>
+            <td><input type="number" class="form-control form-control-sm" step="0.1" min="0" data-field="height"></td>
+            <td><input type="text" class="form-control form-control-sm" data-field="remark"></td>
+        </tr>`;
+    }
+    document.getElementById('piecesContainer').classList.remove('d-none');
+}
+
+function clearPieces() {
+    document.getElementById('piecesBody').innerHTML = '';
+    document.getElementById('piecesContainer').classList.add('d-none');
+}
+
+async function submitAll() {
+    const warehouseId = document.getElementById('warehouseId').value;
+    const categoryId = document.getElementById('categoryId').value;
+    if (!warehouseId) { showToast(_t('pages.package_entry.select_warehouse', '請選擇倉庫'), 'error'); return; }
+
+    const rows = document.querySelectorAll('#piecesBody tr');
+    let successCount = 0;
+    for (const row of rows) {
+        const inputs = row.querySelectorAll('input');
+        const data = {
+            tracking_no: inputs[0].value.trim(),
+            weight: parseFloat(inputs[1].value) || 0,
+            length: parseFloat(inputs[2].value) || 0,
+            width: parseFloat(inputs[3].value) || 0,
+            height: parseFloat(inputs[4].value) || 0,
+            remark: inputs[5].value,
+            warehouse_id: warehouseId,
+            category_id: categoryId || undefined,
+            parent_tracking_no: document.getElementById('trackingNo').value.trim(),
+            status: 'received'
+        };
+        try {
+            await apiRequest('POST', '/packages', data);
+            successCount++;
+            row.classList.add('table-success');
+        } catch(e) {
+            row.classList.add('table-danger');
+        }
+    }
+    showToast(_t('pages.package_multi.receive_result', '成功入庫').replace('{success}', successCount).replace('{total}', rows.length) + ` ${successCount}/${rows.length}`, successCount === rows.length ? 'success' : 'warning');
+}
+
+document.addEventListener('DOMContentLoaded', loadDropdowns);
+</script>
+{{end}}

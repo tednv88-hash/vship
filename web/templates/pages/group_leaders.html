@@ -1,0 +1,53 @@
+{{define "pages/group_leaders"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.group_leaders.title">團長列表</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.group_leaders.search_leader" placeholder="搜尋團長名稱/手機...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="pages.group_leaders.active">活躍</option>
+            <option value="inactive" data-i18n="common.disable">停用</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.group_leaders.leader_name">團長</th>
+                <th data-i18n="pages.group_leaders.phone">手機號</th>
+                <th data-i18n="pages.group_leaders.member_count">團員數</th>
+                <th data-i18n="pages.group_leaders.order_count">訂單數</th>
+                <th data-i18n="pages.group_leaders.total_commission">累計佣金</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="pages.group_leaders.join_time">加入時間</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20;
+function loadData(page) { currentPage = page; const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, status, role: 'leader' });
+    loadTableData('/sharing/verifications', 'tableBody', renderRow, 'pagination', page, limit, params); }
+function renderRow(item) { return `<tr><td>${item.user_name || item.name || '--'}</td><td>${item.phone || '--'}</td>
+    <td>${item.member_count || 0}</td><td>${item.order_count || 0}</td><td>${formatMoney(item.total_commission || 0)}</td>
+    <td>${getStatusBadge(item.status)}</td><td>${formatDate(item.created_at)}</td>
+    <td><div class="action-buttons">
+    <button class="btn btn-sm btn-outline-${item.status === 'active' ? 'warning' : 'success'}" onclick="toggleStatus('${item.id}', '${item.status}')">
+    <i class="fas fa-${item.status === 'active' ? 'ban' : 'check'}"></i></button></div></td></tr>`; }
+async function toggleStatus(id, current) { const newStatus = current === 'active' ? 'inactive' : 'active';
+    try { await apiRequest('PUT', '/sharing/verifications/' + id, { status: newStatus }); showToast(_t('pages.group_leaders.updated_msg', '已更新'), 'success'); loadData(currentPage); } catch(e) {} }
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

@@ -1,0 +1,169 @@
+{{define "pages/orders_quick_pack"}}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="fas fa-bolt me-2"></i><span data-i18n="pages.orders_quick_pack.title">快速打包</span></h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label" data-i18n="pages.orders_quick_pack.scan_input_label">掃描/輸入包裹單號</label>
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-lg" id="scanInput" data-i18n-placeholder="pages.orders_quick_pack.scan_placeholder" placeholder="掃描包裹條碼..." autofocus>
+                    <button class="btn btn-primary" onclick="addPackage()"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" data-i18n="pages.orders_quick_pack.select_route">選擇線路</label>
+                <select class="form-select form-select-lg" id="routeSelect">
+                    <option value="" data-i18n="pages.orders_quick_pack.please_select_route">請選擇線路</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" data-i18n="pages.orders_quick_pack.shipping_address">收件地址</label>
+                <select class="form-select form-select-lg" id="addressSelect">
+                    <option value="" data-i18n="pages.orders_quick_pack.please_select_address">請選擇地址</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0"><span data-i18n="pages.orders_quick_pack.scanned_packages">已掃描包裹</span> (<span id="packageCount">0</span><span data-i18n="pages.orders_quick_pack.items_unit">件</span>)</h5>
+        <div>
+            <span class="me-3"><span data-i18n="pages.orders_quick_pack.total_weight">總重量</span>: <strong id="totalWeight">0</strong> kg</span>
+            <button class="btn btn-danger btn-sm" onclick="clearPackages()"><i class="fas fa-trash me-1"></i><span data-i18n="pages.orders_quick_pack.clear">清空</span></button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th data-i18n="pages.orders_quick_pack.tracking_no">包裹單號</th>
+                    <th data-i18n="pages.orders.user">用戶</th>
+                    <th data-i18n="pages.orders_quick_pack.weight_kg">重量(kg)</th>
+                    <th data-i18n="pages.orders_quick_pack.category">品類</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="packageBody">
+                <tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="pages.orders_quick_pack.scan_to_add">請掃描包裹條碼添加包裹</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body text-center">
+        <button class="btn btn-primary btn-lg px-5" onclick="submitQuickPack()" id="submitBtn" disabled>
+            <i class="fas fa-box me-2"></i><span data-i18n="pages.orders_quick_pack.confirm_pack">確認打包並建立訂單</span>
+        </button>
+    </div>
+</div>
+
+<script>
+let scannedPackages = [];
+
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadRoutes() {
+    try {
+        const res = await apiRequest('GET', '/shipping-routes?limit=100');
+        const select = document.getElementById('routeSelect');
+        (res.data || []).forEach(r => {
+            select.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+        });
+    } catch (e) {}
+}
+
+async function addPackage() {
+    const input = document.getElementById('scanInput');
+    const trackingNo = input.value.trim();
+    if (!trackingNo) return;
+    if (scannedPackages.find(p => p.tracking_no === trackingNo)) {
+        showToast(_t('pages.orders_quick_pack.already_added', '此包裹已添加'), 'warning');
+        input.value = '';
+        input.focus();
+        return;
+    }
+    try {
+        const res = await apiRequest('GET', '/packages?search=' + encodeURIComponent(trackingNo) + '&limit=1');
+        const packages = res.data || [];
+        if (packages.length === 0) {
+            showToast(_t('pages.orders_quick_pack.package_not_found', '找不到包裹') + ': ' + trackingNo, 'error');
+        } else {
+            scannedPackages.push(packages[0]);
+            renderPackages();
+            showToast(_t('pages.orders_quick_pack.package_added', '已添加包裹'), 'success');
+        }
+    } catch (e) {
+        showToast(_t('pages.orders_quick_pack.query_failed', '查詢失敗'), 'error');
+    }
+    input.value = '';
+    input.focus();
+}
+
+function removePackage(idx) {
+    scannedPackages.splice(idx, 1);
+    renderPackages();
+}
+
+function clearPackages() {
+    if (scannedPackages.length === 0) return;
+    if (!confirm(_t('pages.orders_quick_pack.confirm_clear', '確定清空所有已掃描包裹嗎？'))) return;
+    scannedPackages = [];
+    renderPackages();
+}
+
+function renderPackages() {
+    const tbody = document.getElementById('packageBody');
+    const totalWeight = scannedPackages.reduce((sum, p) => sum + (p.weight || 0), 0);
+    document.getElementById('packageCount').textContent = scannedPackages.length;
+    document.getElementById('totalWeight').textContent = totalWeight.toFixed(2);
+    document.getElementById('submitBtn').disabled = scannedPackages.length === 0;
+
+    if (scannedPackages.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">${_t('pages.orders_quick_pack.scan_to_add', '請掃描包裹條碼添加包裹')}</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = scannedPackages.map((p, i) => `<tr>
+        <td>${i + 1}</td>
+        <td>${p.tracking_no || '--'}</td>
+        <td>${p.user_name || '--'}</td>
+        <td>${p.weight || 0}</td>
+        <td>${p.category_name || '--'}</td>
+        <td>${getStatusBadge(p.status)}</td>
+        <td><button class="btn btn-sm btn-outline-danger" onclick="removePackage(${i})"><i class="fas fa-times"></i></button></td>
+    </tr>`).join('');
+}
+
+async function submitQuickPack() {
+    const routeId = document.getElementById('routeSelect').value;
+    if (!routeId) { showToast(_t('pages.orders_quick_pack.please_select_route', '請選擇線路'), 'error'); return; }
+    if (scannedPackages.length === 0) { showToast(_t('pages.orders_quick_pack.please_add_packages', '請添加包裹'), 'error'); return; }
+    try {
+        const packageIds = scannedPackages.map(p => p.id);
+        await apiRequest('POST', '/orders', {
+            shipping_route_id: routeId,
+            package_ids: packageIds,
+            status: 'pending'
+        });
+        showToast(_t('pages.orders_quick_pack.pack_success', '打包訂單建立成功'), 'success');
+        scannedPackages = [];
+        renderPackages();
+    } catch (e) {}
+}
+
+document.getElementById('scanInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addPackage(); }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadRoutes();
+    document.getElementById('scanInput').focus();
+});
+</script>
+{{end}}

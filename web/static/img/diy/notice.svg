@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <!-- Notice/Megaphone Icon -->
+  <defs>
+    <linearGradient id="noticeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Megaphone body -->
+  <path d="M8,14 L16,16 L16,24 L8,26 Z" fill="url(#noticeGrad)"/>
+  <path d="M16,14 L30,8 L30,32 L16,26 Z" fill="url(#noticeGrad)" opacity="0.85"/>
+  <!-- Speaker lines -->
+  <path d="M32,16 Q36,20 32,24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M34,12 Q40,20 34,28" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+  <!-- Handle -->
+  <rect x="6" y="16" width="4" height="8" rx="2" fill="#b45309"/>
+</svg>

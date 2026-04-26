@@ -1,0 +1,77 @@
+{{define "pages/payment_flows"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.payment_flows.title">支付流水</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.payment_flows.search_placeholder" placeholder="搜尋訂單號/支付單號..."></div>
+        <select class="form-select" id="filterOrderType" style="max-width:150px;">
+            <option value="" data-i18n="pages.payment_flows.all_types">全部類型</option>
+            <option value="order" data-i18n="pages.payment_flows.type_order">訂單</option>
+            <option value="recharge" data-i18n="pages.payment_flows.type_recharge">充值</option>
+            <option value="withdrawal" data-i18n="pages.payment_flows.type_withdrawal">提現</option>
+        </select>
+        <select class="form-select" id="filterPayMethod" style="max-width:150px;">
+            <option value="" data-i18n="pages.payment_flows.all_methods">全部方式</option>
+            <option value="alipay" data-i18n="pages.payment_flows.method_alipay">支付寶</option>
+            <option value="wechat" data-i18n="pages.payment_flows.method_wechat">微信</option>
+            <option value="bank_transfer" data-i18n="pages.payment_flows.method_bank">銀行轉帳</option>
+            <option value="balance" data-i18n="pages.payment_flows.method_balance">餘額</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.payment_flows.order_type">訂單類型</th>
+                <th data-i18n="pages.payment_flows.order_no">訂單號</th>
+                <th data-i18n="common.amount">金額</th>
+                <th data-i18n="pages.payment_flows.pay_method">支付方式</th>
+                <th data-i18n="pages.payment_flows.payment_no">支付單號</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="pages.payment_flows.payment_time">支付時間</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 20; const API_PATH = '/payment-flows';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const payMethodMap = { alipay: '支付寶', wechat: '微信', bank_transfer: '銀行轉帳', balance: '餘額', credit_card: '信用卡' };
+const payMethodKeys = { alipay: 'pages.payment_flows.method_alipay', wechat: 'pages.payment_flows.method_wechat', bank_transfer: 'pages.payment_flows.method_bank', balance: 'pages.payment_flows.method_balance', credit_card: 'pages.payment_flows.method_credit_card' };
+const orderTypeMap = { order: '訂單', recharge: '充值', withdrawal: '提現' };
+const orderTypeKeys = { order: 'pages.payment_flows.type_order', recharge: 'pages.payment_flows.type_recharge', withdrawal: 'pages.payment_flows.type_withdrawal' };
+
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({
+        search: document.getElementById('searchInput').value,
+        order_type: document.getElementById('filterOrderType').value,
+        pay_method: document.getElementById('filterPayMethod').value
+    });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    const orderType = _t(orderTypeKeys[item.order_type], orderTypeMap[item.order_type] || item.order_type || '--');
+    const payMethod = _t(payMethodKeys[item.pay_method], payMethodMap[item.pay_method] || item.pay_method || '--');
+    return `<tr>
+        <td>${orderType}</td>
+        <td>${item.order_no || '--'}</td>
+        <td>${formatMoney(item.amount)}</td>
+        <td>${payMethod}</td>
+        <td>${item.payment_no || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.paid_at || item.created_at)}</td>
+    </tr>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterOrderType').addEventListener('change', () => loadData(1));
+document.getElementById('filterPayMethod').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

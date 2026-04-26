@@ -1,0 +1,105 @@
+{{define "pages/package_create"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_create.title">新增包裹</h5>
+        <a href="/packages" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <form id="packageForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.package_create.tracking_no">追蹤號 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="tracking_no" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.package_unclaimed.user_id_label">用戶ID <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="user_id" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="pages.package_admin_forecast.package_category">包裹分類</label>
+                    <select class="form-select" name="category_id" id="categorySelect">
+                        <option value="" data-i18n="common.please_select">請選擇</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" data-i18n="common.warehouse">倉庫</label>
+                    <select class="form-select" name="warehouse_id" id="warehouseSelect">
+                        <option value="" data-i18n="common.please_select">請選擇</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.weight_kg">重量 (kg)</label>
+                    <input type="number" class="form-control" name="weight" step="0.01" data-type="number">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.length_cm">長 (cm)</label>
+                    <input type="number" class="form-control" name="length" step="0.1" data-type="number">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.width_cm">寬 (cm)</label>
+                    <input type="number" class="form-control" name="width" step="0.1" data-type="number">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.height_cm">高 (cm)</label>
+                    <input type="number" class="form-control" name="height" step="0.1" data-type="number">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.declared_value">申報價值</label>
+                    <input type="number" class="form-control" name="declared_value" step="0.01" data-type="number">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" data-i18n="pages.package_create.declared_currency">申報幣種</label>
+                    <select class="form-select" name="declared_currency" id="currencySelect">
+                        <option value="CNY">CNY</option>
+                        <option value="USD">USD</option>
+                        <option value="HKD">HKD</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" data-i18n="common.remark">備註</label>
+                    <textarea class="form-control" name="remark" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i><span data-i18n="pages.package_create.submit">建立包裹</span>
+                </button>
+                <a href="/packages" class="btn btn-outline-secondary ms-2" data-i18n="common.cancel">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const cats = await apiRequest('GET', '/package-categories?limit=100');
+        const sel = document.getElementById('categorySelect');
+        (cats.data || cats || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+        });
+    } catch (e) {}
+    try {
+        const whs = await apiRequest('GET', '/warehouses?limit=100');
+        const sel = document.getElementById('warehouseSelect');
+        (whs.data || whs || []).forEach(w => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`);
+        });
+    } catch (e) {}
+});
+
+document.getElementById('packageForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const data = getFormData('packageForm');
+    try {
+        await apiRequest('POST', '/packages', data);
+        showToast(_t('pages.package_create.create_success', '包裹建立成功'), 'success');
+        window.location.href = '/packages';
+    } catch (e) {}
+});
+</script>
+{{end}}

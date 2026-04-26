@@ -1,0 +1,58 @@
+{{define "pages/dealer_poster"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.dealer_poster.title">分銷海報</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="pages.dealer_poster.add_poster">新增海報</span></button>
+    </div>
+    <div class="row g-3 p-3" id="posterGrid">
+        <div class="col-12 text-center py-4 text-muted" data-i18n="common.loading">載入中...</div>
+    </div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.dealer_poster.add_poster">新增海報</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="dataForm"><input type="hidden" id="editId">
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_name">海報名稱</label><input type="text" class="form-control" id="name" required></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_image_url">海報圖片URL</label><input type="url" class="form-control" id="image_url"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.promo_link">推廣連結</label><input type="url" class="form-control" id="promo_url"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_x">QR碼位置X(%)</label><input type="number" class="form-control" id="qr_x" value="50" min="0" max="100"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_y">QR碼位置Y(%)</label><input type="number" class="form-control" id="qr_y" value="80" min="0" max="100"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.sort_order">排序</label><input type="number" class="form-control" id="sort_order" value="0" min="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status"><option value="active" data-i18n="common.enable">啟用</option><option value="inactive" data-i18n="common.disable">停用</option></select></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+    </div></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+async function loadPosters() {
+    try { const res = await apiRequest('GET', '/dealer/posters?limit=50'); const data = res.data || [];
+        const grid = document.getElementById('posterGrid');
+        grid.innerHTML = data.length ? data.map(p => `<div class="col-md-3"><div class="card h-100">
+            <div style="height:200px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;">
+                ${p.image_url ? `<img src="${p.image_url}" style="max-height:100%;max-width:100%;">` : '<i class="fas fa-image fa-3x text-muted"></i>'}
+            </div><div class="card-body"><h6>${p.name || '--'}</h6><p class="text-muted small">QR: ${p.qr_x||50}%, ${p.qr_y||80}%</p>
+            ${getStatusBadge(p.status)}</div><div class="card-footer"><div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${p.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${p.id}')"><i class="fas fa-trash"></i></button>
+            </div></div></div></div>`).join('') : `<div class="col-12 text-center py-4 text-muted" data-i18n="pages.dealer_poster.no_posters">${_t('pages.dealer_poster.no_posters', '暫無海報')}</div>`;
+    } catch(e) { document.getElementById('posterGrid').innerHTML = `<div class="col-12 text-center py-4 text-muted" data-i18n="pages.dealer_poster.load_failed">${_t('pages.dealer_poster.load_failed', '載入失敗')}</div>`; }
+}
+function openCreateModal() {
+    document.getElementById('modalTitle').textContent = _t('pages.dealer_poster.add_poster', '新增海報');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.dealer_poster.add_poster');
+    document.getElementById('editId').value = ''; resetForm('dataForm'); openModal('formModal');
+}
+async function editItem(id) { try { const res = await apiRequest('GET', '/dealer/posters/' + id); const d = res.data || res;
+    document.getElementById('editId').value = d.id; populateForm('dataForm', d);
+    document.getElementById('modalTitle').textContent = _t('pages.dealer_poster.edit_poster', '編輯海報');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.dealer_poster.edit_poster');
+    openModal('formModal'); } catch(e) {} }
+async function saveItem() { const id = document.getElementById('editId').value; const data = getFormData('dataForm');
+    try { if (id) { await apiRequest('PUT', '/dealer/posters/' + id, data); } else { await apiRequest('POST', '/dealer/posters', data); }
+    showToast(_t('common.operation_success', '操作成功'), 'success'); closeModal('formModal'); loadPosters(); } catch(e) {} }
+async function deleteItem(id) { if (!confirmDelete(_t('pages.dealer_poster.confirm_delete', '確定刪除嗎？'))) return;
+    try { await apiRequest('DELETE', '/dealer/posters/' + id); showToast(_t('common.delete_success', '刪除成功'), 'success'); loadPosters(); } catch(e) {} }
+document.addEventListener('DOMContentLoaded', loadPosters);
+</script>
+{{end}}

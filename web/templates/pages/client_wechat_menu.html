@@ -1,0 +1,241 @@
+{{define "pages/client_wechat_menu"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.client_wechat_menu.title">微信公眾號菜單管理</h5>
+        <div>
+            <button class="btn btn-success btn-sm me-2" onclick="publishToWechat()">
+                <i class="fab fa-weixin me-1"></i><span data-i18n="pages.client_wechat_menu.publish_to_wechat">發佈到微信</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+                <i class="fas fa-plus me-1"></i><span data-i18n="pages.client_webmenu.add_menu">新增菜單</span>
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.client_webmenu.menu_name">菜單名稱</th>
+                    <th data-i18n="pages.client_webmenu.menu_type">菜單類型</th>
+                    <th data-i18n="pages.client_wechat_menu.menu_key_url">菜單Key/URL</th>
+                    <th data-i18n="common.sort">排序</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.client_webmenu.add_menu">新增菜單</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.menu_name">菜單名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.client_webmenu.menu_type">菜單類型</label>
+                        <select class="form-select" name="type" id="wechatMenuType" onchange="toggleMenuFields()">
+                            <option value="click">click (<span data-i18n="pages.client_wechat_menu.click_event">點擊推事件</span>)</option>
+                            <option value="view">view (<span data-i18n="pages.client_wechat_menu.redirect_url">跳轉URL</span>)</option>
+                            <option value="miniprogram">miniprogram (<span data-i18n="pages.client_wechat_menu.miniprogram">小程序</span>)</option>
+                            <option value="scancode_push">scancode_push (<span data-i18n="pages.client_wechat_menu.scan_code">掃碼</span>)</option>
+                            <option value="media_id">media_id (<span data-i18n="pages.client_wechat_menu.media">素材</span>)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 field-key">
+                        <label class="form-label">Key</label>
+                        <input type="text" class="form-control" name="key" data-i18n-placeholder="pages.client_wechat_menu.menu_key_value" placeholder="菜單KEY值">
+                    </div>
+                    <div class="mb-3 field-url d-none">
+                        <label class="form-label">URL</label>
+                        <input type="url" class="form-control" name="url" placeholder="https://">
+                    </div>
+                    <div class="mb-3 field-mini d-none">
+                        <label class="form-label" data-i18n="pages.client_miniprogram.app_id">小程序AppID</label>
+                        <input type="text" class="form-control" name="appid" data-i18n-placeholder="pages.client_miniprogram.app_id" placeholder="小程序AppID">
+                    </div>
+                    <div class="mb-3 field-mini d-none">
+                        <label class="form-label" data-i18n="pages.client_wechat_menu.miniprogram_page_path">小程序頁面路徑</label>
+                        <input type="text" class="form-control" name="pagepath" placeholder="/pages/index/index">
+                    </div>
+                    <div class="mb-3 field-mini d-none">
+                        <label class="form-label" data-i18n="pages.client_wechat_menu.fallback_url">備用URL</label>
+                        <input type="url" class="form-control" name="backup_url" data-i18n-placeholder="pages.client_wechat_menu.fallback_url_desc" placeholder="不支持小程序時的備用URL">
+                    </div>
+                    <div class="mb-3 field-media d-none">
+                        <label class="form-label" data-i18n="pages.client_wechat_menu.media_id">素材Media ID</label>
+                        <input type="text" class="form-control" name="media_id" data-i18n-placeholder="pages.client_wechat_menu.permanent_media_id" placeholder="永久素材Media ID">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.sort">排序</label>
+                        <input type="number" class="form-control" name="sort_order" value="0" min="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1; const limit = 50; let editingId = null;
+const API_PATH = '/wechat-menus';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const typeLabels = {
+    click: () => _t('pages.client_wechat_menu.click_event', '點擊推事件'),
+    view: () => _t('pages.client_wechat_menu.redirect_url', '跳轉URL'),
+    miniprogram: () => _t('pages.client_wechat_menu.miniprogram', '小程序'),
+    scancode_push: () => _t('pages.client_wechat_menu.scan_code', '掃碼'),
+    media_id: () => _t('pages.client_wechat_menu.media', '素材')
+};
+
+function toggleMenuFields() {
+    const type = document.getElementById('wechatMenuType').value;
+    document.querySelectorAll('.field-key, .field-url, .field-mini, .field-media').forEach(el => el.classList.add('d-none'));
+    switch (type) {
+        case 'click':
+            document.querySelectorAll('.field-key').forEach(el => el.classList.remove('d-none'));
+            break;
+        case 'view':
+            document.querySelectorAll('.field-url').forEach(el => el.classList.remove('d-none'));
+            break;
+        case 'miniprogram':
+            document.querySelectorAll('.field-mini').forEach(el => el.classList.remove('d-none'));
+            document.querySelectorAll('.field-url').forEach(el => el.classList.remove('d-none'));
+            break;
+        case 'scancode_push':
+            document.querySelectorAll('.field-key').forEach(el => el.classList.remove('d-none'));
+            break;
+        case 'media_id':
+            document.querySelectorAll('.field-media').forEach(el => el.classList.remove('d-none'));
+            break;
+    }
+}
+
+async function loadData() {
+    try {
+        const res = await apiRequest('GET', API_PATH + '?limit=100');
+        const items = res.data || res.items || [];
+        renderTree(items);
+    } catch (e) {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    }
+}
+
+function renderTree(items) {
+    const topLevel = items.filter(i => !i.parent_id);
+    topLevel.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    let html = '';
+    topLevel.forEach(item => {
+        html += renderMenuRow(item, 0);
+        const children = items.filter(i => i.parent_id === item.id);
+        children.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        children.forEach(child => {
+            html += renderMenuRow(child, 1);
+        });
+    });
+    if (!html) html = '<tr><td colspan="5" class="text-center text-muted py-4">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    document.getElementById('tableBody').innerHTML = html;
+}
+
+function renderMenuRow(item, level) {
+    const indent = level > 0 ? '<span class="text-muted me-2">├─</span>' : '';
+    const labelFn = typeLabels[item.type];
+    const typeLabel = labelFn ? labelFn() : (item.type || '--');
+    const typeBadge = `<span class="badge bg-secondary">${typeLabel}</span>`;
+    let keyUrl = '--';
+    if (item.type === 'click' || item.type === 'scancode_push') keyUrl = item.key || '--';
+    else if (item.type === 'view') keyUrl = item.url ? `<a href="${item.url}" target="_blank">${item.url}</a>` : '--';
+    else if (item.type === 'miniprogram') keyUrl = item.pagepath || '--';
+    else if (item.type === 'media_id') keyUrl = item.media_id || '--';
+
+    return `<tr>
+        <td>${'&nbsp;'.repeat(level * 4)}${indent}${item.name || '--'}</td>
+        <td>${typeBadge}</td>
+        <td><small>${keyUrl}</small></td>
+        <td>${item.sort_order ?? 0}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.client_webmenu.add_menu', '新增菜單');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_webmenu.add_menu');
+    resetForm('itemForm');
+    toggleMenuFields();
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.client_webmenu.edit_menu', '編輯菜單');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.client_webmenu.edit_menu');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const data = res.data || res;
+        populateForm('itemForm', data);
+        document.getElementById('wechatMenuType').value = data.type || 'click';
+        toggleMenuFields();
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.sort_order = parseInt(data.sort_order) || 0;
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData();
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.client_webmenu.confirm_delete', '確定要刪除此菜單嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData();
+    } catch (e) {}
+}
+
+async function publishToWechat() {
+    if (!confirm(_t('pages.client_wechat_menu.confirm_publish', '確定要將菜單發佈到微信公眾號嗎？'))) return;
+    try {
+        await apiRequest('POST', API_PATH + '/publish');
+        showToast(_t('pages.client_wechat_menu.publish_success', '菜單已發佈到微信'), 'success');
+    } catch (e) {
+        showToast(_t('pages.client_wechat_menu.publish_failed', '發佈失敗，請檢查公眾號配置'), 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData());
+</script>
+{{end}}

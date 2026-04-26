@@ -1,0 +1,64 @@
+{{define "pages/warehouse_rack_data"}}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouse_rack_data.title">貨架數據</h5>
+        <div class="d-flex gap-2">
+            <select class="form-select" id="filterWarehouse" style="max-width:180px;"><option value="" data-i18n="common.filter_all_warehouse">全部倉庫</option></select>
+            <button class="btn btn-outline-secondary btn-sm" onclick="loadData()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_rack_data.total_racks">總貨架</h6><h3 id="totalRacks" class="text-primary">0</h3></div></div>
+    <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_rack_data.used_positions">已使用貨位</h6><h3 id="usedSlots" class="text-warning">0</h3></div></div>
+    <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_rack_data.total_capacity">總容量</h6><h3 id="totalCapacity" class="text-info">0</h3></div></div>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.warehouse_rack_data.rack_number">貨架編號</th>
+                <th data-i18n="pages.warehouse_rack_data.warehouse">倉庫</th>
+                <th data-i18n="pages.warehouse_rack_data.layers">層數</th>
+                <th data-i18n="pages.warehouse_rack_data.positions_per_layer">每層貨位</th>
+                <th data-i18n="pages.warehouse_rack_data.used">已使用</th>
+                <th data-i18n="pages.warehouse_rack_data.usage_rate">使用率</th>
+                <th data-i18n="pages.warehouse_rack_data.total_weight">總重量(kg)</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20;
+async function loadWarehouses() { try { const res = await apiRequest('GET', '/warehouses?limit=100');
+    const sel = document.getElementById('filterWarehouse'); (res.data || []).forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name}</option>`; }); } catch(e) {} }
+async function loadData() {
+    const wid = document.getElementById('filterWarehouse').value;
+    try {
+        const endpoint = wid ? '/warehouses/' + wid + '/shelves?limit=200' : '/warehouses?limit=100';
+        const res = await apiRequest('GET', endpoint);
+        const data = res.data || [];
+        document.getElementById('totalRacks').textContent = data.length;
+        const used = data.reduce((s, d) => s + (d.used_slots || 0), 0);
+        const cap = data.reduce((s, d) => s + (d.total_slots || d.capacity || 0), 0);
+        document.getElementById('usedSlots').textContent = used;
+        document.getElementById('totalCapacity').textContent = cap;
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.length ? data.map(r => {
+            const total = r.total_slots || r.capacity || r.rows * r.columns || 0;
+            const usedR = r.used_slots || 0;
+            const rate = total ? Math.round((usedR/total)*100) : 0;
+            return `<tr><td>${r.code || r.name || '--'}</td><td>${r.warehouse_name || '--'}</td>
+                <td>${r.rows || r.levels || '--'}</td><td>${r.columns || r.slots_per_level || '--'}</td>
+                <td>${usedR}</td><td><div class="progress" style="width:100px;"><div class="progress-bar ${rate>80?'bg-danger':rate>50?'bg-warning':'bg-success'}" style="width:${rate}%">${rate}%</div></div></td>
+                <td>${(r.total_weight || 0).toFixed(2)}</td></tr>`;
+        }).join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { loadWarehouses(); loadData(); });
+document.getElementById('filterWarehouse').addEventListener('change', loadData);
+</script>
+{{end}}

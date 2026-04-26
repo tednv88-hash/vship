@@ -1,0 +1,72 @@
+{{define "pages/admin_style"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.admin_style.title">後台樣式</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.admin_style.theme_color">主題色</label>
+                <div class="d-flex align-items-center gap-2">
+                    <input type="color" class="form-control form-control-color" name="theme_color" id="themeColor" value="#4e73df">
+                    <input type="text" class="form-control" name="theme_color_hex" id="themeColorHex" placeholder="#4e73df" style="max-width:120px" oninput="document.getElementById('themeColor').value=this.value">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.admin_style.logo_url">Logo URL</label>
+                <input type="url" class="form-control" name="logo_url" placeholder="https://">
+                <div class="form-text" data-i18n="pages.admin_style.logo_size_hint">建議尺寸：200x50px</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.admin_style.login_background">登入頁背景</label>
+                <input type="url" class="form-control" name="login_bg_url" placeholder="https://">
+                <div class="form-text" data-i18n="pages.admin_style.login_bg_size_hint">建議尺寸：1920x1080px</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.admin_style.sidebar_style">側邊欄樣式</label>
+                <select class="form-select" name="sidebar_style">
+                    <option value="dark" data-i18n="pages.admin_style.dark">深色</option>
+                    <option value="light" data-i18n="pages.admin_style.light">淺色</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()" data-i18n="common.save_settings">儲存設置</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'admin_style';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+document.getElementById('themeColor').addEventListener('input', function() {
+    document.getElementById('themeColorHex').value = this.value;
+});
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+            if (val.theme_color) {
+                document.getElementById('themeColor').value = val.theme_color;
+                document.getElementById('themeColorHex').value = val.theme_color;
+            }
+        }
+    } catch (e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    data.theme_color = document.getElementById('themeColor').value;
+    delete data.theme_color_hex;
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

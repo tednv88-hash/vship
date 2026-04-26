@@ -1,0 +1,981 @@
+{{define "layouts/cms_layout"}}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - vShip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="/dashboard" class="sidebar-brand">
+                <i class="fas fa-ship sidebar-brand-icon"></i>
+                <span class="sidebar-brand-text">vShip</span>
+            </a>
+            <button class="sidebar-close d-lg-none" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="sidebar-nav">
+
+                <!-- 1. 總覽 (Dashboard) -->
+                <li class="sidebar-item{{if eq .ActiveMenu "dashboard"}} active{{end}}">
+                    <a href="/dashboard" class="sidebar-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span data-i18n="menu.dashboard">總覽</span>
+                    </a>
+                </li>
+
+                <!-- 2. 包裹管理 (Packages) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "packages"}} active open{{end}}">
+                    <a href="#packagesSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "packages"}}true{{else}}false{{end}}">
+                        <i class="fas fa-box"></i>
+                        <span data-i18n="menu.packages">包裹管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "packages"}} show{{end}}" id="packagesSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "packages") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/packages" data-i18n="menu.orders_all">全部包裹</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "entry-new"}} active{{end}}">
+                            <a href="/packages/entry-new" data-i18n="menu.package_entry_new">新後台錄入</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "multi-entry"}} active{{end}}">
+                            <a href="/packages/multi-entry" data-i18n="menu.package_multi_entry">一票多件錄入</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "scan-in"}} active{{end}}">
+                            <a href="/packages/scan-in" data-i18n="menu.package_scan_in">掃碼入庫</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "scan-out"}} active{{end}}">
+                            <a href="/packages/scan-out" data-i18n="menu.package_scan_out">掃碼出庫</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "forecast"}} active{{end}}">
+                            <a href="/packages/forecast" data-i18n="menu.package_forecast">預報包裹</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "admin-forecast"}} active{{end}}">
+                            <a href="/packages/admin-forecast" data-i18n="menu.package_admin_forecast">代客預報</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "claim"}} active{{end}}">
+                            <a href="/packages/claim" data-i18n="menu.package_claim">客戶認領</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "unclaimed"}} active{{end}}">
+                            <a href="/packages/unclaimed" data-i18n="menu.package_unclaimed">待認領</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-pack"}} active{{end}}">
+                            <a href="/packages/pending-pack" data-i18n="menu.package_pending_pack">待打包</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "appointment"}} active{{end}}">
+                            <a href="/packages/appointment" data-i18n="menu.package_appointment">預約件</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "returns"}} active{{end}}">
+                            <a href="/packages/returns" data-i18n="menu.package_returns">退貨件</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "problems"}} active{{end}}">
+                            <a href="/packages/problems" data-i18n="menu.package_problems">問題件</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 3. 集運訂單 (Consolidation Orders) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "orders"}} active open{{end}}">
+                    <a href="#ordersSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "orders"}}true{{else}}false{{end}}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span data-i18n="menu.orders">集運訂單</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "orders"}} show{{end}}" id="ordersSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "orders") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/orders" data-i18n="menu.orders_all">全部訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-inspect"}} active{{end}}">
+                            <a href="/orders/pending-inspect" data-i18n="menu.orders_pending_inspect">待查驗</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-ship"}} active{{end}}">
+                            <a href="/orders/pending-ship" data-i18n="menu.orders_pending_ship">待發貨</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "shipped"}} active{{end}}">
+                            <a href="/orders/shipped" data-i18n="menu.orders_shipped">已發貨</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "arrived"}} active{{end}}">
+                            <a href="/orders/arrived" data-i18n="menu.orders_arrived">已到貨</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "completed"}} active{{end}}">
+                            <a href="/orders/completed" data-i18n="menu.orders_completed">已完成</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "unpaid"}} active{{end}}">
+                            <a href="/orders/unpaid" data-i18n="menu.orders_unpaid">未支付</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "problems"}} active{{end}}">
+                            <a href="/orders/problems" data-i18n="menu.orders_problems">問題件</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "overdue"}} active{{end}}">
+                            <a href="/orders/overdue" data-i18n="menu.orders_overdue">超時件</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "quick-pack"}} active{{end}}">
+                            <a href="/orders/quick-pack" data-i18n="menu.orders_quick_pack">快速打包</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "payment-audits"}} active{{end}}">
+                            <a href="/settings/payment-audits" data-i18n="menu.payment_audits">付款審核</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "order-reviews"}} active{{end}}">
+                            <a href="/orders/reviews" data-i18n="menu.order_reviews">訂單評價</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "monthly"}} active{{end}}">
+                            <a href="/orders/monthly" data-i18n="menu.orders_monthly">月結訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "cod"}} active{{end}}">
+                            <a href="/orders/cod" data-i18n="menu.orders_cod">貨到付款</a>
+                        </li>
+                    </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 4. 用戶管理 (Users) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "users"}} active open{{end}}">
+                    <a href="#usersSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "users"}}true{{else}}false{{end}}">
+                        <i class="fas fa-users"></i>
+                        <span data-i18n="menu.members">用戶管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "users"}} show{{end}}" id="usersSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "users") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/users" data-i18n="menu.user_management">用戶列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "members"}} active{{end}}">
+                            <a href="/members" data-i18n="menu.member_levels">會員管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-addresses"}} active{{end}}">
+                            <a href="/users/addresses" data-i18n="menu.user_addresses">地址管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-marks"}} active{{end}}">
+                            <a href="/users/marks" data-i18n="menu.user_marks">標記列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-discounts"}} active{{end}}">
+                            <a href="/users/discounts" data-i18n="menu.user_discounts">折扣列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "balance-logs"}} active{{end}}">
+                            <a href="/users/balance" data-i18n="menu.balance_logs">餘額明細</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "recharge-orders-user"}} active{{end}}">
+                            <a href="/users/recharge" data-i18n="menu.recharge_orders">充值訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-birthdays"}} active{{end}}">
+                            <a href="/users/birthdays" data-i18n="menu.user_birthdays">生日管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-orders"}} active{{end}}">
+                            <a href="/users/orders" data-i18n="menu.user_orders">會員訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "level-settings"}} active{{end}}">
+                            <a href="/users/level-settings" data-i18n="menu.level_settings">等級設置</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 5. 倉庫管理 (Warehouses) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "warehouses"}} active open{{end}}">
+                    <a href="#warehousesSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "warehouses"}}true{{else}}false{{end}}">
+                        <i class="fas fa-warehouse"></i>
+                        <span data-i18n="menu.warehouse">倉庫管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "warehouses"}} show{{end}}" id="warehousesSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "warehouses") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/warehouses" data-i18n="menu.warehouse_management">倉庫列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-addresses"}} active{{end}}">
+                            <a href="/warehouses/addresses" data-i18n="menu.warehouse_addresses">倉庫地址</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-applications"}} active{{end}}">
+                            <a href="/warehouses/applications" data-i18n="menu.warehouse_applications">入駐申請</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-clerks"}} active{{end}}">
+                            <a href="/warehouses/clerks" data-i18n="menu.warehouse_clerks">倉管員</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-clerk-reviews"}} active{{end}}">
+                            <a href="/warehouses/clerk-reviews" data-i18n="menu.warehouse_clerk_reviews">倉管評價</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-capital"}} active{{end}}">
+                            <a href="/warehouses/capital" data-i18n="menu.warehouse_capital">資金明細</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-bonuses"}} active{{end}}">
+                            <a href="/warehouses/bonuses" data-i18n="menu.warehouse_bonuses">獎金管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-withdrawals"}} active{{end}}">
+                            <a href="/warehouses/withdrawals" data-i18n="menu.warehouse_withdrawals">提現管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-settings"}} active{{end}}">
+                            <a href="/warehouses/settings" data-i18n="menu.warehouse_settings">倉庫設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "service-bonus"}} active{{end}}">
+                            <a href="/warehouses/service-bonus" data-i18n="menu.warehouse_service_bonus">服務分成</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "shelf-data"}} active{{end}}">
+                            <a href="/warehouses/shelf-data" data-i18n="menu.warehouse_shelf_data">貨位數據</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "rack-data"}} active{{end}}">
+                            <a href="/warehouses/rack-data" data-i18n="menu.warehouse_rack_data">貨架數據</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 6. 批次管理 (Batches) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "batches"}} active open{{end}}">
+                    <a href="#batchesSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "batches"}}true{{else}}false{{end}}">
+                        <i class="fas fa-layer-group"></i>
+                        <span data-i18n="menu.batches">批次管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "batches"}} show{{end}}" id="batchesSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "batches") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/batches" data-i18n="menu.batch_management">批次列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "batch-templates"}} active{{end}}">
+                            <a href="/batches/templates" data-i18n="menu.batch_templates">批次模板</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "batch-settings"}} active{{end}}">
+                            <a href="/batches/settings" data-i18n="menu.batch_settings">批次設置</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 7. 商品管理 (Goods) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "goods"}} active open{{end}}">
+                    <a href="#goodsSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "goods"}}true{{else}}false{{end}}">
+                        <i class="fas fa-tags"></i>
+                        <span data-i18n="menu.goods">商品管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "goods"}} show{{end}}" id="goodsSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "goods") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/goods" data-i18n="menu.goods">商品列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "goods-categories"}} active{{end}}">
+                            <a href="/goods/categories" data-i18n="menu.goods_categories">商品分類</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "goods-reviews"}} active{{end}}">
+                            <a href="/goods/reviews" data-i18n="menu.goods_reviews">商品評價</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 8. 商城訂單 (Shop Orders) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "shop-orders"}} active open{{end}}">
+                    <a href="#shopOrdersSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "shop-orders"}}true{{else}}false{{end}}">
+                        <i class="fas fa-store"></i>
+                        <span data-i18n="menu.shop_orders">商城訂單</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "shop-orders"}} show{{end}}" id="shopOrdersSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "shop-orders") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/shop-orders" data-i18n="menu.shop_orders">訂單列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-pay"}} active{{end}}">
+                            <a href="/shop-orders/pending-pay" data-i18n="menu.shop_orders_pending_pay">待付款</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-ship"}} active{{end}}">
+                            <a href="/shop-orders/pending-ship" data-i18n="menu.shop_orders_pending_ship">待發貨</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "pending-receive"}} active{{end}}">
+                            <a href="/shop-orders/pending-receive" data-i18n="menu.shop_orders_pending_receive">待收貨</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "shop-completed"}} active{{end}}">
+                            <a href="/shop-orders/completed" data-i18n="menu.shop_orders_completed">已完成</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "refunds"}} active{{end}}">
+                            <a href="/shop-orders/refunds" data-i18n="menu.order_refunds">售後管理</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 9. 內容管理 (Content) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "content"}} active open{{end}}">
+                    <a href="#contentSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "content"}}true{{else}}false{{end}}">
+                        <i class="fas fa-newspaper"></i>
+                        <span data-i18n="menu.content">內容管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "content"}} show{{end}}" id="contentSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "articles"}} active{{end}}">
+                            <a href="/content/articles" data-i18n="menu.articles">文章管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "article-categories"}} active{{end}}">
+                            <a href="/content/categories" data-i18n="menu.article_categories">文章分類</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "files"}} active{{end}}">
+                            <a href="/content/files" data-i18n="menu.files">文件管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "file-groups"}} active{{end}}">
+                            <a href="/content/file-groups" data-i18n="menu.file_groups">文件分組</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "file-recycle-bin"}} active{{end}}">
+                            <a href="/content/file-recycle-bin" data-i18n="menu.file_recycle_bin">文件回收站</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 10. 營銷管理 (Marketing) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "marketing"}} active open{{end}}">
+                    <a href="#marketingSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "marketing"}}true{{else}}false{{end}}">
+                        <i class="fas fa-bullhorn"></i>
+                        <span data-i18n="menu.marketing">營銷管理</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "marketing"}} show{{end}}" id="marketingSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "coupons"}} active{{end}}">
+                            <a href="/marketing/coupons" data-i18n="menu.coupons">優惠券</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "coupon-receives"}} active{{end}}">
+                            <a href="/marketing/coupon-receives" data-i18n="menu.coupon_receives">領取記錄</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "points-logs"}} active{{end}}">
+                            <a href="/marketing/points" data-i18n="menu.points_logs">積分明細</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "points-settings"}} active{{end}}">
+                            <a href="/marketing/points/settings" data-i18n="menu.points_settings">積分設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "recharge-plans"}} active{{end}}">
+                            <a href="/marketing/recharge-plans" data-i18n="menu.recharge_plans">充值方案</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "recharge-orders"}} active{{end}}">
+                            <a href="/marketing/recharge-orders" data-i18n="menu.recharge_orders">充值訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sms-push"}} active{{end}}">
+                            <a href="/marketing/sms" data-i18n="menu.sms_logs">短信推送</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "email-push"}} active{{end}}">
+                            <a href="/marketing/email" data-i18n="menu.email_push">郵件推送</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "blind-box"}} active{{end}}">
+                            <a href="/marketing/blind-box" data-i18n="menu.blind_box">盲盒活動</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "blind-box-draws"}} active{{end}}">
+                            <a href="/marketing/blind-box/draws" data-i18n="menu.blind_box_draws">盲盒記錄</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "blind-box-settings"}} active{{end}}">
+                            <a href="/marketing/blind-box/settings" data-i18n="menu.blind_box_settings">盲盒設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "coupon-distribution"}} active{{end}}">
+                            <a href="/marketing/coupon-distribution" data-i18n="menu.coupon_distribution_settings">優惠券發放設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "recharge-settings"}} active{{end}}">
+                            <a href="/marketing/recharge-settings" data-i18n="menu.recharge_settings">充值設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "blind-box-wall"}} active{{end}}">
+                            <a href="/marketing/blind-box/wall" data-i18n="menu.blind_box_wall">盲盒分享牆</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 11. 數據統計 (Statistics) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "statistics"}} active open{{end}}">
+                    <a href="#statisticsSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "statistics"}}true{{else}}false{{end}}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span data-i18n="menu.statistics">數據統計</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "statistics"}} show{{end}}" id="statisticsSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "overview"}} active{{end}}">
+                            <a href="/statistics" data-i18n="menu.statistics_overview">統計總覽</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "first-entry"}} active{{end}}">
+                            <a href="/statistics/first-entry" data-i18n="menu.statistics_first_entry">首次入庫</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "country"}} active{{end}}">
+                            <a href="/statistics/country" data-i18n="menu.statistics_country">國家統計</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "category"}} active{{end}}">
+                            <a href="/statistics/category" data-i18n="menu.statistics_category">類目統計</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "channel"}} active{{end}}">
+                            <a href="/statistics/channel" data-i18n="menu.statistics_channel">渠道統計</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "order"}} active{{end}}">
+                            <a href="/statistics/order" data-i18n="menu.statistics_order">訂單統計</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dashboard"}} active{{end}}">
+                            <a href="/statistics/dashboard" data-i18n="menu.statistics_dashboard">數據大屏</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 12. 客戶端 (Client / App) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "client"}} active open{{end}}">
+                    <a href="#clientSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "client"}}true{{else}}false{{end}}">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span data-i18n="menu.client">客戶端</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "client"}} show{{end}}" id="clientSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "miniprogram"}} active{{end}}">
+                            <a href="/client/miniprogram" data-i18n="menu.client_miniprogram">小程序設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "h5"}} active{{end}}">
+                            <a href="/client/h5" data-i18n="menu.client_h5">H5端設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "language"}} active{{end}}">
+                            <a href="/client/language" data-i18n="menu.client_language">語言設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "page-links"}} active{{end}}">
+                            <a href="/client/page-links" data-i18n="menu.client_page_links">頁面鏈接</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "subscribe-messages"}} active{{end}}">
+                            <a href="/client/subscribe-messages" data-i18n="menu.subscribe_messages">訂閱消息</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "help-articles"}} active{{end}}">
+                            <a href="/client/help" data-i18n="menu.help_articles">幫助中心</a>
+                        </li>
+                        <li class="sidebar-sublabel" data-i18n="menu.client_sublabel_pc">PC端設置</li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "web"}} active{{end}}">
+                            <a href="/client/web" data-i18n="menu.client_web">PC端管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "webmenu"}} active{{end}}">
+                            <a href="/client/web-menu" data-i18n="menu.client_webmenu">網站菜單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "weblink"}} active{{end}}">
+                            <a href="/client/web-link" data-i18n="menu.client_weblink">友情鏈接</a>
+                        </li>
+                        <li class="sidebar-sublabel" data-i18n="menu.client_sublabel_wechat">微信公眾號</li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "wechat-menu"}} active{{end}}">
+                            <a href="/client/wechat-menu" data-i18n="menu.client_wechat_menu">菜單管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "wechat-reply"}} active{{end}}">
+                            <a href="/client/wechat-reply" data-i18n="menu.client_wechat_reply">自動回覆</a>
+                        </li>
+                        <li class="sidebar-sublabel" data-i18n="menu.client_sublabel_page">頁面管理</li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "page-designs"}} active{{end}}">
+                            <a href="/client/page-designs" data-i18n="menu.page_designs">頁面設計</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "page-category"}} active{{end}}">
+                            <a href="/client/page-category" data-i18n="menu.client_page_category">分類模板</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 13. 應用中心 / 分銷 (Distribution / Dealers) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "distribution"}} active open{{end}}">
+                    <a href="#distributionSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "distribution"}}true{{else}}false{{end}}">
+                        <i class="fas fa-project-diagram"></i>
+                        <span data-i18n="menu.distribution">應用中心</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "distribution"}} show{{end}}" id="distributionSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "distribution") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/distribution/applications" data-i18n="menu.dealer_applications">分銷商申請</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-list"}} active{{end}}">
+                            <a href="/distribution/dealers" data-i18n="menu.dealer_list">分銷商列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-orders"}} active{{end}}">
+                            <a href="/distribution/orders" data-i18n="menu.dealer_orders">分銷訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-withdrawals"}} active{{end}}">
+                            <a href="/distribution/withdrawals" data-i18n="menu.dealer_withdrawals">分銷提現</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-levels"}} active{{end}}">
+                            <a href="/distribution/levels" data-i18n="menu.dealer_levels">分銷等級</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-settings"}} active{{end}}">
+                            <a href="/distribution/settings" data-i18n="menu.dealer_settings">分銷設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sharing-orders"}} active{{end}}">
+                            <a href="/distribution/sharing-orders" data-i18n="menu.sharing_orders">分享訂單</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sharing-settings"}} active{{end}}">
+                            <a href="/distribution/sharing-settings" data-i18n="menu.sharing_settings">分享設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sharing-verifications"}} active{{end}}">
+                            <a href="/distribution/sharing-verifications" data-i18n="menu.sharing_verifications">分享核銷</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "dealer-poster"}} active{{end}}">
+                            <a href="/distribution/poster" data-i18n="menu.dealer_poster">分銷海報</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "group-leaders"}} active{{end}}">
+                            <a href="/distribution/group-leaders" data-i18n="menu.group_leader_management">團長列表</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 14. 管理員 (Admin) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "admin"}} active open{{end}}">
+                    <a href="#adminSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "admin"}}true{{else}}false{{end}}">
+                        <i class="fas fa-user-shield"></i>
+                        <span data-i18n="menu.admin">管理員</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "admin"}} show{{end}}" id="adminSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "admin-users"}} active{{end}}">
+                            <a href="/admin/users" data-i18n="menu.admin_users">管理員列表</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "admin-roles"}} active{{end}}">
+                            <a href="/admin/roles" data-i18n="menu.admin_roles">角色管理</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 15. 設置 (Settings) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "settings"}} active open{{end}}">
+                    <a href="#settingsSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "settings"}}true{{else}}false{{end}}">
+                        <i class="fas fa-cog"></i>
+                        <span data-i18n="menu.system_settings">系統設置</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "settings"}} show{{end}}" id="settingsSubmenu">
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "store-settings"}} active{{end}}">
+                            <a href="/settings/store-settings" data-i18n="menu.store_settings">商城設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "countries"}} active{{end}}">
+                            <a href="/settings/countries" data-i18n="menu.countries">國家管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "currencies"}} active{{end}}">
+                            <a href="/settings/currencies" data-i18n="menu.currencies">幣種管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "member-levels"}} active{{end}}">
+                            <a href="/settings/member-levels" data-i18n="menu.member_levels">會員等級</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "package-categories"}} active{{end}}">
+                            <a href="/settings/package-categories" data-i18n="menu.package_categories">包裹分類</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "route-categories"}} active{{end}}">
+                            <a href="/settings/route-categories" data-i18n="menu.route_categories">線路分類</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "logistics-companies"}} active{{end}}">
+                            <a href="/settings/logistics-companies" data-i18n="menu.logistics_companies">物流公司</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "insurance"}} active{{end}}">
+                            <a href="/settings/insurance" data-i18n="menu.insurance">保險產品</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "consumables"}} active{{end}}">
+                            <a href="/settings/consumables" data-i18n="menu.consumables">耗材管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "value-added-services"}} active{{end}}">
+                            <a href="/settings/value-added-services" data-i18n="menu.value_added_services">增值服務</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "tracking-templates"}} active{{end}}">
+                            <a href="/settings/tracking-templates" data-i18n="menu.tracking_templates">軌跡模板</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "banners"}} active{{end}}">
+                            <a href="/settings/banners" data-i18n="menu.banners">輪播圖</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "shipping-marks"}} active{{end}}">
+                            <a href="/settings/shipping-marks" data-i18n="menu.shipping_marks">貨運標記</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "address-book"}} active{{end}}">
+                            <a href="/settings/address-book" data-i18n="menu.address_book">地址簿</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "notifications"}} active{{end}}">
+                            <a href="/settings/notifications" data-i18n="menu.notifications">通知管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "notice-settings"}} active{{end}}">
+                            <a href="/settings/notice" data-i18n="menu.notice_settings">通知設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "payment-settings"}} active{{end}}">
+                            <a href="/settings/payment" data-i18n="menu.payment_settings">支付設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sms-settings"}} active{{end}}">
+                            <a href="/settings/sms" data-i18n="menu.sms_settings">短信設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "email-settings"}} active{{end}}">
+                            <a href="/settings/email" data-i18n="menu.email_settings">郵件設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "storage-settings"}} active{{end}}">
+                            <a href="/settings/storage" data-i18n="menu.storage_settings">存儲設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "printer-settings"}} active{{end}}">
+                            <a href="/settings/printer" data-i18n="menu.printer_settings">打印機設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "template-messages"}} active{{end}}">
+                            <a href="/settings/template-messages" data-i18n="menu.template_messages">模板消息</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "admin-style"}} active{{end}}">
+                            <a href="/settings/admin-style" data-i18n="menu.admin_style">後台樣式</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "barcode-settings"}} active{{end}}">
+                            <a href="/settings/barcode" data-i18n="menu.barcode_settings">條碼設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "bank-accounts"}} active{{end}}">
+                            <a href="/settings/bank-accounts" data-i18n="menu.bank_accounts">銀行設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "remittance-certificates"}} active{{end}}">
+                            <a href="/settings/remittance-certificates" data-i18n="menu.remittance_certificates">匯款憑證審核</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "payment-flows"}} active{{end}}">
+                            <a href="/settings/payment-flows" data-i18n="menu.payment_flows">支付流水</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "channels"}} active{{end}}">
+                            <a href="/settings/channels" data-i18n="menu.channel_settings">渠道設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "navigation-items"}} active{{end}}">
+                            <a href="/settings/navigation" data-i18n="menu.navigation_items">導航管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "menu-settings"}} active{{end}}">
+                            <a href="/settings/menus" data-i18n="menu.menu_settings">菜單管理</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "package-settings"}} active{{end}}">
+                            <a href="/settings/package-settings" data-i18n="menu.package_settings">包裹設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "cache-clear"}} active{{end}}">
+                            <a href="/settings/cache-clear" data-i18n="menu.cache_clear">清除緩存</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "user-client"}} active{{end}}">
+                            <a href="/settings/user-client" data-i18n="menu.client_settings">用戶端設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "warehouse-keeper"}} active{{end}}">
+                            <a href="/settings/warehouse-keeper" data-i18n="menu.warehouse_keeper_settings">倉管端設置</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "ai-recognition"}} active{{end}}">
+                            <a href="/settings/ai-recognition" data-i18n="menu.ai_recognition_settings">智能AI識別</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "sms-prefix"}} active{{end}}">
+                            <a href="/settings/sms-prefix" data-i18n="menu.sms_prefix_settings">短信前綴</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 16. 工具 (Tools) -->
+                <li class="sidebar-item has-submenu{{if eq .ActiveMenu "tools"}} active open{{end}}">
+                    <a href="#toolsSubmenu" class="sidebar-link" data-bs-toggle="collapse" aria-expanded="{{if eq .ActiveMenu "tools"}}true{{else}}false{{end}}">
+                        <i class="fas fa-tools"></i>
+                        <span data-i18n="menu.tools">工具</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu{{if eq .ActiveMenu "tools"}} show{{end}}" id="toolsSubmenu">
+                        <li class="sidebar-subitem{{if and (eq .ActiveMenu "tools") (not .ActiveSubMenu)}} active{{end}}">
+                            <a href="/tools" data-i18n="menu.tools_overview">工具概覽</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "tools-guide"}} active{{end}}">
+                            <a href="/tools/guide" data-i18n="menu.tools_guide">使用指南</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "tools-api"}} active{{end}}">
+                            <a href="/tools/api" data-i18n="menu.tools_api">API接口</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "tools-update-log"}} active{{end}}">
+                            <a href="/tools/update-log" data-i18n="menu.tools_update_log">更新日誌</a>
+                        </li>
+                        <li class="sidebar-subitem{{if eq .ActiveSubMenu "tools-freight-query"}} active{{end}}">
+                            <a href="/tools/freight-query" data-i18n="menu.tools_freight_query">運費查詢</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-text">v1.0.0</div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navigation -->
+        <nav class="topnav">
+            <div class="topnav-left">
+                <button class="topnav-toggler d-lg-none" id="sidebarToggler">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="topnav-title d-none d-lg-block">{{.Title}}</h1>
+                <h1 class="topnav-title d-lg-none topnav-title-mobile">{{.Title}}</h1>
+            </div>
+
+            <!-- Mobile Right Icons (visible < 992px) -->
+            <div class="topnav-right-mobile d-lg-none">
+                <a href="/settings/payment-audits" class="topnav-badge-link" data-i18n-title="topnav.pending_payment_audit" title="待審核線下付款">
+                    <i class="fas fa-money-check-alt"></i>
+                    <span class="badge bg-danger topnav-badge-count topnav-badge-count-mobile" id="paymentAuditBadgeMobile" style="display:none;">0</span>
+                </a>
+                <a href="/settings/remittance-certificates" class="topnav-badge-link" data-i18n-title="topnav.pending_remittance" title="待審核匯款憑證">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span class="badge bg-danger topnav-badge-count topnav-badge-count-mobile" id="remittanceBadgeMobile" style="display:none;">0</span>
+                </a>
+                <div class="dropdown">
+                    <button class="topnav-badge-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-i18n-title="topnav.pending_items" title="待處理事項">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-warning topnav-badge-count topnav-badge-count-mobile" id="pendingBadgeMobile" style="display:none;">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 260px;">
+                        <li class="dropdown-header" data-i18n="topnav.pending_items">待處理事項</li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/orders">
+                            <span><i class="fas fa-clock me-2"></i><span data-i18n="topnav.overdue_orders">逾期訂單</span></span>
+                            <span class="badge bg-danger" id="overdueOrderCountMobile">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/packages/unclaimed">
+                            <span><i class="fas fa-box-open me-2"></i><span data-i18n="topnav.pending_claim">待認領包裹</span></span>
+                            <span class="badge bg-warning" id="unclaimedCountMobile">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/packages/problems">
+                            <span><i class="fas fa-exclamation-triangle me-2"></i><span data-i18n="topnav.problem_packages">問題件</span></span>
+                            <span class="badge bg-info" id="problemCountMobile">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/distribution/applications">
+                            <span><i class="fas fa-user-plus me-2"></i><span data-i18n="topnav.dealer_applications">分銷商申請</span></span>
+                            <span class="badge bg-primary" id="dealerAppCountMobile">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/warehouses/applications">
+                            <span><i class="fas fa-warehouse me-2"></i><span data-i18n="topnav.warehouse_applications">倉庫入駐申請</span></span>
+                            <span class="badge bg-secondary" id="warehouseAppCountMobile">0</span>
+                        </a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="topnav-badge-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i><span data-i18n="menu.system_settings">系統設置</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-header" data-i18n="topnav.language">語言</li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="zh"><i class="fas fa-check me-2 lang-check"></i>繁體中文</a></li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="zh-CN"><i class="fas fa-check me-2 lang-check"></i>简体中文</a></li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="en"><i class="fas fa-check me-2 lang-check"></i>English</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i><span data-i18n="topnav.logout">登出</span></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Desktop Right Icons (visible >= 992px) -->
+            <div class="topnav-right d-none d-lg-flex">
+                <!-- Offline Payment Audit Badge -->
+                <a href="/settings/payment-audits" class="topnav-badge-link me-3" data-i18n-title="topnav.pending_payment_audit" title="待審核線下付款">
+                    <i class="fas fa-money-check-alt"></i>
+                    <span class="badge bg-danger topnav-badge-count" id="paymentAuditBadge" style="display:none;">0</span>
+                </a>
+                <!-- Remittance Certificate Badge -->
+                <a href="/settings/remittance-certificates" class="topnav-badge-link me-3" data-i18n-title="topnav.pending_remittance" title="待審核匯款憑證">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span class="badge bg-danger topnav-badge-count" id="remittanceBadge" style="display:none;">0</span>
+                </a>
+                <!-- Pending Tasks Dropdown -->
+                <div class="dropdown me-3">
+                    <button class="topnav-badge-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-i18n-title="topnav.pending_items" title="待處理事項">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-warning topnav-badge-count" id="pendingBadge" style="display:none;">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 280px;">
+                        <li class="dropdown-header" data-i18n="topnav.pending_items">待處理事項</li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/orders">
+                            <span><i class="fas fa-clock me-2"></i><span data-i18n="topnav.overdue_orders">逾期訂單</span></span>
+                            <span class="badge bg-danger" id="overdueOrderCount">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/packages/unclaimed">
+                            <span><i class="fas fa-box-open me-2"></i><span data-i18n="topnav.pending_claim">待認領包裹</span></span>
+                            <span class="badge bg-warning" id="unclaimedCount">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/packages/problems">
+                            <span><i class="fas fa-exclamation-triangle me-2"></i><span data-i18n="topnav.problem_packages">問題件</span></span>
+                            <span class="badge bg-info" id="problemCount">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/distribution/applications">
+                            <span><i class="fas fa-user-plus me-2"></i><span data-i18n="topnav.dealer_applications">分銷商申請</span></span>
+                            <span class="badge bg-primary" id="dealerAppCount">0</span>
+                        </a></li>
+                        <li><a class="dropdown-item d-flex justify-content-between" href="/warehouses/applications">
+                            <span><i class="fas fa-warehouse me-2"></i><span data-i18n="topnav.warehouse_applications">倉庫入駐申請</span></span>
+                            <span class="badge bg-secondary" id="warehouseAppCount">0</span>
+                        </a></li>
+                    </ul>
+                </div>
+                <!-- User Dropdown -->
+                <div class="dropdown">
+                    <button class="topnav-user dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="topnav-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="topnav-username" data-i18n="menu.admin">管理員</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i><span data-i18n="menu.system_settings">系統設置</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-header" data-i18n="topnav.language">語言</li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="zh"><i class="fas fa-check me-2 lang-check"></i>繁體中文</a></li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="zh-CN"><i class="fas fa-check me-2 lang-check"></i>简体中文</a></li>
+                        <li><a class="dropdown-item lang-option" href="#" data-lang="en"><i class="fas fa-check me-2 lang-check"></i>English</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i><span data-i18n="topnav.logout">登出</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="main-content">
+            {{embed}}
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="text-center">
+                <span>&copy; 2025 V-sys Limited - vShip</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <style>
+        /* Language switcher: hide checkmark for non-active languages */
+        .lang-option .lang-check { visibility: hidden; }
+        .lang-option.active .lang-check { visibility: visible; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/app.js"></script>
+    {{block "scripts" .}}{{end}}
+
+    <script>
+        // Sidebar toggle
+        document.getElementById('sidebarToggler').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.add('show');
+            document.getElementById('sidebarOverlay').classList.add('show');
+        });
+        document.getElementById('sidebarClose').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.remove('show');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        });
+        document.getElementById('sidebarOverlay').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.remove('show');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        });
+
+        // Check for tenant on page load + load header badge counts
+        (async function() {
+            try {
+                // Check localStorage auth first (matching vWork pattern)
+                var authToken = localStorage.getItem('auth_token');
+                if (!authToken) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                var fetchOpts = {
+                    credentials: 'same-origin',
+                    headers: {}
+                };
+                if (authToken) {
+                    fetchOpts.headers['Authorization'] = 'Bearer ' + authToken;
+                }
+
+                const resp = await fetch('/api/v1/user/me', fetchOpts);
+
+                if (resp.status === 401) {
+                     localStorage.removeItem('auth_token');
+                     localStorage.removeItem('user');
+                     localStorage.removeItem('tenant_id');
+                     window.location.href = '/login';
+                     return;
+                }
+                
+                const user = await resp.json();
+
+                if (user && !user.tenant_id) {
+                    // If user has no tenant, redirect to setup page
+                    if (window.location.pathname !== '/setup-tenant') {
+                       window.location.href = '/setup-tenant';
+                    }
+                } else if (user && user.name) {
+                    // Update username in topnav
+                    const usernameEl = document.querySelector('.topnav-username');
+                    if (usernameEl) {
+                        usernameEl.textContent = user.name;
+                    }
+                }
+
+                // Load header badge counts (non-blocking)
+                loadHeaderBadges();
+            } catch (e) {
+                console.error('Auth check failed', e);
+            }
+        })();
+
+        // Helper: set badge on both desktop + mobile elements
+        function setBadge(desktopId, mobileId, count) {
+            var text = count > 99 ? '99+' : String(count);
+            [desktopId, mobileId].forEach(function(id) {
+                if (!id) return;
+                var el = document.getElementById(id);
+                if (!el) return;
+                if (count > 0) {
+                    el.textContent = text;
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        // Load header notification badge counts
+        async function loadHeaderBadges() {
+            var pendingTotal = 0;
+
+            // Helper to fetch a count from a list endpoint (uses data.total)
+            function fetchCount(url) {
+                var opts = { credentials: 'same-origin', headers: {} };
+                var t = localStorage.getItem('auth_token');
+                if (t) { opts.headers['Authorization'] = 'Bearer ' + t; }
+                return fetch(url, opts)
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) { return (data && data.total) ? data.total : 0; })
+                    .catch(function() { return 0; });
+            }
+
+            try {
+                // Payment audits pending count
+                fetchCount('/api/v1/payment-audits?status=pending&limit=1')
+                    .then(function(count) {
+                        setBadge('paymentAuditBadge', 'paymentAuditBadgeMobile', count);
+                    });
+
+                // Remittance certificates pending count
+                fetchCount('/api/v1/remittance-certificates?status=pending&limit=1')
+                    .then(function(count) {
+                        setBadge('remittanceBadge', 'remittanceBadgeMobile', count);
+                    });
+
+                // Pending tasks: fetch all 5 items in parallel, then sum for bell badge
+                var counts = await Promise.all([
+                    fetchCount('/api/v1/orders?status=overdue&limit=1'),
+                    fetchCount('/api/v1/packages?unclaimed=true&limit=1'),
+                    fetchCount('/api/v1/packages?is_problem=true&limit=1'),
+                    fetchCount('/api/v1/dealer/applications?status=pending&limit=1'),
+                    fetchCount('/api/v1/warehouse-applications?status=pending&limit=1')
+                ]);
+
+                // Update individual dropdown badges (desktop + mobile)
+                setBadge('overdueOrderCount', 'overdueOrderCountMobile', counts[0]);
+                setBadge('unclaimedCount', 'unclaimedCountMobile', counts[1]);
+                setBadge('problemCount', 'problemCountMobile', counts[2]);
+                setBadge('dealerAppCount', 'dealerAppCountMobile', counts[3]);
+                setBadge('warehouseAppCount', 'warehouseAppCountMobile', counts[4]);
+
+                // Sum for bell badge
+                pendingTotal = counts.reduce(function(a, b) { return a + b; }, 0);
+                setBadge('pendingBadge', 'pendingBadgeMobile', pendingTotal);
+            } catch (e) {
+                console.error('Failed to load header badges', e);
+            }
+        }
+        // Language switcher: highlight current language
+        (function() {
+            var currentLang = (typeof I18n !== 'undefined' && I18n.currentLang) ? I18n.currentLang : (localStorage.getItem('vship_lang') || 'zh');
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                if (el.getAttribute('data-lang') === currentLang) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+{{end}}

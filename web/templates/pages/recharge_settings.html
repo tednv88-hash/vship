@@ -1,0 +1,82 @@
+{{define "pages/recharge_settings"}}
+<div class="card">
+    <div class="card-header"><h5 class="card-title mb-0" data-i18n="pages.recharge_settings.title">充值設置</h5></div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.recharge_settings.recharge_function">充值功能</label>
+                <select class="form-select" id="recharge_enabled"><option value="1" data-i18n="pages.recharge_settings.open">開啟</option><option value="0" data-i18n="pages.recharge_settings.close">關閉</option></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.recharge_settings.min_amount">最低充值金額</label>
+                <input type="number" class="form-control" id="min_amount" step="0.01" min="0" value="10">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.recharge_settings.recharge_description">充值說明</label>
+                <textarea class="form-control" id="recharge_description" rows="3"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span></button>
+        </form>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.recharge_settings.denomination_settings">充值面額設置</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="pages.recharge_settings.add_denomination">新增面額</span></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.recharge_plans.recharge_amount">充值金額</th><th data-i18n="pages.recharge_plans.bonus_amount">贈送金額</th><th data-i18n="pages.recharge_plans.bonus_points">贈送積分</th><th data-i18n="pages.recharge_plans.sort_order">排序</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.recharge_settings.add_denomination">新增面額</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="planForm"><input type="hidden" id="editId">
+            <div class="mb-3"><label class="form-label" data-i18n="pages.recharge_plans.recharge_amount">充值金額</label><input type="number" class="form-control" id="amount" step="0.01" min="0" required></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.recharge_plans.bonus_amount">贈送金額</label><input type="number" class="form-control" id="gift_amount" step="0.01" min="0" value="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.recharge_plans.bonus_points">贈送積分</label><input type="number" class="form-control" id="gift_points" min="0" value="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.recharge_plans.sort_order">排序</label><input type="number" class="form-control" id="sort_order" min="0" value="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="plan_status"><option value="active" data-i18n="common.status_active">啟用</option><option value="inactive" data-i18n="common.status_inactive">停用</option></select></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="savePlan()" data-i18n="common.save">儲存</button></div>
+    </div></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+async function loadSettings() { try { const res = await apiRequest('GET', '/recharge/setting');
+    const d = res.data || res; document.getElementById('recharge_enabled').value = d.recharge_enabled || '1';
+    document.getElementById('min_amount').value = d.min_amount || 10; document.getElementById('recharge_description').value = d.recharge_description || ''; } catch(e) {} }
+async function saveSettings() { const data = { recharge_enabled: document.getElementById('recharge_enabled').value,
+    min_amount: parseFloat(document.getElementById('min_amount').value), recharge_description: document.getElementById('recharge_description').value };
+    try { await apiRequest('PUT', '/recharge/setting', data); showToast(_t('pages.recharge_settings.settings_saved', '設置已儲存'), 'success'); } catch(e) {} }
+function loadPlans() { loadTableData('/recharge-plans', 'tableBody', renderRow, null, 1, 100, ''); }
+function renderRow(item) { return `<tr><td>${formatMoney(item.amount)}</td><td>${formatMoney(item.gift_amount || 0)}</td><td>${item.gift_points || 0}</td>
+    <td>${item.sort_order || 0}</td><td>${getStatusBadge(item.status)}</td>
+    <td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editPlan('${item.id}')"><i class="fas fa-edit"></i></button>
+    <button class="btn btn-sm btn-outline-danger" onclick="deletePlan('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`; }
+function openCreateModal() {
+    document.getElementById('modalTitle').textContent = _t('pages.recharge_settings.add_denomination', '新增面額');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.recharge_settings.add_denomination');
+    document.getElementById('editId').value = ''; resetForm('planForm'); openModal('formModal');
+}
+async function editPlan(id) { try { const res = await apiRequest('GET', '/recharge-plans/' + id); const d = res.data || res;
+    document.getElementById('editId').value = d.id; document.getElementById('amount').value = d.amount; document.getElementById('gift_amount').value = d.gift_amount || 0;
+    document.getElementById('gift_points').value = d.gift_points || 0; document.getElementById('sort_order').value = d.sort_order || 0;
+    document.getElementById('plan_status').value = d.status || 'active';
+    document.getElementById('modalTitle').textContent = _t('pages.recharge_settings.edit_denomination', '編輯面額');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.recharge_settings.edit_denomination');
+    openModal('formModal'); } catch(e) {} }
+async function savePlan() { const id = document.getElementById('editId').value;
+    const data = { amount: parseFloat(document.getElementById('amount').value), gift_amount: parseFloat(document.getElementById('gift_amount').value),
+        gift_points: parseInt(document.getElementById('gift_points').value), sort_order: parseInt(document.getElementById('sort_order').value),
+        status: document.getElementById('plan_status').value };
+    try { if (id) { await apiRequest('PUT', '/recharge-plans/' + id, data); } else { await apiRequest('POST', '/recharge-plans', data); }
+    showToast(_t('pages.recharge_settings.save_success', '儲存成功'), 'success'); closeModal('formModal'); loadPlans(); } catch(e) {} }
+async function deletePlan(id) { if (!confirmDelete()) return;
+    try { await apiRequest('DELETE', '/recharge-plans/' + id); showToast(_t('common.delete_success', '刪除成功'), 'success'); loadPlans(); } catch(e) {} }
+document.addEventListener('DOMContentLoaded', () => { loadSettings(); loadPlans(); });
+</script>
+{{end}}

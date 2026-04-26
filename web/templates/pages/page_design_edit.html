@@ -1,0 +1,1082 @@
+{{define "pages/page_design_edit"}}
+<style>
+/* DIY Editor Layout */
+.work-diy{display:flex;padding:0;align-items:flex-start;gap:0;min-height:calc(100vh - 180px)}
+.work-diy .diy-menu{width:280px;flex-shrink:0;background:#fdfdfd;border:1px solid #e2e8f0;border-radius:8px;user-select:none;overflow:hidden}
+.work-diy .diy-menu .menu-title{position:relative;padding:12px 20px;border-bottom:1px solid #e2e8f0;font-size:1rem;font-weight:600;color:#1e293b}
+.work-diy .diy-menu .menu-title::before{content:'';position:absolute;width:4px;height:16px;background:var(--primary);top:14px;left:10px;border-radius:2px}
+.work-diy .diy-menu .navs{padding:10px}
+.work-diy .diy-menu .navs .title{font-size:0.8125rem;color:#94a3b8;margin:10px 0 6px;font-weight:500}
+.work-diy .diy-menu .navs-components{display:flex;flex-wrap:wrap;gap:6px}
+.work-diy .diy-menu .navs-components nav{width:76px;padding:6px 2px;border:1px solid #e2e8f0;text-align:center;font-size:11px;cursor:pointer;border-radius:6px;background:#f8fafc;transition:all 0.2s;color:#475569}
+.work-diy .diy-menu .navs-components nav:hover{border-color:var(--primary);color:var(--primary);background:#fff}
+.work-diy .diy-menu .navs-components nav .item-icon{font-size:20px;margin-bottom:2px;line-height:1.4}
+.work-diy .diy-menu .action{padding:12px;border-top:1px solid #e2e8f0;display:flex;gap:8px;justify-content:flex-end}
+
+/* Phone preview container */
+.work-diy .diy-phone-wrap{flex:1;display:flex;justify-content:center;padding:0 20px}
+.work-diy .diy-phone{width:377px;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:1px solid #ddd;overflow:hidden;flex-shrink:0}
+.work-diy .diy-phone .phone-top{width:100%;height:66px;text-align:center;background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}
+.work-diy .diy-phone .phone-top h4{margin:0;font-size:14px;font-weight:normal;white-space:nowrap;line-height:88px;color:#fff}
+.work-diy .diy-phone .phone-main{position:relative;border-top:0;user-select:none;line-height:normal;overflow:hidden}
+.work-diy .diy-phone .phone-main .dragArea{overflow-y:auto;height:580px}
+.work-diy .diy-phone .phone-main .dragArea::-webkit-scrollbar{width:0;display:none}
+
+/* Phone preview components */
+.work-diy .diy-phone .phone-main .drag{display:block;overflow:hidden;position:relative}
+.work-diy .diy-phone .phone-main .optional{cursor:pointer;transition:outline 0.15s}
+.work-diy .diy-phone .phone-main .optional:hover{outline:2px dashed var(--primary);outline-offset:-2px}
+.work-diy .diy-phone .phone-main .optional.selected{outline:2px solid var(--primary);outline-offset:-2px}
+.work-diy .diy-phone .phone-main .drag .btn-edit-del{height:18px;position:absolute;right:2px;bottom:2px;display:none;z-index:90}
+.work-diy .diy-phone .phone-main .drag .btn-edit-del>div{width:36px;height:18px;line-height:18px;display:inline-block;text-align:center;font-size:10px;color:#fff;background:rgba(0,0,0,0.5);margin-left:2px;cursor:pointer;border-radius:3px}
+.work-diy .diy-phone .phone-main .drag.selected .btn-edit-del,.work-diy .diy-phone .phone-main .drag:hover .btn-edit-del{display:block}
+
+/* Banner */
+.diy-banner{display:block;margin:0;padding:0;height:auto;overflow:hidden}
+.diy-banner img{display:none;width:100%}
+.diy-banner img:first-child{display:block}
+.diy-banner .dots{height:16px;text-align:center;padding:0 0 4px;display:flex;justify-content:center;gap:4px;align-items:center;position:absolute;bottom:6px;left:50%;transform:translateX(-50%)}
+.diy-banner .dots span{display:inline-block;width:6px;height:6px;border-radius:50%}
+.diy-banner .dots.round span{border-radius:50%}
+.diy-banner .dots.square span{border-radius:0}
+.diy-banner .dots.long span{border-radius:3px}
+.diy-banner .dots span:first-child{width:14px;border-radius:3px}
+.diy-banner-placeholder{width:100%;height:170px;background:linear-gradient(135deg,var(--primary) 0%,#04b06a 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+
+/* Search */
+.diy-search-comp{background:#f1f1f2;padding:10px}
+.diy-search-comp .inner{height:30px;background:#fff;overflow:hidden}
+.diy-search-comp .inner.radius{border-radius:5px}
+.diy-search-comp .inner.round{border-radius:30px}
+.diy-search-comp .inner.square{border-radius:0}
+.diy-search-comp .inner .search-input{height:30px;line-height:30px;color:#999;padding:0 10px;font-size:12px;display:flex;align-items:center;gap:6px}
+.diy-search-comp .inner .search-input i{font-size:14px}
+
+/* Notice */
+.diy-notice-comp{display:flex;align-items:center;padding:10px;background:#fff;gap:8px}
+.diy-notice-comp .notice__icon{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.diy-notice-comp .notice__icon img{width:100%;height:100%;object-fit:contain}
+.diy-notice-comp .notice__text{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px}
+.diy-notice-comp .notice__more{flex-shrink:0;color:#666;font-size:12px}
+
+/* NavBar */
+.diy-navBar{padding:8px 0}
+.diy-navBar ul{list-style:none;display:flex;flex-wrap:wrap;margin:0;padding:0}
+.diy-navBar ul.cols-3 li{width:33.333%}
+.diy-navBar ul.cols-4 li{width:25%}
+.diy-navBar ul.cols-5 li{width:20%}
+.diy-navBar li{text-align:center;padding:6px 4px}
+.diy-navBar .item-image{width:44px;height:44px;margin:0 auto}
+.diy-navBar .item-image img{width:100%;height:100%;object-fit:contain}
+.diy-navBar .item-text{font-size:11px;margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.diy-navbar-placeholder{width:44px;height:44px;margin:0 auto;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px}
+
+/* Goods */
+.diy-goods-comp{padding:0}
+.diy-goods-comp .goods-list{list-style:none;margin:0;padding:6px;display:flex;flex-wrap:wrap;gap:6px}
+.diy-goods-comp .goods-list.column__1 .goods-item{width:100%;display:flex;gap:10px;background:#fff;border-radius:6px;overflow:hidden}
+.diy-goods-comp .goods-list.column__1 .goods-item .goods-item_left{width:120px;height:120px;flex-shrink:0}
+.diy-goods-comp .goods-list.column__1 .goods-item .goods-item_left img{width:100%;height:100%;object-fit:cover}
+.diy-goods-comp .goods-list.column__1 .goods-item .goods-item_right{flex:1;padding:8px 8px 8px 0;display:flex;flex-direction:column;justify-content:space-between}
+.diy-goods-comp .goods-list.column__2 .goods-item{width:calc(50% - 3px);background:#fff;border-radius:6px;overflow:hidden}
+.diy-goods-comp .goods-list.column__3 .goods-item{width:calc(33.333% - 4px);background:#fff;border-radius:6px;overflow:hidden}
+.diy-goods-comp .goods-item .goods-image{width:100%;aspect-ratio:1/1}
+.diy-goods-comp .goods-item .goods-image img{width:100%;height:100%;object-fit:cover}
+.diy-goods-comp .goods-item .detail{padding:6px 8px}
+.diy-goods-comp .goods-item .goods-name{font-size:12px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.diy-goods-comp .goods-item .goods-item_title{font-size:13px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.diy-goods-comp .goods-item .detail-price,.diy-goods-comp .goods-item .desc_footer{margin-top:4px}
+.diy-goods-comp .goods-item .goods-price,.diy-goods-comp .goods-item .price_x{color:#ff4d4f;font-size:14px;font-weight:600}
+.diy-goods-comp .goods-item .goods-price::before,.diy-goods-comp .goods-item .price_x::before{content:'¥';font-size:11px}
+.diy-goods-comp .goods-item .line-price,.diy-goods-comp .goods-item .price_y{font-size:11px;color:#999;text-decoration:line-through;margin-left:4px}
+.diy-goods-comp .goods-item .desc-selling_point{font-size:11px;color:#999;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.diy-goods-comp .goods-item .desc-goods_sales{font-size:11px;color:#999;margin-top:2px}
+.diy-goods-placeholder{width:100%;aspect-ratio:1/1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:24px}
+
+/* ImageSingle */
+.diy-imageSingle{display:flex;flex-wrap:wrap}
+.diy-imageSingle .item-image{display:block}
+.diy-imageSingle .item-image img{width:100%;display:block}
+.diy-imageSingle-placeholder{width:100%;height:100px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:14px}
+
+/* Window */
+.diy-window{overflow:hidden}
+.diy-window .data-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap}
+.diy-window .data-list .item-image img{width:100%;display:block}
+
+/* Video */
+.diy-video-comp{text-align:center}
+.diy-video-comp video{width:100%;max-height:200px;background:#000}
+.diy-video-placeholder{width:100%;height:180px;background:#1e293b;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:8px}
+.diy-video-placeholder i{font-size:36px;opacity:0.6}
+
+/* Article */
+.diy-article .article-item{padding:10px;border-bottom:1px solid #f0f0f0;background:#fff}
+.diy-article .article-item.show-type__10{display:flex;gap:10px}
+.diy-article .article-item__left{flex:1}
+.diy-article .article-item__title{font-size:13px;color:#333;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.diy-article .article-item__image{width:80px;height:60px;flex-shrink:0;border-radius:4px;overflow:hidden}
+.diy-article .article-item__image img{width:100%;height:100%;object-fit:cover}
+.diy-article .show-type__20 .article-item__image{width:100%;height:auto;aspect-ratio:16/9;margin-top:8px}
+.diy-article .article-item__footer{font-size:11px;color:#999;margin-top:6px}
+
+/* Special (headline) */
+.diy-special{display:flex;align-items:center;padding:8px 10px;background:#fff}
+.diy-special .special-left{width:60px;height:24px;flex-shrink:0}
+.diy-special .special-left img{width:100%;height:100%;object-fit:contain}
+.diy-special .special-content{flex:1;overflow:hidden;margin:0 8px}
+.diy-special .special-content-list{list-style:none;margin:0;padding:0}
+.diy-special .content-item{font-size:12px;color:#333;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.diy-special .special-more{color:#999;font-size:12px;flex-shrink:0}
+
+/* Service (online CS) */
+.diy-service{text-align:center;padding:12px;background:#fff}
+.diy-service .service-icon{font-size:32px;color:var(--primary)}
+.diy-service .service-text{font-size:12px;color:#666;margin-top:4px}
+
+/* Official Account */
+.diy-officialAccount{background:#fff;padding:12px;display:flex;align-items:center;gap:10px;border:1px solid #f0f0f0;margin:8px}
+.diy-officialAccount .oa-icon{width:40px;height:40px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.diy-officialAccount .oa-info{flex:1}
+.diy-officialAccount .oa-name{font-size:13px;color:#333;font-weight:500}
+.diy-officialAccount .oa-desc{font-size:11px;color:#999}
+.diy-officialAccount .oa-btn{font-size:12px;color:var(--primary);border:1px solid var(--primary);padding:2px 10px;border-radius:3px}
+
+/* RichText */
+.diy-richText{padding:10px;background:#fff;font-size:13px;color:#333;line-height:1.6;word-break:break-all}
+
+/* Blank (spacer) */
+.diy-blank{width:100%}
+
+/* Guide (divider line) */
+.diy-guide{padding:0 10px}
+.diy-guide .guide-line{width:100%}
+
+/* Coupon */
+.diy-coupon{display:flex;justify-content:space-around;padding:10px 0;flex-wrap:wrap;gap:6px}
+.diy-coupon .coupon-item{display:flex;border-radius:6px;overflow:hidden;min-width:100px}
+.diy-coupon .left-content{padding:8px 12px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.diy-coupon .content-top .unit{font-size:12px}
+.diy-coupon .content-top .price{font-size:20px;font-weight:700}
+.diy-coupon .content-bottom{font-size:10px;opacity:0.8;white-space:nowrap}
+.diy-coupon .right-receive{padding:8px 10px;background:rgba(255,255,255,0.2);color:#fff;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* Right editor panel */
+.work-diy .diy-editor{width:340px;flex-shrink:0;background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow-y:auto;max-height:calc(100vh - 180px)}
+.work-diy .diy-editor .editor-title{padding:12px 16px;border-bottom:1px solid #e2e8f0;font-weight:600;font-size:0.9375rem;color:#1e293b;position:relative}
+.work-diy .diy-editor .editor-title::before{content:'';position:absolute;width:4px;height:16px;background:var(--primary);top:14px;left:8px;border-radius:2px}
+.work-diy .diy-editor .editor-empty{text-align:center;padding:40px 20px;color:#94a3b8;font-size:0.875rem}
+.work-diy .diy-editor .editor-form{padding:16px}
+.work-diy .diy-editor .editor-form .form-group{margin-bottom:12px}
+.work-diy .diy-editor .editor-form label{font-size:0.8125rem;font-weight:500;color:#475569;margin-bottom:4px;display:block}
+.work-diy .diy-editor .editor-form input[type="text"],.work-diy .diy-editor .editor-form input[type="number"],.work-diy .diy-editor .editor-form select{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:4px;font-size:0.8125rem}
+.work-diy .diy-editor .editor-form input[type="color"]{width:36px;height:28px;padding:0;border:1px solid #e2e8f0;border-radius:4px;cursor:pointer}
+.work-diy .diy-editor .editor-form .color-row{display:flex;align-items:center;gap:8px}
+.work-diy .diy-editor .editor-form .btn-reset{font-size:11px;padding:2px 8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:3px;cursor:pointer;color:#64748b}
+.work-diy .diy-editor .editor-form .btn-reset:hover{background:#f1f5f9}
+.work-diy .diy-editor .editor-form hr{border:none;border-top:1px dashed #e2e8f0;margin:16px 0}
+.work-diy .diy-editor .editor-form .radio-group,.work-diy .diy-editor .editor-form .check-group{display:flex;flex-wrap:wrap;gap:8px 16px}
+.work-diy .diy-editor .editor-form .radio-group label,.work-diy .diy-editor .editor-form .check-group label{display:flex;align-items:center;gap:4px;font-weight:400;cursor:pointer}
+.work-diy .diy-editor .data-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px;margin-bottom:8px;position:relative}
+.work-diy .diy-editor .data-item .item-delete{position:absolute;top:6px;right:8px;color:#ef4444;cursor:pointer;font-size:14px}
+.work-diy .diy-editor .data-item .data-image{width:60px;height:60px;background:#f0f0f0;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.work-diy .diy-editor .data-item .data-image img{width:100%;height:100%;object-fit:cover}
+.work-diy .diy-editor .form-item-add{text-align:center;padding:10px;border:1px dashed #e2e8f0;border-radius:6px;color:var(--primary);cursor:pointer;font-size:13px;margin-top:8px;transition:background 0.15s}
+.work-diy .diy-editor .form-item-add:hover{background:var(--primary-light)}
+</style>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <a href="/client/page-designs" class="text-muted text-decoration-none me-2"><i class="fas fa-arrow-left"></i></a>
+        <span class="page-header-title" id="pageTitle" data-i18n="pages.page_designs.title">頁面設計</span>
+    </div>
+    <div>
+        <a class="btn btn-outline-info btn-sm me-2" id="btnPreview" href="/preview/page-designs/{{.PageID}}" target="_blank"><i class="fas fa-eye me-1"></i>預覽</a>
+        <button class="btn btn-primary btn-sm" id="btnSave"><i class="fas fa-save me-1"></i><span data-i18n="pages.page_design_edit.save_page">保存頁面</span></button>
+    </div>
+</div>
+
+<!-- Vue App -->
+<div id="diyApp" class="work-diy" v-cloak>
+    <!-- Left: Component Library -->
+    <div class="diy-menu">
+        <div class="menu-title">組件庫</div>
+        <div class="navs">
+            <div class="title">媒體組件</div>
+            <div class="navs-components">
+                <nav @click="addItem('banner')"><p class="item-icon"><i class="fas fa-images"></i></p><p>圖片輪播</p></nav>
+                <nav @click="addItem('imageSingle')"><p class="item-icon"><i class="fas fa-image"></i></p><p>單圖組</p></nav>
+                <nav @click="addItem('window')"><p class="item-icon"><i class="fas fa-th-large"></i></p><p>圖片櫥窗</p></nav>
+                <nav @click="addItem('video')"><p class="item-icon"><i class="fas fa-video"></i></p><p>視頻組</p></nav>
+                <nav @click="addItem('article')"><p class="item-icon"><i class="fas fa-newspaper"></i></p><p>文章組</p></nav>
+                <nav @click="addItem('special')"><p class="item-icon"><i class="fas fa-bolt"></i></p><p>頭條快報</p></nav>
+            </div>
+            <div class="title">商城組件</div>
+            <div class="navs-components">
+                <nav @click="addItem('search')"><p class="item-icon"><i class="fas fa-search"></i></p><p>搜索框</p></nav>
+                <nav @click="addItem('notice')"><p class="item-icon"><i class="fas fa-bullhorn"></i></p><p>公告組</p></nav>
+                <nav @click="addItem('navBar')"><p class="item-icon"><i class="fas fa-compass"></i></p><p>導航組</p></nav>
+                <nav @click="addItem('goods')"><p class="item-icon"><i class="fas fa-box-open"></i></p><p>商品組</p></nav>
+            </div>
+            <div class="title">工具組件</div>
+            <div class="navs-components">
+                <nav @click="addItem('service')"><p class="item-icon"><i class="fas fa-headset"></i></p><p>在線客服</p></nav>
+                <nav @click="addItem('officialAccount')"><p class="item-icon"><i class="fab fa-weixin"></i></p><p>關注公眾號</p></nav>
+                <nav @click="addItem('richText')"><p class="item-icon"><i class="fas fa-align-left"></i></p><p>富文本</p></nav>
+                <nav @click="addItem('blank')"><p class="item-icon"><i class="fas fa-arrows-alt-v"></i></p><p>輔助空白</p></nav>
+                <nav @click="addItem('guide')"><p class="item-icon"><i class="fas fa-minus"></i></p><p>輔助線</p></nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Center: Phone Preview -->
+    <div class="diy-phone-wrap">
+        <div class="diy-phone">
+            <!-- Phone status bar / title -->
+            <div class="phone-top optional" @click.stop="editItem('page')"
+                 :class="{selected: selectedIndex === 'page'}"
+                 :style="{background: pageData.page.style.titleBackgroundColor, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 12px'}">
+                <img src="/static/img/diy/logo/logo.svg" alt="大發貨運" style="height: 28px; margin-right: 8px;">
+                <h4 v-if="!pageData.page.params.title || pageData.page.params.title === '大發貨運'" style="display:none"></h4>
+                <h4 v-else :style="{color: pageData.page.style.titleTextColor, margin: 0}">{{"{{" }} pageData.page.params.title {{"}}" }}</h4>
+            </div>
+            <!-- Draggable component area -->
+            <div class="phone-main">
+                <div class="dragArea" ref="dragArea">
+                    <div v-for="(item, index) in pageData.items" :key="index"
+                         class="drag optional"
+                         :class="{selected: index === selectedIndex}"
+                         @click.stop="editItem(index)">
+
+                        <!-- Banner -->
+                        <template v-if="item.type === 'banner'">
+                            <div class="diy-banner" style="position:relative">
+                                <template v-if="item.data && item.data.length && item.data[0].imgUrl">
+                                    <img v-for="(b, bi) in item.data" :src="b.imgUrl" :key="bi" style="width:100%">
+                                </template>
+                                <div v-else class="diy-banner-placeholder"><i class="fas fa-images me-2"></i>圖片輪播</div>
+                                <div class="dots" :class="item.style.btnShape" v-if="item.data && item.data.length > 1">
+                                    <span v-for="(b, bi) in item.data" :key="bi" :style="{background: item.style.btnColor}"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Search -->
+                        <template v-else-if="item.type === 'search'">
+                            <div class="diy-search-comp">
+                                <div class="inner" :class="item.style.searchStyle">
+                                    <div class="search-input" :style="{textAlign: item.style.textAlign}">
+                                        <i class="fas fa-search"></i>
+                                        <span>{{"{{" }} item.params.placeholder {{"}}" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Notice -->
+                        <template v-else-if="item.type === 'notice'">
+                            <div class="diy-notice-comp" :style="{padding: item.style.paddingTop+'px 10px', background: item.style.background}">
+                                <div class="notice__icon">
+                                    <img v-if="item.params.icon" :src="item.params.icon" alt="notice">
+                                    <i v-else class="fas fa-bullhorn" style="color:#ff9800;font-size:14px"></i>
+                                </div>
+                                <div class="notice__text" :style="{color: item.style.textColor}">{{"{{" }} item.params.text {{"}}" }}</div>
+                                <div class="notice__more">{{"{{" }} item.params.moreText || '更多' {{"}}" }}</div>
+                            </div>
+                        </template>
+
+                        <!-- NavBar -->
+                        <template v-else-if="item.type === 'navBar'">
+                            <div class="diy-navBar" :style="{background: item.style.background}">
+                                <ul :class="'cols-' + item.style.rowsNum">
+                                    <li v-for="(nav, ni) in item.data" :key="ni">
+                                        <div class="item-image" v-if="nav.imgUrl"><img :src="nav.imgUrl"></div>
+                                        <div v-else class="diy-navbar-placeholder"><i class="fas fa-image"></i></div>
+                                        <p class="item-text" :style="{color: nav.color}">{{"{{" }} nav.text {{"}}" }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
+
+                        <!-- Goods -->
+                        <template v-else-if="item.type === 'goods'">
+                            <div class="diy-goods-comp" :style="{background: item.style.background}">
+                                <ul class="goods-list" :class="['column__' + item.style.column, 'display__' + item.style.display]">
+                                    <li class="goods-item" v-for="(g, gi) in (item.data && item.data.length ? item.data : defaultGoods)" :key="gi">
+                                        <template v-if="item.style.column == 1">
+                                            <div style="display:flex">
+                                                <div class="goods-item_left">
+                                                    <img v-if="g.image" :src="g.image"><div v-else class="diy-goods-placeholder"><i class="fas fa-box"></i></div>
+                                                </div>
+                                                <div class="goods-item_right">
+                                                    <div v-if="item.style.show.goodsName" class="goods-item_title">{{"{{" }} g.goods_name {{"}}" }}</div>
+                                                    <div class="goods-item_desc">
+                                                        <div v-if="item.style.show.sellingPoint" class="desc-selling_point">{{"{{" }} g.selling_point {{"}}" }}</div>
+                                                        <div v-if="item.style.show.goodsSales" class="desc-goods_sales">已售{{"{{" }} g.goods_sales {{"}}" }}件</div>
+                                                        <div class="desc_footer">
+                                                            <span v-if="item.style.show.goodsPrice" class="price_x">{{"{{" }} g.goods_price {{"}}" }}</span>
+                                                            <span v-if="item.style.show.linePrice && g.line_price > 0" class="price_y">¥{{"{{" }} g.line_price {{"}}" }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="goods-image">
+                                                <img v-if="g.image" :src="g.image"><div v-else class="diy-goods-placeholder"><i class="fas fa-box"></i></div>
+                                            </div>
+                                            <div class="detail">
+                                                <p v-if="item.style.show.goodsName" class="goods-name">{{"{{" }} g.goods_name {{"}}" }}</p>
+                                                <p class="detail-price">
+                                                    <span v-if="item.style.show.goodsPrice" class="goods-price">{{"{{" }} g.goods_price {{"}}" }}</span>
+                                                    <span v-if="item.style.show.linePrice && g.line_price > 0" class="line-price">¥{{"{{" }} g.line_price {{"}}" }}</span>
+                                                </p>
+                                            </div>
+                                        </template>
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
+
+                        <!-- ImageSingle -->
+                        <template v-else-if="item.type === 'imageSingle'">
+                            <div class="diy-imageSingle" :style="{paddingBottom: item.style.paddingTop+'px', background: item.style.background}">
+                                <div class="item-image" v-for="(img, ii) in item.data" :key="ii"
+                                     :style="{padding: item.style.paddingTop+'px '+item.style.paddingLeft+'px 0'}">
+                                    <img v-if="img.imgUrl" :src="img.imgUrl" style="width:100%;display:block">
+                                    <div v-else class="diy-imageSingle-placeholder">單圖組</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Window -->
+                        <template v-else-if="item.type === 'window'">
+                            <div class="diy-window" :style="{background: item.style.background, padding: item.style.paddingTop+'px '+item.style.paddingLeft+'px'}">
+                                <div class="data-list" style="display:flex;flex-wrap:wrap">
+                                    <div v-for="(w, wi) in item.data" :key="wi"
+                                         :style="{width: (100/item.style.layout)+'%', padding: item.style.paddingTop+'px '+item.style.paddingLeft+'px'}">
+                                        <img v-if="w.imgUrl" :src="w.imgUrl" style="width:100%;display:block">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Video -->
+                        <template v-else-if="item.type === 'video'">
+                            <div class="diy-video-comp" :style="{padding: item.style.paddingTop+'px 0'}">
+                                <template v-if="item.params.videoUrl">
+                                    <video :src="item.params.videoUrl" :poster="item.params.poster"
+                                           :style="{height: item.style.height+'px'}" controls style="width:100%"></video>
+                                </template>
+                                <div v-else class="diy-video-placeholder"><i class="fas fa-play-circle"></i><span style="font-size:12px">視頻組</span></div>
+                            </div>
+                        </template>
+
+                        <!-- Article -->
+                        <template v-else-if="item.type === 'article'">
+                            <div class="diy-article">
+                                <div class="article-item" v-for="(a, ai) in (item.data && item.data.length ? item.data : item.defaultData)" :key="ai"
+                                     :class="'show-type__' + a.show_type">
+                                    <template v-if="a.show_type == 10">
+                                        <div class="article-item__left" style="flex:1">
+                                            <div class="article-item__title">{{"{{" }} a.article_title {{"}}" }}</div>
+                                            <div class="article-item__footer">{{"{{" }} a.views_num {{"}}" }}次瀏覽</div>
+                                        </div>
+                                        <div class="article-item__image"><img :src="a.image"></div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="article-item__title">{{"{{" }} a.article_title {{"}}" }}</div>
+                                        <div class="article-item__image"><img :src="a.image"></div>
+                                        <div class="article-item__footer">{{"{{" }} a.views_num {{"}}" }}次瀏覽</div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Special (headline) -->
+                        <template v-else-if="item.type === 'special'">
+                            <div class="diy-special">
+                                <div class="special-left" v-if="item.style.image"><img :src="item.style.image"></div>
+                                <div class="special-left" v-else style="background:#ff4d4f;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;width:40px;height:20px">快報</div>
+                                <div class="special-content" style="flex:1">
+                                    <ul class="special-content-list">
+                                        <li class="content-item" v-for="(s, si) in (item.data && item.data.length ? item.data : item.defaultData)" :key="si">{{"{{" }} s.article_title {{"}}" }}</li>
+                                    </ul>
+                                </div>
+                                <div class="special-more"><i class="fas fa-chevron-right"></i></div>
+                            </div>
+                        </template>
+
+                        <!-- Service -->
+                        <template v-else-if="item.type === 'service'">
+                            <div class="diy-service">
+                                <div class="service-icon"><i class="fas fa-headset"></i></div>
+                                <div class="service-text">在線客服</div>
+                            </div>
+                        </template>
+
+                        <!-- Official Account -->
+                        <template v-else-if="item.type === 'officialAccount'">
+                            <div class="diy-officialAccount">
+                                <div class="oa-icon"><i class="fab fa-weixin"></i></div>
+                                <div class="oa-info"><div class="oa-name">公眾號名稱</div><div class="oa-desc">關注公眾號</div></div>
+                                <div class="oa-btn">關注</div>
+                            </div>
+                        </template>
+
+                        <!-- RichText -->
+                        <template v-else-if="item.type === 'richText'">
+                            <div class="diy-richText" v-html="item.params.content || '<p style=\'color:#999;text-align:center\'>富文本內容</p>'"></div>
+                        </template>
+
+                        <!-- Blank -->
+                        <template v-else-if="item.type === 'blank'">
+                            <div class="diy-blank" :style="{height: item.style.height+'px', background: item.style.background}"></div>
+                        </template>
+
+                        <!-- Guide (divider) -->
+                        <template v-else-if="item.type === 'guide'">
+                            <div class="diy-guide" :style="{background: item.style.background, padding: item.style.paddingTop+'px 10px'}">
+                                <div class="guide-line" :style="{borderTop: item.style.lineHeight+'px '+item.style.lineStyle+' '+item.style.lineColor}"></div>
+                            </div>
+                        </template>
+
+                        <!-- Delete button overlay -->
+                        <div class="btn-edit-del">
+                            <div @click.stop="deleteItem(index)">刪除</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Property Editor -->
+    <div class="diy-editor" ref="diyEditor">
+        <!-- No selection -->
+        <div v-if="selectedIndex === -1" class="editor-empty">
+            <i class="fas fa-hand-pointer" style="font-size:32px;color:#e2e8f0;margin-bottom:12px;display:block"></i>
+            請選擇左側組件進行編輯
+        </div>
+
+        <!-- Page settings -->
+        <div v-else-if="selectedIndex === 'page'">
+            <div class="editor-title">&nbsp;&nbsp;頁面設置</div>
+            <div class="editor-form">
+                <div class="form-group">
+                    <label>頁面標題</label>
+                    <input type="text" v-model="pageData.page.params.title">
+                </div>
+                <div class="form-group">
+                    <label>標題文字顏色</label>
+                    <div class="color-row">
+                        <input type="color" v-model="pageData.page.style.titleTextColor">
+                        <button class="btn-reset" @click="pageData.page.style.titleTextColor='#ffffff'">重置</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>標題背景顏色</label>
+                    <div class="color-row">
+                        <input type="color" v-model="pageData.page.style.titleBackgroundColor">
+                        <button class="btn-reset" @click="pageData.page.style.titleBackgroundColor='#05ce78'">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Component editors -->
+        <div v-else-if="curItem">
+            <div class="editor-title">&nbsp;&nbsp;{{"{{" }} curItem.name {{"}}" }}</div>
+            <div class="editor-form">
+
+                <!-- Banner editor -->
+                <template v-if="curItem.type === 'banner'">
+                    <div class="form-group">
+                        <label>指示器顏色</label>
+                        <div class="color-row">
+                            <input type="color" v-model="curItem.style.btnColor">
+                            <button class="btn-reset" @click="curItem.style.btnColor='#ffffff'">重置</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>指示器樣式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="round" v-model="curItem.style.btnShape"> 圓形</label>
+                            <label><input type="radio" value="square" v-model="curItem.style.btnShape"> 方形</label>
+                            <label><input type="radio" value="long" v-model="curItem.style.btnShape"> 長條</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>輪播間隔（毫秒）</label>
+                        <input type="number" v-model="curItem.params.interval" min="1000" step="100">
+                    </div>
+                    <hr>
+                    <label style="font-weight:600;margin-bottom:8px;display:block">輪播圖片</label>
+                    <div class="data-item" v-for="(b, bi) in curItem.data" :key="bi">
+                        <i class="fas fa-times item-delete" @click="deleteData(bi)" v-if="curItem.data.length > 1"></i>
+                        <div class="form-group"><label>圖片地址</label><input type="text" v-model="b.imgUrl" placeholder="輸入圖片URL"></div>
+                        <div class="form-group"><label>鏈接地址</label><input type="text" v-model="b.linkUrl" placeholder="點擊跳轉URL"></div>
+                    </div>
+                    <div class="form-item-add" @click="addData()"><i class="fas fa-plus me-1"></i>添加一個</div>
+                </template>
+
+                <!-- Search editor -->
+                <template v-else-if="curItem.type === 'search'">
+                    <div class="form-group">
+                        <label>提示文字</label>
+                        <input type="text" v-model="curItem.params.placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label>對齊方式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="left" v-model="curItem.style.textAlign"> 居左</label>
+                            <label><input type="radio" value="center" v-model="curItem.style.textAlign"> 居中</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>搜索框樣式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="square" v-model="curItem.style.searchStyle"> 方形</label>
+                            <label><input type="radio" value="radius" v-model="curItem.style.searchStyle"> 圓角</label>
+                            <label><input type="radio" value="round" v-model="curItem.style.searchStyle"> 圓形</label>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Notice editor -->
+                <template v-else-if="curItem.type === 'notice'">
+                    <div class="form-group">
+                        <label>公告文字</label>
+                        <input type="text" v-model="curItem.params.text">
+                    </div>
+                    <div class="form-group">
+                        <label>文字顏色</label>
+                        <div class="color-row">
+                            <input type="color" v-model="curItem.style.textColor">
+                            <button class="btn-reset" @click="curItem.style.textColor='#666666'">重置</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>背景顏色</label>
+                        <div class="color-row">
+                            <input type="color" v-model="curItem.style.background">
+                            <button class="btn-reset" @click="curItem.style.background='#fffbe6'">重置</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>上下邊距</label>
+                        <input type="range" v-model="curItem.style.paddingTop" min="0" max="50" style="width:100%">
+                        <small class="text-muted">{{"{{" }} curItem.style.paddingTop {{"}}" }}px</small>
+                    </div>
+                </template>
+
+                <!-- NavBar editor -->
+                <template v-else-if="curItem.type === 'navBar'">
+                    <div class="form-group">
+                        <label>每行數量</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="3" v-model="curItem.style.rowsNum"> 3個</label>
+                            <label><input type="radio" value="4" v-model="curItem.style.rowsNum"> 4個</label>
+                            <label><input type="radio" value="5" v-model="curItem.style.rowsNum"> 5個</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>背景顏色</label>
+                        <div class="color-row">
+                            <input type="color" v-model="curItem.style.background">
+                            <button class="btn-reset" @click="curItem.style.background='#ffffff'">重置</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <label style="font-weight:600;margin-bottom:8px;display:block">導航項目</label>
+                    <div class="data-item" v-for="(nav, ni) in curItem.data" :key="ni">
+                        <i class="fas fa-times item-delete" @click="deleteData(ni)" v-if="curItem.data.length > 1"></i>
+                        <div class="form-group"><label>圖標地址</label><input type="text" v-model="nav.imgUrl" placeholder="圖標URL"></div>
+                        <div class="form-group"><label>文字內容</label><input type="text" v-model="nav.text"></div>
+                        <div class="form-group"><label>文字顏色</label>
+                            <div class="color-row"><input type="color" v-model="nav.color"><button class="btn-reset" @click="nav.color='#666666'">重置</button></div>
+                        </div>
+                        <div class="form-group"><label>鏈接地址</label><input type="text" v-model="nav.linkUrl" placeholder="點擊跳轉URL"></div>
+                    </div>
+                    <div class="form-item-add" @click="addData()"><i class="fas fa-plus me-1"></i>添加一個</div>
+                </template>
+
+                <!-- Goods editor -->
+                <template v-else-if="curItem.type === 'goods'">
+                    <div class="form-group">
+                        <label>商品來源</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="auto" v-model="curItem.params.source"> 自動獲取</label>
+                            <label><input type="radio" value="choice" v-model="curItem.params.source"> 手動選擇</label>
+                        </div>
+                    </div>
+                    <div v-if="curItem.params.source === 'auto'">
+                        <div class="form-group"><label>商品排序</label>
+                            <div class="radio-group">
+                                <label><input type="radio" value="all" v-model="curItem.params.auto.goodsSort"> 綜合</label>
+                                <label><input type="radio" value="sales" v-model="curItem.params.auto.goodsSort"> 銷量</label>
+                                <label><input type="radio" value="price" v-model="curItem.params.auto.goodsSort"> 價格</label>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>顯示數量</label><input type="number" v-model="curItem.params.auto.showNum" min="1"></div>
+                    </div>
+                    <hr>
+                    <div class="form-group"><label>背景顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.background"><button class="btn-reset" @click="curItem.style.background='#f5f5f5'">重置</button></div>
+                    </div>
+                    <div class="form-group"><label>顯示類型</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="list" v-model="curItem.style.display"> 列表平鋪</label>
+                            <label><input type="radio" value="slide" v-model="curItem.style.display"> 橫向滑動</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>分列數量</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="1" v-model="curItem.style.column"> 單列</label>
+                            <label><input type="radio" value="2" v-model="curItem.style.column"> 兩列</label>
+                            <label><input type="radio" value="3" v-model="curItem.style.column"> 三列</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>顯示內容</label>
+                        <div class="check-group">
+                            <label><input type="checkbox" v-model="curItem.style.show.goodsName"> 商品名稱</label>
+                            <label><input type="checkbox" v-model="curItem.style.show.goodsPrice"> 商品價格</label>
+                            <label><input type="checkbox" v-model="curItem.style.show.linePrice"> 劃線價格</label>
+                            <label v-show="curItem.style.column == 1"><input type="checkbox" v-model="curItem.style.show.sellingPoint"> 商品賣點</label>
+                            <label v-show="curItem.style.column == 1"><input type="checkbox" v-model="curItem.style.show.goodsSales"> 商品銷量</label>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ImageSingle editor -->
+                <template v-else-if="curItem.type === 'imageSingle'">
+                    <div class="form-group"><label>上下邊距</label>
+                        <input type="range" v-model="curItem.style.paddingTop" min="0" max="30" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingTop {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>左右邊距</label>
+                        <input type="range" v-model="curItem.style.paddingLeft" min="0" max="30" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingLeft {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>背景顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.background"><button class="btn-reset" @click="curItem.style.background='#ffffff'">重置</button></div>
+                    </div>
+                    <hr>
+                    <label style="font-weight:600;margin-bottom:8px;display:block">圖片列表</label>
+                    <div class="data-item" v-for="(img, ii) in curItem.data" :key="ii">
+                        <i class="fas fa-times item-delete" @click="deleteData(ii)" v-if="curItem.data.length > 1"></i>
+                        <div class="form-group"><label>圖片地址</label><input type="text" v-model="img.imgUrl" placeholder="圖片URL"></div>
+                        <div class="form-group"><label>鏈接地址</label><input type="text" v-model="img.linkUrl" placeholder="點擊跳轉URL"></div>
+                    </div>
+                    <div class="form-item-add" @click="addData()"><i class="fas fa-plus me-1"></i>添加一個</div>
+                </template>
+
+                <!-- Window editor -->
+                <template v-else-if="curItem.type === 'window'">
+                    <div class="form-group"><label>分列數量</label>
+                        <div class="radio-group">
+                            <label><input type="radio" :value="2" v-model="curItem.style.layout"> 2列</label>
+                            <label><input type="radio" :value="3" v-model="curItem.style.layout"> 3列</label>
+                            <label><input type="radio" :value="4" v-model="curItem.style.layout"> 4列</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>上下邊距</label>
+                        <input type="range" v-model="curItem.style.paddingTop" min="0" max="30" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingTop {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>左右邊距</label>
+                        <input type="range" v-model="curItem.style.paddingLeft" min="0" max="30" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingLeft {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>背景顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.background"><button class="btn-reset" @click="curItem.style.background='#ffffff'">重置</button></div>
+                    </div>
+                    <hr>
+                    <label style="font-weight:600;margin-bottom:8px;display:block">圖片列表</label>
+                    <div class="data-item" v-for="(w, wi) in curItem.data" :key="wi">
+                        <i class="fas fa-times item-delete" @click="deleteData(wi)" v-if="curItem.data.length > 1"></i>
+                        <div class="form-group"><label>圖片地址</label><input type="text" v-model="w.imgUrl" placeholder="圖片URL"></div>
+                        <div class="form-group"><label>鏈接地址</label><input type="text" v-model="w.linkUrl" placeholder="點擊跳轉URL"></div>
+                    </div>
+                    <div class="form-item-add" @click="addData()"><i class="fas fa-plus me-1"></i>添加一個</div>
+                </template>
+
+                <!-- Video editor -->
+                <template v-else-if="curItem.type === 'video'">
+                    <div class="form-group"><label>視頻地址</label><input type="text" v-model="curItem.params.videoUrl" placeholder="視頻URL"></div>
+                    <div class="form-group"><label>封面圖片</label><input type="text" v-model="curItem.params.poster" placeholder="封面圖URL"></div>
+                    <div class="form-group"><label>自動播放</label>
+                        <div class="radio-group">
+                            <label><input type="radio" :value="1" v-model="curItem.params.autoplay"> 是</label>
+                            <label><input type="radio" :value="0" v-model="curItem.params.autoplay"> 否</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>視頻高度</label>
+                        <input type="range" v-model="curItem.style.height" min="100" max="400" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.height {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>上下邊距</label>
+                        <input type="range" v-model="curItem.style.paddingTop" min="0" max="30" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingTop {{"}}" }}px</small>
+                    </div>
+                </template>
+
+                <!-- Article editor -->
+                <template v-else-if="curItem.type === 'article'">
+                    <div class="form-group"><label>文章來源</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="auto" v-model="curItem.params.source"> 自動獲取</label>
+                            <label><input type="radio" value="choice" v-model="curItem.params.source"> 手動選擇</label>
+                        </div>
+                    </div>
+                    <div v-if="curItem.params.source === 'auto'">
+                        <div class="form-group"><label>顯示數量</label><input type="number" v-model="curItem.params.auto.showNum" min="1"></div>
+                    </div>
+                </template>
+
+                <!-- Special editor -->
+                <template v-else-if="curItem.type === 'special'">
+                    <div class="form-group"><label>文章來源</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="auto" v-model="curItem.params.source"> 自動獲取</label>
+                            <label><input type="radio" value="choice" v-model="curItem.params.source"> 手動選擇</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>左側圖片</label><input type="text" v-model="curItem.style.image" placeholder="圖片URL"></div>
+                    <div class="form-group"><label>顯示方式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="all" v-model="curItem.style.display"> 全部顯示</label>
+                            <label><input type="radio" value="single" v-model="curItem.style.display"> 單條滾動</label>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Service editor -->
+                <template v-else-if="curItem.type === 'service'">
+                    <div class="form-group"><label>客服類型</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="chat" v-model="curItem.params.type"> 在線客服</label>
+                            <label><input type="radio" value="phone" v-model="curItem.params.type"> 電話客服</label>
+                        </div>
+                    </div>
+                    <div class="form-group" v-if="curItem.params.type === 'phone'">
+                        <label>電話號碼</label><input type="text" v-model="curItem.params.phoneNum" placeholder="客服電話">
+                    </div>
+                </template>
+
+                <!-- RichText editor -->
+                <template v-else-if="curItem.type === 'richText'">
+                    <div class="form-group"><label>富文本內容（HTML）</label>
+                        <textarea v-model="curItem.params.content" rows="8" style="width:100%;border:1px solid #e2e8f0;border-radius:4px;padding:8px;font-size:12px;font-family:monospace"></textarea>
+                    </div>
+                </template>
+
+                <!-- Blank editor -->
+                <template v-else-if="curItem.type === 'blank'">
+                    <div class="form-group"><label>空白高度</label>
+                        <input type="range" v-model="curItem.style.height" min="5" max="200" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.height {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>背景顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.background"><button class="btn-reset" @click="curItem.style.background='#ffffff'">重置</button></div>
+                    </div>
+                </template>
+
+                <!-- Guide editor -->
+                <template v-else-if="curItem.type === 'guide'">
+                    <div class="form-group"><label>線條樣式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="solid" v-model="curItem.style.lineStyle"> 實線</label>
+                            <label><input type="radio" value="dashed" v-model="curItem.style.lineStyle"> 虛線</label>
+                            <label><input type="radio" value="dotted" v-model="curItem.style.lineStyle"> 點線</label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>線條粗細</label>
+                        <input type="range" v-model="curItem.style.lineHeight" min="1" max="10" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.lineHeight {{"}}" }}px</small>
+                    </div>
+                    <div class="form-group"><label>線條顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.lineColor"><button class="btn-reset" @click="curItem.style.lineColor='#000000'">重置</button></div>
+                    </div>
+                    <div class="form-group"><label>背景顏色</label>
+                        <div class="color-row"><input type="color" v-model="curItem.style.background"><button class="btn-reset" @click="curItem.style.background='#ffffff'">重置</button></div>
+                    </div>
+                    <div class="form-group"><label>上下邊距</label>
+                        <input type="range" v-model="curItem.style.paddingTop" min="0" max="50" style="width:100%"><small class="text-muted">{{"{{" }} curItem.style.paddingTop {{"}}" }}px</small>
+                    </div>
+                </template>
+
+                <!-- OfficialAccount editor -->
+                <template v-else-if="curItem.type === 'officialAccount'">
+                    <p class="text-muted" style="font-size:12px">此組件會在微信小程序中顯示關注公眾號的入口，最多只能添加一個。</p>
+                </template>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{define "scripts"}}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuedraggable@2.24.3/dist/vuedraggable.umd.min.js"></script>
+<script>
+(function() {
+    // Page ID from URL
+    const pathParts = window.location.pathname.split('/');
+    const pageId = pathParts[pathParts.indexOf('page-designs') + 1];
+
+    const localeMap = {
+        zhHant: {
+            pageTitle: '頁面標題',
+            editPrefix: '編輯頁面 - ',
+            warnOfficialOnce: '該組件最多只能存在一個',
+            warnKeepOne: '至少保留一個',
+            warnNeedOne: '至少需要一個組件',
+            saveSuccess: '保存成功',
+            saveFailed: '保存失敗',
+            deleteConfirm: '確定要刪除此組件嗎？',
+            searchPlaceholder: '請輸入關鍵字進行搜索',
+            articleTitle: '這是一篇示例文章標題',
+            specialTitle: '這是一條快報示例消息',
+            noticeText: '這是一條公告消息，歡迎使用vShip集運系統',
+            nav1: '按鈕文字1',
+            nav2: '按鈕文字2',
+            nav3: '按鈕文字3',
+            nav4: '按鈕文字4',
+            goodsName: '示例商品名稱',
+            goodsPoint1: '品質保證',
+            goodsPoint2: '限時特惠',
+            richText: '<p>請輸入內容</p>'
+        },
+        zhHans: {
+            pageTitle: '页面标题',
+            editPrefix: '编辑页面 - ',
+            warnOfficialOnce: '该组件最多只能存在一个',
+            warnKeepOne: '至少保留一个',
+            warnNeedOne: '至少需要一个组件',
+            saveSuccess: '保存成功',
+            saveFailed: '保存失败',
+            deleteConfirm: '确定要删除此组件吗？',
+            searchPlaceholder: '请输入关键字进行搜索',
+            articleTitle: '这是一篇示例文章标题',
+            specialTitle: '这是一条快报示例消息',
+            noticeText: '这是一条公告消息，欢迎使用vShip集运系统',
+            nav1: '按钮文字1',
+            nav2: '按钮文字2',
+            nav3: '按钮文字3',
+            nav4: '按钮文字4',
+            goodsName: '示例商品名称',
+            goodsPoint1: '品质保证',
+            goodsPoint2: '限时特惠',
+            richText: '<p>请输入内容</p>'
+        },
+        en: {
+            pageTitle: 'Page Title',
+            editPrefix: 'Edit Page - ',
+            warnOfficialOnce: 'Only one Official Account component is allowed',
+            warnKeepOne: 'Keep at least one item',
+            warnNeedOne: 'At least one component is required',
+            saveSuccess: 'Saved successfully',
+            saveFailed: 'Save failed',
+            deleteConfirm: 'Are you sure you want to delete this component?',
+            searchPlaceholder: 'Enter keyword to search',
+            articleTitle: 'Sample article title',
+            specialTitle: 'Sample headline news item',
+            noticeText: 'This is a notice message. Welcome to vShip.',
+            nav1: 'Menu 1',
+            nav2: 'Menu 2',
+            nav3: 'Menu 3',
+            nav4: 'Menu 4',
+            goodsName: 'Sample Product',
+            goodsPoint1: 'Quality assured',
+            goodsPoint2: 'Limited offer',
+            richText: '<p>Please enter content</p>'
+        }
+    };
+
+    let locale = localeMap.zhHant;
+    const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+    async function loadDefaultLang() {
+        try {
+            const res = await apiRequest('GET', '/app-settings?setting_type=language');
+            const list = Array.isArray(res.data) ? res.data : [];
+            if (list.length > 0) {
+                const cfg = list[0].config || {};
+                const lang = cfg.default_lang || cfg.default_language;
+                if (lang && localeMap[lang]) {
+                    return lang;
+                }
+            }
+        } catch (e) {}
+        return 'zhHant';
+    }
+
+    // Default component templates
+    const defaults = {
+        search: {name:'搜索框',type:'search',params:{placeholder:'請輸入關鍵字進行搜索'},style:{textAlign:'left',searchStyle:'round'}},
+        banner: {name:'圖片輪播',type:'banner',style:{btnColor:'#ffffff',btnShape:'round'},params:{interval:'2800'},data:[{imgUrl:'',linkUrl:''},{imgUrl:'',linkUrl:''}]},
+        imageSingle: {name:'單圖組',type:'imageSingle',style:{paddingTop:0,paddingLeft:0,background:'#ffffff'},data:[{imgUrl:'',imgName:'',linkUrl:''}]},
+        window: {name:'圖片櫥窗',type:'window',style:{background:'#ffffff',layout:2,paddingTop:0,paddingLeft:0},data:[{imgUrl:'',linkUrl:''},{imgUrl:'',linkUrl:''},{imgUrl:'',linkUrl:''},{imgUrl:'',linkUrl:''}]},
+        video: {name:'視頻組',type:'video',style:{paddingTop:0,height:200},params:{videoUrl:'',poster:'',autoplay:0}},
+        article: {name:'文章組',type:'article',params:{source:'auto',auto:{showNum:5}},data:[],defaultData:[{article_title:'這是一篇示例文章標題',show_type:10,image:'',views_num:128}]},
+        special: {name:'頭條快報',type:'special',style:{image:'',display:'all'},params:{source:'auto',auto:{showNum:3}},data:[],defaultData:[{article_title:'這是一條快報示例消息'}]},
+        notice: {name:'公告組',type:'notice',params:{text:'這是一條公告消息，歡迎使用vShip集運系統',icon:'',moreText:'更多'},style:{paddingTop:10,background:'#fffbe6',textColor:'#666666'}},
+        navBar: {name:'導航組',type:'navBar',style:{background:'#ffffff',rowsNum:'4'},data:[
+            {imgUrl:'',text:'按鈕文字1',linkUrl:'',color:'#666666'},
+            {imgUrl:'',text:'按鈕文字2',linkUrl:'',color:'#666666'},
+            {imgUrl:'',text:'按鈕文字3',linkUrl:'',color:'#666666'},
+            {imgUrl:'',text:'按鈕文字4',linkUrl:'',color:'#666666'}
+        ]},
+        goods: {name:'商品組',type:'goods',params:{source:'auto',auto:{category:0,goodsSort:'all',showNum:6}},style:{background:'#f5f5f5',display:'list',column:'2',show:{goodsName:true,goodsPrice:true,linePrice:false,sellingPoint:false,goodsSales:false}},data:[],defaultData:[]},
+        service: {name:'在線客服',type:'service',params:{type:'chat',phoneNum:''}},
+        officialAccount: {name:'關注公眾號',type:'officialAccount',params:{}},
+        richText: {name:'富文本',type:'richText',params:{content:'<p>請輸入內容</p>'}},
+        blank: {name:'輔助空白',type:'blank',style:{height:'20',background:'#ffffff'}},
+        guide: {name:'輔助線',type:'guide',style:{background:'#ffffff',lineStyle:'solid',lineHeight:'1',lineColor:'#000000',paddingTop:10}}
+    };
+
+    // Default goods for preview
+    const defaultGoods = [
+        {goods_name:'示例商品名稱',goods_price:'99.00',line_price:'199.00',image:'',selling_point:'品質保證',goods_sales:128},
+        {goods_name:'示例商品名稱',goods_price:'59.00',line_price:'129.00',image:'',selling_point:'限時特惠',goods_sales:256}
+    ];
+
+    function applyLocaleText() {
+        defaults.search.params.placeholder = locale.searchPlaceholder;
+        defaults.article.defaultData[0].article_title = locale.articleTitle;
+        defaults.special.defaultData[0].article_title = locale.specialTitle;
+        defaults.notice.params.text = locale.noticeText;
+        defaults.navBar.data[0].text = locale.nav1;
+        defaults.navBar.data[1].text = locale.nav2;
+        defaults.navBar.data[2].text = locale.nav3;
+        defaults.navBar.data[3].text = locale.nav4;
+        defaults.richText.params.content = locale.richText;
+        defaultGoods[0].goods_name = locale.goodsName;
+        defaultGoods[1].goods_name = locale.goodsName;
+        defaultGoods[0].selling_point = locale.goodsPoint1;
+        defaultGoods[1].selling_point = locale.goodsPoint2;
+    }
+
+    // Default page data structure
+    function getDefaultPageData() {
+        return {
+            page: {
+                params: { title: locale.pageTitle },
+                style: { titleTextColor: '#ffffff', titleBackgroundColor: '#05ce78' }
+            },
+            items: []
+        };
+    }
+
+    // Load page data from API
+    async function loadPageData() {
+        try {
+            const res = await apiRequest('GET', '/page-designs/' + pageId);
+            const data = res.data || res;
+            document.getElementById('pageTitle').textContent = _t('pages.page_design_edit.edit_page_prefix', locale.editPrefix) + (data.name || '');
+            if (data.page_data && data.page_data.page) {
+                return data.page_data;
+            }
+            return getDefaultPageData();
+        } catch (e) {
+            console.error('Failed to load page data:', e);
+            return getDefaultPageData();
+        }
+    }
+
+    // Initialize Vue app
+    loadDefaultLang().then(function(lang) {
+        locale = localeMap[lang] || localeMap.zhHant;
+        applyLocaleText();
+        return loadPageData();
+    }).then(function(pageData) {
+        // Ensure structure
+        if (!pageData.page) pageData.page = getDefaultPageData().page;
+        if (!pageData.page.params) pageData.page.params = { title: locale.pageTitle };
+        if (!pageData.page.style) pageData.page.style = { titleTextColor: '#ffffff', titleBackgroundColor: '#05ce78' };
+        if (!pageData.items) pageData.items = [];
+
+        const app = new Vue({
+            el: '#diyApp',
+            data: {
+                pageData: pageData,
+                selectedIndex: -1,
+                curItem: null,
+                defaultGoods: defaultGoods
+            },
+            methods: {
+                addItem: function(key) {
+                    // Check uniqueness for officialAccount
+                    if (key === 'officialAccount') {
+                        for (var i = 0; i < this.pageData.items.length; i++) {
+                            if (this.pageData.items[i].type === 'officialAccount') {
+                                showToast(_t('pages.page_design_edit.max_one_component', locale.warnOfficialOnce), 'warning');
+                                return;
+                            }
+                        }
+                    }
+                    var data = JSON.parse(JSON.stringify(defaults[key]));
+                    this.pageData.items.push(data);
+                    this.editItem(this.pageData.items.length - 1);
+                },
+                editItem: function(index) {
+                    this.selectedIndex = index;
+                    this.curItem = index === 'page' ? this.pageData.page : this.pageData.items[index];
+                },
+                deleteItem: function(index) {
+                    if (!confirm(_t('pages.page_design_edit.confirm_delete_component', locale.deleteConfirm))) return;
+                    this.pageData.items.splice(index, 1);
+                    this.selectedIndex = -1;
+                    this.curItem = null;
+                },
+                deleteData: function(dataIndex) {
+                    if (this.curItem.data.length <= 1) {
+                        showToast(_t('pages.page_design_edit.keep_at_least_one', locale.warnKeepOne), 'warning');
+                        return;
+                    }
+                    this.curItem.data.splice(dataIndex, 1);
+                },
+                addData: function() {
+                    var type = this.curItem.type;
+                    var newItem = JSON.parse(JSON.stringify(defaults[type].data[0]));
+                    this.curItem.data.push(newItem);
+                },
+                savePageData: async function() {
+                    if (this.pageData.items.length === 0) {
+                        showToast(_t('pages.page_design_edit.need_at_least_one', locale.warnNeedOne), 'warning');
+                        return;
+                    }
+                    try {
+                        await apiRequest('PUT', '/page-designs/' + pageId, {
+                            page_data: this.pageData
+                        });
+                        showToast(_t('common.save_success', locale.saveSuccess));
+                    } catch (e) {
+                        showToast(_t('pages.page_design_edit.save_failed', locale.saveFailed), 'error');
+                    }
+                }
+            },
+            mounted: function() {
+                var self = this;
+                // Drag & drop via Sortable
+                if (window.Sortable) {
+                    var dragArea = this.$refs.dragArea;
+                    if (dragArea) {
+                        Sortable.create(dragArea, {
+                            animation: 120,
+                            filter: '.btn-edit-del',
+                            onEnd: function(evt) {
+                                var items = self.pageData.items;
+                                var moved = items.splice(evt.oldIndex, 1)[0];
+                                items.splice(evt.newIndex, 0, moved);
+                                self.editItem(evt.newIndex);
+                            }
+                        });
+                    }
+                }
+                // Save button
+                document.getElementById('btnSave').addEventListener('click', function() {
+                    self.savePageData();
+                });
+            }
+        });
+    });
+})();
+</script>
+{{end}}

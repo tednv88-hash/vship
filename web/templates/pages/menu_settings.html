@@ -1,0 +1,177 @@
+{{define "pages/menu_settings"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.menu_settings.title">菜單管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="card-body">
+        <div id="menuTree" class="mb-3">
+            <div class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.menu_settings.add_menu_item">新增菜單項</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.name">名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.menu_settings.icon_class">圖標 (FontAwesome class)</label>
+                        <input type="text" class="form-control" name="icon" placeholder="fas fa-home">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.menu_settings.link">連結</label>
+                        <input type="text" class="form-control" name="url" placeholder="/path">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.menu_settings.parent_menu">上級菜單</label>
+                        <select class="form-select" name="parent_id" id="parentSelect">
+                            <option value="" data-i18n="pages.menu_settings.no_parent">無（頂級菜單）</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.sort">排序</label>
+                        <input type="number" class="form-control" name="sort_order" data-type="number" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.menu_settings.position">位置</label>
+                        <input type="hidden" name="position" value="sidebar">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.status">狀態</label>
+                        <select class="form-select" name="status">
+                            <option value="active" data-i18n="common.enable">啟用</option>
+                            <option value="inactive" data-i18n="common.disable">停用</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let editingId = null;
+const API_PATH = '/navigation-items';
+let menuItems = [];
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadMenu() {
+    try {
+        const res = await apiRequest('GET', API_PATH + '?position=sidebar&limit=200');
+        menuItems = res.data || res || [];
+        renderMenuTree();
+        updateParentSelect();
+    } catch (e) {
+        document.getElementById('menuTree').innerHTML = '<div class="text-center py-4 text-muted">' + _t('common.load_failed', '載入失敗') + '</div>';
+    }
+}
+
+function renderMenuTree() {
+    const container = document.getElementById('menuTree');
+    const topItems = menuItems.filter(m => !m.parent_id);
+    topItems.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+    if (topItems.length === 0) {
+        container.innerHTML = '<div class="text-center py-4 text-muted">' + _t('pages.menu_settings.no_menu_items', '暫無菜單項') + '</div>';
+        return;
+    }
+
+    let html = '<div class="list-group">';
+    topItems.forEach(item => {
+        html += renderMenuItem(item, 0);
+        const children = menuItems.filter(m => m.parent_id === item.id);
+        children.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        children.forEach(child => {
+            html += renderMenuItem(child, 1);
+        });
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function renderMenuItem(item, level) {
+    const indent = level > 0 ? 'ps-4' : '';
+    const icon = item.icon ? `<i class="${item.icon} me-2"></i>` : '<i class="fas fa-circle me-2" style="font-size:6px"></i>';
+    return `<div class="list-group-item d-flex justify-content-between align-items-center ${indent}">
+        <div>${icon}<span>${item.name || '--'}</span> <small class="text-muted ms-2">${item.url || ''}</small> ${getStatusBadge(item.status)}</div>
+        <div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>`;
+}
+
+function updateParentSelect() {
+    const sel = document.getElementById('parentSelect');
+    sel.innerHTML = '<option value="" data-i18n="pages.menu_settings.no_parent">' + _t('pages.menu_settings.no_parent', '無（頂級菜單）') + '</option>';
+    menuItems.filter(m => !m.parent_id).forEach(item => {
+        sel.insertAdjacentHTML('beforeend', `<option value="${item.id}">${item.name}</option>`);
+    });
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.menu_settings.add_menu_item', '新增菜單項');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.menu_settings.add_menu_item');
+    resetForm('itemForm');
+    updateParentSelect();
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.menu_settings.edit_menu_item', '編輯菜單項');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.menu_settings.edit_menu_item');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        const data = res.data || res;
+        updateParentSelect();
+        populateForm('itemForm', data);
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.position = 'sidebar';
+    if (!data.parent_id) delete data.parent_id;
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'));
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'));
+        }
+        closeModal('formModal');
+        loadMenu();
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete()) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'));
+        loadMenu();
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadMenu());
+</script>
+{{end}}

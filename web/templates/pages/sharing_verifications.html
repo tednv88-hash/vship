@@ -1,0 +1,57 @@
+{{define "pages/sharing_verifications"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.sharing_verifications.title">分享核銷</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.sharing_verifications.search" placeholder="搜尋訂單/用戶..."></div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="pending" data-i18n="pages.sharing_verifications.pending_verify">待核銷</option>
+            <option value="verified" data-i18n="pages.sharing_verifications.verified">已核銷</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="common.order">訂單</th><th data-i18n="common.user">用戶</th><th data-i18n="pages.sharing_verifications.verifier">核銷人</th><th data-i18n="pages.sharing_verifications.verify_time">核銷時間</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; const API_PATH = '/sharing/verifications';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: document.getElementById('filterStatus').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    let actions = '--';
+    if (item.status === 'pending') {
+        actions = `<button class="btn btn-sm btn-outline-success" onclick="verifyItem('${item.id}')"><i class="fas fa-check-circle"></i> <span data-i18n="pages.sharing_verifications.verify">${_t('pages.sharing_verifications.verify','核銷')}</span></button>`;
+    }
+    return `<tr>
+        <td>${item.order_no || '--'}</td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.verifier_name || '--'}</td>
+        <td>${item.verified_at ? formatDate(item.verified_at) : '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td><div class="action-buttons">${actions}</div></td>
+    </tr>`;
+}
+async function verifyItem(id) {
+    if (!confirm(_t('pages.sharing_verifications.confirm_verify', '確定要核銷此記錄嗎？'))) return;
+    try {
+        await apiRequest('PUT', API_PATH + '/' + id + '/verify');
+        showToast(_t('pages.sharing_verifications.verify_success', '核銷成功'), 'success');
+        loadData(currentPage);
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

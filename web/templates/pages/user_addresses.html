@@ -1,0 +1,163 @@
+{{define "pages/user_addresses"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.user_addresses.title">用戶地址管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.user_addresses.search_placeholder" placeholder="搜尋收件人/電話/地址...">
+        </div>
+        <input type="text" class="form-control" id="filterUserId" data-i18n-placeholder="pages.package_unclaimed.user_id_label" placeholder="用戶ID" style="max-width:150px;">
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.user_addresses.recipient">收件人</th>
+                    <th data-i18n="pages.user_addresses.phone">電話</th>
+                    <th data-i18n="pages.user_addresses.country">國家</th>
+                    <th data-i18n="pages.user_addresses.region">省市</th>
+                    <th data-i18n="pages.user_addresses.address">地址</th>
+                    <th data-i18n="pages.user_addresses.postal_code">郵編</th>
+                    <th data-i18n="pages.user_addresses.is_default">是否默認</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.user_addresses.add_address">新增地址</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.package_unclaimed.user_id_label">用戶ID <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="user_id" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.recipient">收件人 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="recipient_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.phone">電話 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.country">國家</label>
+                            <select class="form-select" name="country_id" id="countrySelect">
+                                <option value="" data-i18n="common.please_select">請選擇</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.postal_code">郵遞區號</label>
+                            <input type="text" class="form-control" name="postal_code">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.province">省/州</label>
+                            <input type="text" class="form-control" name="province">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.city">城市</label>
+                            <input type="text" class="form-control" name="city">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" data-i18n="pages.user_addresses.district">區/鄉鎮</label>
+                            <input type="text" class="form-control" name="district">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.user_addresses.detail_address">詳細地址 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="address" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="is_default" id="isDefault" value="true">
+                        <label class="form-check-label" for="isDefault" data-i18n="pages.user_addresses.set_default">設為預設地址</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/address-book';
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const user_id = document.getElementById('filterUserId').value;
+    const params = buildQueryParams({ search, user_id });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const defaultBadge = item.is_default ? `<span class="badge bg-success">${_t('pages.user_addresses.default_badge', '預設')}</span>` : '';
+    const region = [item.province, item.city, item.district].filter(Boolean).join(' ');
+    return `<tr>
+        <td>${item.user_name || item.user_id || '--'}</td>
+        <td>${item.recipient_name || '--'}</td>
+        <td>${item.phone || '--'}</td>
+        <td>${item.country_name || '--'}</td>
+        <td>${region || '--'}</td>
+        <td class="text-truncate" style="max-width:150px">${item.address || '--'}</td>
+        <td>${item.postal_code || '--'}</td>
+        <td>${defaultBadge}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+function openCreateModal() { editingId = null; document.getElementById('modalTitle').textContent = _t('pages.user_addresses.add_address', '新增地址'); resetForm('itemForm'); openModal('formModal'); }
+async function editItem(id) {
+    editingId = id; document.getElementById('modalTitle').textContent = _t('pages.user_addresses.edit_address', '編輯地址');
+    try { const res = await apiRequest('GET', API_PATH + '/' + id); const data = res.data || res; populateForm('itemForm', data); document.getElementById('isDefault').checked = !!data.is_default; openModal('formModal'); } catch (e) {}
+}
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.is_default = document.getElementById('isDefault').checked;
+    try { if (editingId) { await apiRequest('PUT', API_PATH + '/' + editingId, data); showToast(_t('common.update_success', '更新成功')); } else { await apiRequest('POST', API_PATH, data); showToast(_t('common.create_success', '建立成功')); } closeModal('formModal'); loadData(currentPage); } catch (e) {}
+}
+async function deleteItem(id) { if (!confirmDelete()) return; try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功')); loadData(currentPage); } catch (e) {} }
+document.addEventListener('DOMContentLoaded', async function() {
+    loadData(1);
+    try {
+        const countries = await apiRequest('GET', '/countries?limit=100');
+        const sel = document.getElementById('countrySelect');
+        (countries.data || countries || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name_zh || c.name}</option>`);
+        });
+    } catch (e) {}
+});
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterUserId').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

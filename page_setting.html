@@ -1,0 +1,2954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>集运系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="assets/common/i/favicon.ico"/>
+    <link href="assets/common/css/animate.compat.css" rel="stylesheet">
+    <meta name="apple-mobile-web-app-title" content="集运系统"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.datetimepicker.css"/>
+    
+    <!--原始背景-->
+        <!--蓝色背景-->
+        <!--静态图背景-->
+        <!--数字粒子背景-->
+        <link rel="stylesheet" href="assets/store/css/app_shu1/app_shu.css?v=2.2.55"/>
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_783249_m68ye1gfnza.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3768063_yu9jg4vyhs.css">
+    <script src="assets/common/js/jquery.min.js"></script>
+    <script src="assets/common/js/base.js"></script>
+    <script src="assets/common/js/amazeui.datetimepicker.min.js"></script>
+    <script src="//at.alicdn.com/t/font_783249_e5yrsf08rap.js"></script>
+    <script>
+        BASE_URL = 'https://zhuanyun.sllowly.cn/';
+        STORE_URL = 'index.php?s=/store';
+    </script>
+</head>
+
+<body data-type="">
+<div class="am-g tpl-g">
+    <!-- 头部 -->
+    <header class="tpl-header">
+        <!-- 右侧内容 -->
+        <div class="tpl-header-fluid">
+            <!-- 侧边切换 -->
+            <div class="am-fl tpl-header-button switch-button">
+                <i class="iconfont icon-menufold"></i>
+            </div>
+            <!-- 刷新页面 -->
+            <div class="am-fl tpl-header-button refresh-button">
+                <i class="iconfont icon-refresh"></i>
+            </div>
+            <!-- 其它功能-->
+            <div class="am-fr tpl-header-navbar">
+                <ul>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tr_order/payment_audit" style="color: #ff0000;    font-weight: 900;">
+                            <span >线下支付审核 (4)</span>
+                        </a>
+                    </li>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/setting.certificate/index" style="color: #ff0000;    font-weight: 900;">
+                            <span >汇款凭证审核 (32)</span>
+                        </a>
+                    </li>
+                                        <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tools/guide"><span>使用指南</span></a>
+                    </li>
+                                        <li style="margin-top:10px" class="am-text-sm tpl-header-navbar-welcome">
+                        <div class="am-dropdown" data-am-dropdown>
+                              <button class="am-btn am-btn-danger am-dropdown-toggle" data-am-dropdown-toggle>待处理 <span class="am-icon-caret-down"></span></button>
+                              <ul class="am-dropdown-content">
+                                <li class="am-dropdown-header"><a style="line-height:20px;" href="index.php?s=/store/tr_order/exceedorder" >超时订单 <span class="tipsspan"> 4 </span></a></li>
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >问题包裹 <span class="tipsspan">1</span></a></li>-->
+                              </ul>
+                            </div>
+                    </li>
+                                        <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="javascript:;">有限期：<span>2030-02-01</span>
+                        </a>
+                    </li>
+                    <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/store.user/renew">欢迎你，<span>admin</span>
+                        </a>
+                    </li>
+                    <!-- 退出 -->
+                    <li class="am-text-sm">
+                        <a href="index.php?s=/store/passport/logout">
+                            <i class="iconfont icon-tuichu"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!-- 侧边导航栏 -->
+    <div class="left-sidebar dis-flex" id="particles-js">
+                    <canvas class="particles-js-canvas-el" style="width: 100%; height: 100%;" width="472" height="625"></canvas>
+                    <div class="sidebar-scroll ">
+            <!-- 一级菜单 -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-heading">集运系统</li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-home"
+                                   style=""></i>
+                                                        总览                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/package.index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-miaosha"
+                                   style=""></i>
+                                                        包裹管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tr_order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        集运订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-user"
+                                   style=""></i>
+                                                        用户管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/shop/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shop"
+                                   style=""></i>
+                                                        仓库管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/batch/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        批次管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/goods/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-goods"
+                                   style=""></i>
+                                                        商品管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        商城订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/content.article/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        内容管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/market.coupon/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-marketing"
+                                   style=""></i>
+                                                        营销管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/statistics.data/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-qushitu"
+                                   style=""></i>
+                                                        数据统计                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/wxapp/setting"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wxapp"
+                                   style="color:#36b313;"></i>
+                                                        客户端                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/apps.dealer.apply/index"
+                           class="">
+                                                            <svg class="icon sidebar-nav-link-logo" aria-hidden="true">
+                                    <use xlink:href="#icon-application"></use>
+                                </svg>
+                                                        应用中心                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/store.user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        管理员                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/setting/store"
+                           class="active">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-setting"
+                                   style=""></i>
+                                                        设置                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tools/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        工具箱                        </a>
+                    </li>
+                            </ul>
+        </div>
+        <!-- 子级菜单-->
+                    <div class="sidebar-second-scroll">
+                <ul class="left-sidebar-second">
+                    <li class="sidebar-second-title">设置</li>
+                    <li class="sidebar-second-item">
+                                                        <!-- 二级菜单-->
+                                <a href="index.php?s=/store/setting/store"
+                                   class="active"
+                                   >
+                                    系统设置                                </a>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        自定义区                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/stylecenter"
+                                                   >
+                                                    后台样式设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/userclient"
+                                                   >
+                                                    用户端设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/keeper"
+                                                   >
+                                                    仓管端设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/adminstyle"
+                                                   >
+                                                    电脑端设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.nav/index"
+                                                   >
+                                                    小程序导航</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.menus/index"
+                                                   >
+                                                    小程序菜单</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        基础功能                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.line/index"
+                                                   >
+                                                    集运线路</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.country/index"
+                                                   >
+                                                    国家支持</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.line_category/index"
+                                                   >
+                                                    运输方式</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.insure/index"
+                                                   >
+                                                    保险管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.category/index"
+                                                   >
+                                                    类目管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.ditch/index"
+                                                   >
+                                                    渠道中心</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.express/index"
+                                                   >
+                                                    物流公司</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.banner/index"
+                                                   >
+                                                    轮播管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.consumables/index"
+                                                   >
+                                                    耗材管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.currency/index"
+                                                   >
+                                                    货币管理</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        辅助功能                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.addservice/index"
+                                                   >
+                                                    增值服务</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.barcode/index"
+                                                   >
+                                                    商品条码库</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.package/index"
+                                                   >
+                                                    打包服务</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/aiidentify"
+                                                   >
+                                                    智能AI识别</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/storage"
+                                                   >
+                                                    上传设置</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        财务功能                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.payment_flow/index"
+                                                   >
+                                                    支付流水</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/paytype"
+                                                   >
+                                                    支付设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.certificate/index"
+                                                   >
+                                                    汇款凭证</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.bank/index"
+                                                   >
+                                                    汇款账号</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        通知功能                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/tplmsg"
+                                                   >
+                                                    模板消息</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/notice"
+                                                   >
+                                                    物流模板</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/email"
+                                                   >
+                                                    邮件通知</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/sms"
+                                                   >
+                                                    短信设置</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.sms/index"
+                                                   >
+                                                    短信前缀</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.track/index"
+                                                   >
+                                                    常用轨迹</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        小票打印机                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.printer/index"
+                                                   >
+                                                    打印机管理</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting/printer"
+                                                   >
+                                                    打印设置</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        其他                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/setting.cache/clear"
+                                                   >
+                                                    清理缓存</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                </li>
+                </ul>
+            </div>
+            </div>
+
+    <!-- 内容区域 start -->
+    <div class="tpl-content-wrapper ">
+        <div class="row-content am-cf">
+    <div class="row">
+        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+            <div class="widget am-cf">
+                <form id="my-form" class="am-form tpl-form-line-form" method="post">
+                    <div class="widget-body">
+                        <fieldset>
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">系统设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 系统名称 </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[name]"
+                                           value="集运系统" required>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 分享标题 </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[title]"
+                                           value="集运系统" required>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 分享描述 </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[desc]"
+                                           value="让每个包裹都能安全到达" required>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require">分享封面 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <div class="am-form-file">
+                                        <button type="button"
+                                                class="upload-file am-btn am-btn-secondary am-radius">
+                                            <i class="am-icon-cloud-upload"></i> 选择图片
+                                        </button>
+                                        <div class="uploader-list am-cf">
+                                                <div class="file-item">
+                                                    <a href=""
+                                                       title="点击查看大图" target="_blank">
+                                                        <img src="https://logistics-xiaosi.oss-accelerate.aliyuncs.com/20250825174244f151c0605.png">
+                                                    </a>
+                                                    <input type="hidden" name="store[cover_id]" value="844497">
+                                                    <i class="iconfont icon-shanchu file-item-delete"></i>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group" style='display:none'>
+                                <label class="am-u-sm-3 am-form-label form-require"> 配送方式 </label>
+                                <div class="am-u-sm-9">
+                                                                            <label class="am-checkbox-inline">
+                                            <input type="checkbox" name="store[delivery_type][]"
+                                                   value="10" data-am-ucheck
+                                                checked>
+                                            物流配送                                        </label>
+                                                                            <label class="am-checkbox-inline">
+                                            <input type="checkbox" name="store[delivery_type][]"
+                                                   value="20" data-am-ucheck
+                                                checked>
+                                            上门自提                                        </label>
+                                                                        <div class="help-block">
+                                        <small>注：配送方式至少选择一个</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页标题模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[indextitle]" value="10"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        全屏模式
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[indextitle]" value="20"
+                                               data-am-ucheck
+                                            >
+                                        显示标题
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 首页标题背景色 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[indextitle_back]"
+                                           value="#FFF" >
+                                            <div class="help-block">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 首页标题字体颜色 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[indextitle_fontcolor]"
+                                           value="#000" >
+                                            <div class="help-block">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否为外企(外企注册的小程序不能正常获取手机号)
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_external]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        是
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_external]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        否
+                                    </label>
+                                     
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否强制用户授权手机号
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_getphone]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_getphone]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                     
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否强制用户修改昵称
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_setnickname]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_setnickname]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>注：用户初次登录默认昵称为【微信用户】，设置强制则用户必须修改；</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    用户注册时验证方式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[checkphone]" value="10"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        验证邮箱
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[checkphone]" value="20"
+                                               data-am-ucheck
+                                            >
+                                        验证手机号
+                                    </label>
+                                    <div class="help-block">
+                                        <small>注：验证邮箱需要配置邮箱服务器，验证手机号请购买短信额度；</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启引导公众号关注
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechatgzh]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechatgzh]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    客户端模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[client][mode]" value="10"
+                                               data-am-ucheck
+                                                                                           required>
+                                        只开启H5
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[client][mode]" value="20"
+                                               data-am-ucheck
+                                            checked>
+                                        H5+小程序
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    集运订单号生成规则
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <select id="selectize-tags-1" onclick="changeorder()" onchange="changeorder()" name="store[orderno][default]" multiple="" class="tag-gradient-success">
+                                                                                    <option value="20" selected >年月日20230101(固定)</option>
+                                                                                    <option value="110" selected >随机5位数(10000-99999)(动态)</option>
+                                                                                    <option value="10" >时间戳1688197248(动态)</option>
+                                                                                    <option value="20" selected>年月日20230101(固定)</option>
+                                                                                    <option value="30" >(缩)年月日230101(固定)</option>
+                                                                                    <option value="40" >年月日时分秒20230101213030(动态)</option>
+                                                                                    <option value="50" >用户ID(固定)</option>
+                                                                                    <option value="60" >目的地ID(固定)</option>
+                                                                                    <option value="70" >仓库简称(CTO)(固定)</option>
+                                                                                    <option value="90" >自定义字母(XS)(固定)</option>
+                                                                                    <option value="100" >自定序号(001-100)(固定)</option>
+                                                                                    <option value="110" selected>随机5位数(10000-99999)(动态)</option>
+                                                                            </select>
+                                    <input id="orderno" autocomplete="off" type="hidden" name="store[orderno][default]"  value="20,110">
+                                    <small>注：请至少选择两个规则，注意选择固定+动态的单号规则；</small>
+                                </div>
+                            </div>
+                            
+                            
+                             <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 自定义订单首字母 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[createSnfistword]"
+                                           value="Y" required>
+                                            <div class="help-block">
+                                        <small>注：默认开启客服邮箱，修改邮箱后，用户端对应的文字也将修改；</small>
+                                </div>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 自定义功能设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页弹窗设置
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[jumpbox][mode]" value="10"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        每次都弹
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[jumpbox][mode]" value="20"
+                                               data-am-ucheck
+                                            >
+                                        只弹一次
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[jumpbox][mode]" value="30"
+                                               data-am-ucheck
+                                            >
+                                        一次不弹
+                                    </label>
+                                    <div class="help-block">
+                                        <small>注意：开启每次都弹后只会展示第一个公告<a target="_blank" href="index.php?s=/store/setting.banner/index">点击跳转到公告设置</a></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    底部菜单模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[menu_type]" value="10"
+                                               data-am-ucheck
+                                            >
+                                        A模式:首页/查询/快捷键/拼团/我的
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[menu_type]" value="20"
+                                               data-am-ucheck
+                                            >
+                                        B模式:首页/查询/快捷键/运费/我的
+                                    </label>
+                                    <br>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[menu_type]" value="30"
+                                               data-am-ucheck
+                                            >
+                                        C模式:首页/查询/运费/我的
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[menu_type]" value="40"
+                                               data-am-ucheck
+                                            >
+                                        D模式:首页/查询/运费/拼团/我的
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[menu_type]" value="50"
+                                               data-am-ucheck
+                                            checked>
+                                        E模式:首页/查询/运费/商城/我的
+                                    </label>
+                                    <div class="help-block">
+                                        <small>注意：默认开启A模式，如需其他模式亲自行设置
+                                              <a href="index.php?s=/store/setting.help/menuset" target="_blank">点击查看效果图？</a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    新手问题展示模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[newhand_mode]" value="10"
+                                               data-am-ucheck
+                                            >
+                                        A模式:列表模式
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[newhand_mode]" value="20"
+                                               data-am-ucheck
+                                            checked>
+                                        B模式:图文模式
+                                    </label>
+                                    <div class="help-block">
+                                        <small>注意：默认开启A模式，如需其他模式亲自行设置</small>
+                                    </div>
+                                </div>
+                            </div>
+                             
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 运费查询排序方式 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[sort_mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10" selected>按价格排序</option>
+                                            <option value="20" >按路线sort排序</option>
+                                            <option value="30" >按路线ID自然排序</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    路线查询排序方式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_sort]" value="10"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        从大到小
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_sort]" value="20"
+                                               data-am-ucheck
+                                            >
+                                        从小到大
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启路线折扣
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_discount]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_discount]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>路线折扣开启后，所有的用户运费查询，运费计算的运费将在标准价格基础上乘以折扣比例</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启运费自动计算
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_auto_free]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_auto_free]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>开启自动计算后，系统会根据订单重量，体积自动计算最终运费。</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 重量单位设置 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[weight_mode][mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10" >克/g</option>
+                                            <option value="20" selected>千克/kg</option>
+                                            <option value="30"  >磅/lbs</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前仅支持克、千克、磅等单位的切换,默认全局重量单位</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 长度单位设置 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[size_mode][mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10" selected>厘米/CM</option>
+                                            <option value="20" >英寸/IN</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前仅支持CM、IN等单位的切换,默认全局长度单位</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 计费单位设置 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[price_mode][mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                        <option value="10" selected>元/¥</option>
+                                        <option value="20" >美元/$</option>
+                                        <option value="30"  >加币/C$</option>
+                                        <option value="40"  >欧元/€</option>
+                                        <option value="50"  >澳元/AUD</option>
+                                        <option value="60"  >港币/HK$</option>
+                                        <option value="70"  >澳门币/MOP</option>
+                                        <option value="80"  >迪拉姆/AED</option>
+                                        <option value="90"  >泰铢/THB</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启自提点
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_packagestation]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_packagestation]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>开启自提点后，请到【设置】->【自提点管理】中添加自提点</small>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            
+                           <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 滞留件时效 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[retention_day]"
+                                           value="7" required>
+                                            <div class="help-block">
+                                                 <small>此功能配合仓库功能使用；当到达目的地的包裹在仓库中滞留超过时效则再次触发通知；</small>
+                                            </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 轮播图高度 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[height_banner]"
+                                           value="280" required>
+                                            <div class="help-block">
+                                                 <small>用户端轮播图高度默认180px；你可以根据自己的需要设置高度；</small>
+                                            </div>
+                                </div>
+                            </div>
+                           
+                            
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">用户编号设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    用户编号模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline" id>
+                                        <input type="radio" name="store[usercode_mode][is_show]" value="0" onclick="switchLineMode(this)"
+                                               data-am-ucheck 
+                                            >
+                                        使用系统用户ID
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[usercode_mode][is_show]" value="1" onclick="switchLineMode(this)"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        使用唯一编号CODE
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[usercode_mode][is_show]" value="2" onclick="switchLineMode(this)"
+                                               data-am-ucheck
+                                                                                           required>
+                                        使用可切换的唛头
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="usercode">
+                            <div class="am-form-group usercoded"> 
+                                <label class="am-u-sm-3  am-form-label form-require"> 用户编号模式设置 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[usercode_mode][mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10"  >纯数字模式</option>
+                                            <option value="20" >纯英文模式</option>
+                                            <option value="30"  >数字英文混合模式</option>
+                                            <option value="40" selected >数字英文顺序模式</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 用户编号配置：纯数字模式 -->
+                         
+                            <div id="10" class="form-tab-group    " name="store[usercode_mode][mode]">
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3 am-form-label form-require">数字个数，最佳是5位</label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                        <input class="tpl-form-input" type="number"
+                                               name="store[usercode_mode][10][number]" min="4" max="10" value="5">
+                                        <small>填5位数生成的范围为：00001-99999</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 用户编号配置：纯英文模式 -->
+                            <div id="20" class="form-tab-group   " name="store[usercode_mode][mode]">
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3  am-form-label form-require"> 英文个数，最佳是5位数 </label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                        <input type="text" class="tpl-form-input"
+                                               name="store[usercode_mode][20][char]" value="5">
+                                                <small>填5位数随机生成的编号为：BHRTD，JGFDSA，OPRADS...</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 用户编号配置：数字英文混合模式 -->
+                            <div id="30" name="store[usercode_mode][mode] " class="form-tab-group   
+                            ">
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3  am-form-label form-require"> 头部英文，最佳为2-3个固定子母 </label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                         <input type="text" class="tpl-form-input"
+                                               name="store[usercode_mode][30][char]" value="Y">
+                                    </div>
+                                    <label class="am-u-sm-3  am-form-label form-require"> 数字个数，最佳是5位 </label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                        <input type="text" class="tpl-form-input"  value="5"
+                                               name="store[usercode_mode][30][number]">
+                                                <small>子母填【JY】，数字填5生成的范围为：JY00001-JY99999</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 用户编号配置：数字英文混合模式 -->
+                            <div id="40" name="store[usercode_mode][mode] " class="form-tab-group  active 
+                            ">
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3  am-form-label form-require"> 头部英文，最佳为2-3个固定子母 </label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                         <input type="text" class="tpl-form-input"
+                                               name="store[usercode_mode][40][char]" value="Y">
+                                    </div>
+                                    <label class="am-u-sm-3  am-form-label form-require"> 数字个数，最佳是5位 </label>
+                                    <div class="am-u-sm-9 am-u-end">
+                                        <input type="text" class="tpl-form-input"  value="5"
+                                               name="store[usercode_mode][40][number]">
+                                                <small>子母填【JY】，数字填5生成的范围为：JY00001-JY99999</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">小程序仓库地址显示方式设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 用户复制仓库地址收件人显示模式 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[link_mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10" >仓库名+用户ID</option>
+                                            <option value="20" >仓库联系人+用户ID</option>
+                                            <option value="30" >用户昵称+用户ID</option>
+                                            <option value="40" >仓库简称+用户ID</option>
+                                            <option value="50" selected>用户昵称</option>
+                                            <option value="60" >仓库名</option>
+                                            <option value="70" >仓库简称(用户昵称)</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 用户复制仓库地址显示模式 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[address_mode]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="10" >纯仓库地址</option>
+                                            <option value="20" >地址+用户ID</option>
+                                            <option value="30" selected>地址+用户ID+室</option>
+                                            <option value="40" >地址+用户ID+室+客服</option>
+                                             <option value="50" >地址+用户昵称+用户ID+室</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    复制仓库地址时，用户ID是否修改为xxxx室
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_change_uid]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_change_uid]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>此方法可以避免被电商平台隐私打**码，导致用户ID看不到</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 上面的"室"替换成下面的文字 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[is_room_alias]"
+                                           value="房">
+                                           <div class="help-block">
+                                        <small>一般可以使用的"室"，"库"，"仓"，"房"，"楼"，"号"等，你也可以自行填写</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">客服设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    客服样式模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[service_type]" value="10"
+                                               data-am-ucheck
+                                                                                           required>
+                                        列表展示
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[service_type]" value="20"
+                                               data-am-ucheck
+                                            checked>
+                                        悬浮客服
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require">悬浮客服 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <div class="am-form-file">
+                                        <button type="button"
+                                                class="uploadser-file am-btn am-btn-secondary am-radius">
+                                            <i class="am-icon-cloud-upload"></i> 选择图片
+                                        </button>
+                                        <div class="uploader-list am-cf">
+                                                <div class="file-item">
+                                                    <a href=""
+                                                       title="点击查看大图" target="_blank">
+                                                        <img src="https://logistics-xiaosi.oss-accelerate.aliyuncs.com/202509022120515102b8021.png">
+                                                    </a>
+                                                    <input type="hidden" name="store[service_id]" value="850917">
+                                                    <i class="iconfont icon-shanchu file-item-delete"></i>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启电话客服
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_phone]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_phone]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 客户服务名称 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[service_name]"
+                                           value="集运系统客服" required>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 客户服务电话 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[service_phone]"
+                                           value="18086328550" required>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启微信客服
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechat]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechat]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 微信客服名称 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[wechat_name]"
+                                           value="微信客服" required>
+                                            <div class="help-block">
+                                        <small>注：默认开启客服功能，修改名称，用户端对应的文字也将修改；</small>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 企业微信ID </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[wechat_company_corpid]"
+                                           value="ww5baaa3d879277540">
+                                            <div class="help-block">
+                                        <small>注：如果没有企业微信，就留空</small>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 企业微信客服链接 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[wechat_company]"
+                                           value="https://work.weixin.qq.com/kfid/kfc76f3a51ed1ddbf27">
+                                            <div class="help-block">
+                                        <small>注：如果没有企业微信，就留空</small>
+                                </div>
+                                </div>
+                            </div>
+                             <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启微信号展示
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechathao]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechathao]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        微信号
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_wechathao]" value="2"
+                                               data-am-ucheck
+                                                                                           required>
+                                        微信二维码
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 微信客服账号 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[wechathao]"
+                                           value="sllowly666" required>
+                                            <div class="help-block">
+                                        <small>注：默认开启客服微信号，修改微信号，用户端对应的文字也将修改；</small>
+                                </div>
+                                </div>
+                            </div>
+                             <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启客服邮箱展示
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_kefuemail]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_kefuemail]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 邮箱客服名称 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[emailname]"
+                                           value="客服邮箱" required>
+                                            <div class="help-block">
+                                        <small>注：默认开启客服邮箱，修改邮箱后，用户端对应的文字也将修改；</small>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require"> 客服邮箱账号 </label>
+                                <div class="am-u-sm-9">
+                                     <input type="text" class="tpl-form-input" name="store[kefuemail]"
+                                           value="123456@sllowly.com" required>
+                                            <div class="help-block">
+                                </div>
+                                </div>
+                            </div>
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 系统默认功能设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    代用户打包默认选择邮寄模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][send_mode]" value="20"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        默认为直邮模式
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][send_mode]" value="10"
+                                               data-am-ucheck
+                                            >
+                                        默认为拼邮模式
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    后台录入的包裹默认为邮寄模式
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_shop]" value="20"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        默认为直邮模式
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_shop]" value="10"
+                                               data-am-ucheck
+                                            >
+                                        默认为拼邮模式
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    当上面模式为直邮模式时，是否自动生成订单
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][is_zhiyou_pack]" value="0"
+                                               data-am-ucheck
+                                                                                           required>
+                                        默认不生成
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][is_zhiyou_pack]" value="1"
+                                               data-am-ucheck
+                                            checked>
+                                        默认生成
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    当上面模式为直邮模式时，默认订单状态为
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_status]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        待查验（待打包）
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_status]" value="2"
+                                               data-am-ucheck
+                                            >
+                                        待支付
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_status]" value="3"
+                                               data-am-ucheck
+                                            >
+                                        待发货
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    当上面模式为直邮模式时，默认付款模式为
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_pay]" value="0"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        立即发货
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_pay]" value="1"
+                                               data-am-ucheck
+                                            >
+                                        货到付款
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][pack_in_pay]" value="2"
+                                               data-am-ucheck
+                                            >
+                                        月结
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    新用户注册时，默认付款模式为
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][user_pack_in_pay]" value="0"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        立即发货
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][user_pack_in_pay]" value="1"
+                                               data-am-ucheck
+                                            >
+                                        货到付款
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[moren][user_pack_in_pay]" value="2"
+                                               data-am-ucheck
+                                            >
+                                        月结
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    海外仓派件是否强制要求上传派送照片才能确认签收
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_focus_savaimage]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_focus_savaimage]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>开启强制后，在没有上传派件照片前不可确认签收</small>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    电子秤API入库时候自动分配货位
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_auto_shelf]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        自动分配
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_auto_shelf]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        不分配
+                                    </label>
+                                    <div class="help-block">
+                                        <small>开启分配后，在电子秤入库时会分配货位</small>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 功能开启隐藏设置</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    运费查询后是否展示所有路线
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_line_show]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_line_show]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    运费查询是否关联物品类目
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_categorysearch]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_categorysearch]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页是否展示导航
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_navigation]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_navigation]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页是否展示新手区
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_newhand]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_newhand]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页是否展示广告图
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_yaoqing]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_yaoqing]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页是否展示评论
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_pinglun]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_pinglun]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    首页是否展示最佳路线
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_line]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_line]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启邀请好友广告图
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_fyaoqing]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_fyaoqing]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启余额
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_balance]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_balance]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启站内信
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_sitesms]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_sitesms]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启优惠券
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_cuppon]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_cuppon]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启积分
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_point]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_point]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启集运订单
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_jiyun]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_jiyun]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启商城订单
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_shoporder]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_shoporder]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启拼团功能
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_pintuan]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_pintuan]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    个人中心是否开启分销入口
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_fenxiao]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_fenxiao]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启下单拍照功能
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_camera]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_camera]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>此功能默认关闭，当你的操作电脑上了解了摄像头时可以启用，用于入库拍照使用，否则请关闭；</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否展示待认领包裹图片
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_ren_image]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_ren_image]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                        <small>如果你使用了电子秤自动拍照上传，请勿开启。</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    仓管员入库是否开启热门商品类目
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_hotcategory]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_hotcategory]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                    <div class="help-block">
+                                         <small>开启后仓管员入库时，会多出一个快速选择热门商品类目的区域
+                                              <a href="index.php?s=/store/setting.help/hotcategory" target="_blank">点击查看效果图？</a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 个人中心功能开关</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启申请团长
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_tuanzhang]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_tuanzhang]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启绑定邮箱
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_email]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_email]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启仓库地址
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_warehouse]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_warehouse]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启优惠券中心
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_daifu]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_daifu]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启申请查验
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_chayan]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_chayan]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                             <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启关于我们
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_about]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_about]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                           <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启包裹认领
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_renling]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_renling]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启新手问题
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_problem]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_problem]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启收货地址
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_address]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[is_address]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 用户地址动态设置开关</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启电话前缀
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_tel_code]" value="1"
+                                               data-am-ucheck
+                                                                                           required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_tel_code]" value="0"
+                                               data-am-ucheck
+                                            checked>
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启个人通关代码
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_clearancecode]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_clearancecode]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启身份证号
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_identitycard]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_identitycard]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启省/州
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_province]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_province]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启城市
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_city]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_city]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启区
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_region]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_region]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启街道
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_street]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_street]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启门牌号
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_door]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_door]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启详细地址
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_detail]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_detail]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启邮箱
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_email]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_email]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启邮编
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_code]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_code]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启备注
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_remark]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_remark]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label form-require">
+                                    是否开启唛头
+                                </label>
+                                <div class="am-u-sm-9">
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_usermark]" value="1"
+                                               data-am-ucheck
+                                            checked                                               required>
+                                        开启
+                                    </label>
+                                    <label class="am-radio-inline">
+                                        <input type="radio" name="store[address_setting][is_usermark]" value="0"
+                                               data-am-ucheck
+                                            >
+                                        关闭
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label">自定义备注</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[address_setting][remark]"
+                                           value="">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl"> 物流查询API</div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 快递100 Customer </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[kuaidi100][customer]"
+                                           value="77FFE302C4C2F74DA5DD8E191107C837">
+                                    <small>用于查询物流信息，<a href="https://www.kuaidi100.com/openapi/"
+                                                       target="_blank">快递100申请</a></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 快递100 Key </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[kuaidi100][key]"
+                                           value="VsKNyGsK8610">
+                                </div>
+                            </div>
+                           
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 17TRACK Key </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input" name="store[track17][key]"
+                                           value="56A7C556A9BC319E1A19A9498B7700ED">
+                                    <small>用于查询国际物流信息，<a href="https://user.17track.net/zh-cn/register?gb=api.17track.net#maybe=16"
+                                                       target="_blank">17TRACK密钥申请</a>
+                                    </small>       
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3 am-form-label"> 17tack WebHookL </label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" class="tpl-form-input"
+                                           value="https://zhuanyun.sllowly.cn/index.php?s=/api/api_Post/Webhook17Track&wxapp_id=10001">
+                                    <small>用于快递单号回调</small>       
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label class="am-u-sm-3  am-form-label form-require"> 17TRACK轨迹默认语言 </label>
+                                <div class="am-u-sm-9 am-u-end">
+                                    <select name="store[track17][lang]"
+                                            data-am-selected="{btnSize: 'sm', placeholder: '请选择', maxHeight: 400}">
+                                            <option value="en" >英文</option>
+                                            <option value="ja" >日文</option>
+                                            <option value="fr" >法文</option>
+                                            <option value="da" >丹麦文</option>
+                                            <option value="th" >泰文</option>
+                                            <option value="de" >德文</option>
+                                            <option value="es" >西班牙文</option>
+                                            <option value="zh-hans" selected>简体中文</option>
+                                    </select>
+                                    <div class="help-block">
+                                        <small>目前支持纯数字模式，纯英文模式，数字英文混合模式</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3 am-margin-top-lg">
+                                    <button type="submit" class="j-submit am-btn am-btn-secondary">提交
+                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="/web/static/css/selectize.default.css" rel="stylesheet">
+<script src="/web/static/js/summernote-bs4.min.js"></script>
+<script src="/web/static/js/selectize.min.js"></script>
+<!-- 图片文件列表模板 -->
+<script id="tpl-file-item" type="text/template">
+    {{ each list }}
+    <div class="file-item">
+        <a href="{{ $value.file_path }}" title="点击查看大图" target="_blank">
+            <img src="{{ $value.file_path }}">
+        </a>
+        <input type="hidden" name="{{ name }}" value="{{ $value.file_id }}">
+        <i class="iconfont icon-shanchu file-item-delete"></i>
+    </div>
+    {{ /each }}
+</script>
+
+
+
+<!-- 文件库弹窗 -->
+<!-- 文件库模板 -->
+<script id="tpl-file-library" type="text/template">
+    <div class="row">
+        <div class="file-group">
+            <ul class="nav-new">
+                <li class="ng-scope {{ is_default ? 'active' : '' }}" data-group-id="-1">
+                    <a class="group-name am-text-truncate" href="javascript:void(0);" title="全部">全部</a>
+                </li>
+                <li class="ng-scope" data-group-id="0">
+                    <a class="group-name am-text-truncate" href="javascript:void(0);" title="未分组">未分组</a>
+                </li>
+                {{ each group_list }}
+                <li class="ng-scope"
+                    data-group-id="{{ $value.group_id }}" title="{{ $value.group_name }}">
+                    <a class="group-edit" href="javascript:void(0);" title="编辑分组">
+                        <i class="iconfont icon-bianji"></i>
+                    </a>
+                    <a class="group-name am-text-truncate" href="javascript:void(0);">
+                        {{ $value.group_name }}
+                    </a>
+                    <a class="group-delete" href="javascript:void(0);" title="删除分组">
+                        <i class="iconfont icon-shanchu1"></i>
+                    </a>
+                </li>
+                {{ /each }}
+            </ul>
+            <a class="group-add" href="javascript:void(0);">新增分组</a>
+        </div>
+        <div class="file-list">
+            <div class="v-box-header am-cf">
+                <div class="h-left am-fl am-cf">
+                    <div class="am-fl">
+                        <div class="group-select am-dropdown">
+                            <button type="button" class="am-btn am-btn-sm am-btn-secondary am-dropdown-toggle">
+                                移动至 <span class="am-icon-caret-down"></span>
+                            </button>
+                            <ul class="group-list am-dropdown-content">
+                                <li class="am-dropdown-header">请选择分组</li>
+                                {{ each group_list }}
+                                <li>
+                                    <a class="move-file-group" data-group-id="{{ $value.group_id }}"
+                                       href="javascript:void(0);">{{ $value.group_name }}</a>
+                                </li>
+                                {{ /each }}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="am-fl tpl-table-black-operation">
+                        <a href="javascript:void(0);" class="file-delete tpl-table-black-operation-del"
+                           data-group-id="2">
+                            <i class="am-icon-trash"></i> 删除
+                        </a>
+                    </div>
+                </div>
+                <div class="h-rigth am-fr">
+                    <div class="j-upload upload-image">
+                        <i class="iconfont icon-add1"></i>
+                        上传图片
+                    </div>
+                </div>
+            </div>
+            <div id="file-list-body" class="v-box-body">
+                {{ include 'tpl-file-list' file_list }}
+            </div>
+            <div class="v-box-footer am-cf"></div>
+        </div>
+    </div>
+
+</script>
+
+<!-- 文件列表模板 -->
+<script id="tpl-file-list" type="text/template">
+    <ul class="file-list-item">
+        {{ include 'tpl-file-list-item' data }}
+    </ul>
+    {{ if last_page > 1 }}
+    <div class="file-page-box am-fr">
+        <ul class="pagination">
+            {{ if current_page > 1 }}
+            <li>
+                <a class="switch-page" href="javascript:void(0);" title="上一页" data-page="{{ current_page - 1 }}">«</a>
+            </li>
+            {{ /if }}
+            {{ if current_page < last_page }}
+            <li>
+                <a class="switch-page" href="javascript:void(0);" title="下一页" data-page="{{ current_page + 1 }}">»</a>
+            </li>
+            {{ /if }}
+        </ul>
+    </div>
+    {{ /if }}
+</script>
+
+<!-- 文件列表模板 -->
+<script id="tpl-file-list-item" type="text/template">
+    {{ each $data }}
+    <li class="ng-scope" title="{{ $value.file_name }}" data-file-id="{{ $value.file_id }}"
+        data-file-path="{{ $value.file_path }}">
+        <div class="img-cover"
+             style="background-image: url('{{ $value.file_path }}')">
+        </div>
+        <p class="file-name am-text-center am-text-truncate">{{ $value.file_name }}</p>
+        <div class="select-mask">
+            <img src="assets/store/img/chose.png">
+        </div>
+    </li>
+    {{ /each }}
+</script>
+
+<!-- 分组元素-->
+<script id="tpl-group-item" type="text/template">
+    <li class="ng-scope" data-group-id="{{ group_id }}" title="{{ group_name }}">
+        <a class="group-edit" href="javascript:void(0);" title="编辑分组">
+            <i class="iconfont icon-bianji"></i>
+        </a>
+        <a class="group-name am-text-truncate" href="javascript:void(0);">
+            {{ group_name }}
+        </a>
+        <a class="group-delete" href="javascript:void(0);" title="删除分组">
+            <i class="iconfont icon-shanchu1"></i>
+        </a>
+    </li>
+</script>
+
+<script>
+
+    function switchLineMode(_this){
+        var _mode = _this.value;
+        if(_mode==0  || _mode==2){
+          $('.usercoded').css('display','none');
+          $('.usercodes').css('display','none');
+          $('.active').addClass('goog');
+          $('.active').removeClass('active');
+        }
+        if(_mode==1){
+          $('.active').removeClass('disnone');
+          $('.usercoded').css('display','block');
+          $('.goog').addClass('active');
+          $('.goog').removeClass('disnone');
+        }
+    }
+    
+    function changeorder(){
+        console.log($('#selectize-tags-1')[0]);
+        $('#orderno').val($('#selectize-tags-1')[0].selectize.items);
+    }
+    
+    $(function () {
+
+        $('#selectize-tags-1').selectize({
+    	    delimiter: ',',
+    	    persist: false,
+    	    create: function(input) {
+    	        return {
+    	            value: input,
+    	            text: input
+    	        }
+    	    }
+	    });
+        // 切换用户编号模式
+        $("select[name='store[usercode_mode][mode]']").on('change', function (e) {
+            $('.form-tab-group').removeClass('active');
+            $('.form-tab-group').removeClass('goog');
+            $('#' + e.currentTarget.value).addClass('active');
+        });
+        
+         // 选择图片
+        $('.upload-file').selectImages({
+            name: 'store[cover_id]'
+        });
+         // 选择图片
+        $('.uploadser-file').selectImages({
+            name: 'store[service_id]'
+        });
+        /**
+         * 表单验证提交
+         * @type {*}
+         */
+        $('#my-form').superForm();
+
+    });
+</script>
+
+    </div>
+    <!-- 内容区域 end -->
+    
+    <!-- 订单提醒弹窗 -->
+    <div id="inpack-notify-popup" style="display:none; position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 15px 20px; z-index: 99999; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="iconfont icon-lingdang" style="font-size: 24px; margin-right: 15px; animation: bell-ring 0.5s ease-in-out infinite;"></i>
+                <div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">你有新集运订单需要处理</div>
+                    <div style="font-size: 14px; opacity: 0.9;" id="notify-order-sn">订单号：<span id="notify-order-sn-value"></span></div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="javascript:;" id="notify-goto-order" style="color: #fff; text-decoration: none; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 4px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">查看订单</a>
+                <a href="javascript:;" id="notify-close" style="color: #fff; text-decoration: none; font-size: 20px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes bell-ring {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        #inpack-notify-popup.show {
+            animation: slideDown 0.3s ease-out;
+        }
+    </style>
+
+</div>
+<script src="assets/common/plugins/layer/layer.js"></script>
+<script src="assets/common/js/jquery.form.min.js"></script>
+<script src="assets/common/js/amazeui.min.js"></script>
+<script src="assets/common/js/webuploader.html5only.js"></script>
+<script src="assets/common/js/art-template.js"></script>
+<script src="assets/store/js/app.js?v=2.2.55"></script>
+<script src="assets/store/js/file.library.js?v=2.2.55"></script>
+        <script src="assets/store/css/app_shu1/jiyunbg.js"></script>
+    <script src="assets/store/css/app_shu1/jiyunApp.js"></script>
+    <script>
+// 菜单链接打开方式：根据配置文件中的 open_new_tab 参数决定
+// 如果菜单项设置了 target="_blank"，则在新标签页打开，否则在当前页打开
+$(document).ready(function() {
+    // 一级菜单：在当前页面跳转
+    $('.sidebar-nav a').on('click', function(e) {
+        var href = $(this).attr('href');
+        // 如果不是 javascript:void(0) 这样的伪链接
+        if (href && href !== 'javascript:void(0);' && href.indexOf('javascript:') !== 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = href; // 当前页面跳转
+        }
+    });
+    
+    // 注意：二级、三级菜单现在由 HTML 的 target 属性控制
+    // 如果菜单配置中有 'open_new_tab' => true，会自动添加 target="_blank"
+});
+
+// 订单提醒功能
+(function() {
+    'use strict';
+    
+    // 配置
+    var POLL_INTERVAL = 30000; // 30秒轮询间隔
+    var STORAGE_KEY = 'inpack_notify_last_check';
+    var AUDIO_PATH = 'assets/store/order.MP3';
+    
+    // 音频对象（延迟加载，等待用户交互）
+    var audio = null;
+    var audioInitialized = false;
+    
+    // 初始化音频对象
+    function initAudio() {
+        if (audioInitialized || audio) return;
+        
+        try {
+            audio = new Audio(AUDIO_PATH);
+            audio.preload = 'auto';
+            audio.volume = 0.8;
+            
+            // 处理音频加载错误
+            audio.addEventListener('error', function(e) {
+                console.warn('订单提醒音频加载失败:', e);
+                audio = null;
+            });
+            
+            audioInitialized = true;
+        } catch (e) {
+            console.warn('初始化音频对象失败:', e);
+        }
+    }
+    
+    // 播放提醒音频
+    function playNotifySound() {
+        if (!audio) {
+            initAudio();
+        }
+        
+        if (audio && audioInitialized) {
+            try {
+                // 重置音频到开始位置
+                audio.currentTime = 0;
+                var playPromise = audio.play();
+                
+                // 处理播放错误
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        console.warn('音频播放失败（可能是浏览器自动播放限制）:', error);
+                        // 如果自动播放失败，尝试在用户交互后播放
+                        var onceInteraction = function() {
+                            if (audio) {
+                                audio.play().catch(function() {});
+                            }
+                            document.removeEventListener('click', onceInteraction);
+                            document.removeEventListener('touchstart', onceInteraction);
+                            document.removeEventListener('keydown', onceInteraction);
+                        };
+                        document.addEventListener('click', onceInteraction, { once: true });
+                        document.addEventListener('touchstart', onceInteraction, { once: true });
+                        document.addEventListener('keydown', onceInteraction, { once: true });
+                    });
+                }
+            } catch (e) {
+                console.warn('播放音频时出错:', e);
+            }
+        }
+    }
+    
+    // 显示顶部通知
+    function showNotifyPopup(orderSn, orderId) {
+        var $popup = $('#inpack-notify-popup');
+        var $orderSnValue = $('#notify-order-sn-value');
+        
+        if ($orderSnValue.length) {
+            $orderSnValue.text(orderSn || '');
+        }
+        
+        // 设置跳转链接
+        var $gotoLink = $('#notify-goto-order');
+        if ($gotoLink.length && orderId) {
+            var orderUrl = BASE_URL + 'index.php?s=/store/tr_order/edit&id=' + orderId;
+            $gotoLink.attr('href', orderUrl);
+        }
+        
+        // 显示弹窗
+        $popup.fadeIn(300).addClass('show');
+        
+        // 自动关闭（5秒后）
+        setTimeout(function() {
+            hideNotifyPopup();
+        }, 5000);
+    }
+    
+    // 隐藏顶部通知
+    function hideNotifyPopup() {
+        var $popup = $('#inpack-notify-popup');
+        $popup.fadeOut(300, function() {
+            $(this).removeClass('show');
+        });
+    }
+    
+    // 检查是否有新订单
+    function checkNewInpack() {
+        // 检查设置是否启用（从后端获取，暂时默认启用）
+        // 这里可以通过AJAX获取设置，或者从页面变量中获取
+        // 为了简化，我们默认启用，如果需要可以在后端返回设置值
+        
+        // 只在页面可见时检查
+        if (document.hidden) {
+            return;
+        }
+        
+        $.ajax({
+            url: BASE_URL + 'index.php?s=/store/package.Index/getLatestInpackTime',
+            type: 'GET',
+            dataType: 'json',
+            timeout: 10000,
+            success: function(res) {
+                if (res.code == 1 && res.data) {
+                    // 检查是否启用提醒
+                    var notifyEnabled = res.data.notify_enabled !== false; // 默认为true
+                    
+                    if (!notifyEnabled) {
+                        // 如果未启用，直接返回，不进行后续检查
+                        return;
+                    }
+                    
+                    var latestTime = res.data.latest_time || 0;
+                    var latestId = res.data.latest_id || 0;
+                    var latestOrderSn = res.data.latest_order_sn || '';
+                    
+                    if (latestTime > 0 && latestId > 0) {
+                        // 获取本地存储的最后检查信息
+                        var lastCheck = localStorage.getItem(STORAGE_KEY);
+                        var lastCheckData = lastCheck ? JSON.parse(lastCheck) : { time: 0, id: 0 };
+                        
+                        // 检查是否有新订单
+                        if (latestTime > lastCheckData.time && latestId != lastCheckData.id) {
+                            // 有新订单，播放提醒
+                            playNotifySound();
+                            showNotifyPopup(latestOrderSn, latestId);
+                            
+                            // 更新本地存储
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        } else if (latestTime > lastCheckData.time) {
+                            // 时间更新了但ID相同，只更新时间
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        }
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                // 静默失败，不显示错误
+                console.warn('检查新订单失败:', status, error);
+            }
+        });
+    }
+    
+    // 初始化
+    $(document).ready(function() {
+        // 用户交互后初始化音频（解决浏览器自动播放限制）
+        var initOnInteraction = function() {
+            initAudio();
+            // 只初始化一次
+            $(document).off('click touchstart keydown', initOnInteraction);
+        };
+        $(document).on('click touchstart keydown', initOnInteraction);
+        
+        // 关闭通知按钮事件
+        $('#notify-close').on('click', function() {
+            hideNotifyPopup();
+        });
+        
+        // 点击通知区域外部也可关闭（可选）
+        $('#inpack-notify-popup').on('click', function(e) {
+            if ($(e.target).closest('#notify-goto-order, #notify-close').length === 0) {
+                // 点击通知内容区域，跳转到订单
+                var href = $('#notify-goto-order').attr('href');
+                if (href && href !== 'javascript:;') {
+                    window.location.href = href;
+                }
+            }
+        });
+        
+        // 首次检查（延迟2秒，避免页面加载时立即请求）
+        setTimeout(checkNewInpack, 2000);
+        
+        // 设置定时轮询
+        setInterval(checkNewInpack, POLL_INTERVAL);
+        
+        // 页面可见性变化时检查
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面变为可见时立即检查一次
+                setTimeout(checkNewInpack, 1000);
+            }
+        });
+    });
+})();
+</script>
+</body>
+
+</html>

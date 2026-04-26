@@ -1,0 +1,118 @@
+{{define "pages/tools_freight_query"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.tools_freight_query.title">運費查詢</h5>
+    </div>
+    <div class="card-body">
+        <form id="queryForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.origin_country">始發國家</label>
+                    <select class="form-select" name="origin_country" id="originCountry">
+                        <option value="" data-i18n="pages.tools_freight_query.select_origin">請選擇始發國家</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.destination_country">目的國家</label>
+                    <select class="form-select" name="destination_country" id="destinationCountry">
+                        <option value="" data-i18n="pages.tools_freight_query.select_destination">請選擇目的國家</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.shipping_route">運輸線路</label>
+                    <select class="form-select" name="shipping_route" id="shippingRoute">
+                        <option value="" data-i18n="pages.tools_freight_query.select_route">請選擇運輸線路</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.weight_kg">重量(kg)</label>
+                    <input type="number" class="form-control" name="weight" step="0.01" min="0" data-i18n-placeholder="pages.tools_freight_query.weight_kg" placeholder="重量">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.length_cm">長(cm)</label>
+                    <input type="number" class="form-control" name="length" step="0.1" min="0" data-i18n-placeholder="pages.tools_freight_query.length_cm" placeholder="長">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.width_cm">寬(cm)</label>
+                    <input type="number" class="form-control" name="width" step="0.1" min="0" data-i18n-placeholder="pages.tools_freight_query.width_cm" placeholder="寬">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label" data-i18n="pages.tools_freight_query.height_cm">高(cm)</label>
+                    <input type="number" class="form-control" name="height" step="0.1" min="0" data-i18n-placeholder="pages.tools_freight_query.height_cm" placeholder="高">
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="queryFreight()"><i class="fas fa-search me-1"></i><span data-i18n="pages.tools_freight_query.query_freight">查詢運費</span></button>
+        </form>
+    </div>
+</div>
+<div class="mt-4" id="resultsArea" style="display:none;">
+    <h5 class="mb-3" data-i18n="pages.tools_freight_query.query_result">查詢結果</h5>
+    <div class="row" id="resultsContainer"></div>
+    <div id="noResults" class="text-center py-4 text-muted" style="display:none;" data-i18n="pages.tools_freight_query.no_matching_plan">暫無符合條件的運費方案</div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+async function loadCountries() {
+    try {
+        const data = await apiRequest('GET', '/countries');
+        const items = data.items || data || [];
+        const originSel = document.getElementById('originCountry');
+        const destSel = document.getElementById('destinationCountry');
+        items.forEach(c => {
+            const name = c.name || c.country_name || '';
+            const val = c.id || c.code || '';
+            originSel.insertAdjacentHTML('beforeend', `<option value="${val}">${name}</option>`);
+            destSel.insertAdjacentHTML('beforeend', `<option value="${val}">${name}</option>`);
+        });
+    } catch(e){}
+}
+async function loadRoutes() {
+    try {
+        const data = await apiRequest('GET', '/shipping-routes');
+        const items = data.items || data || [];
+        const sel = document.getElementById('shippingRoute');
+        items.forEach(r => {
+            const name = r.name || r.route_name || '';
+            const val = r.id || '';
+            sel.insertAdjacentHTML('beforeend', `<option value="${val}">${name}</option>`);
+        });
+    } catch(e){}
+}
+async function queryFreight() {
+    const data = getFormData('queryForm');
+    try {
+        const result = await apiRequest('POST', '/tools/freight-query', data);
+        const items = result.items || result || [];
+        const container = document.getElementById('resultsContainer');
+        const area = document.getElementById('resultsArea');
+        const noResults = document.getElementById('noResults');
+        container.innerHTML = '';
+        area.style.display = 'block';
+        if (!items.length) {
+            noResults.style.display = 'block';
+            return;
+        }
+        noResults.style.display = 'none';
+        items.forEach(item => {
+            container.insertAdjacentHTML('beforeend', `
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title">${item.route_name||item.name||'--'}</h6>
+                            <div class="mb-2"><span class="text-muted">${_t('pages.tools_freight_query.estimated_cost', '預估費用')}：</span><strong class="text-primary">${formatMoney(item.estimated_cost)}</strong></div>
+                            <div class="mb-2"><span class="text-muted">${_t('pages.tools_freight_query.estimated_transit', '預估時效')}：</span>${item.estimated_days||'--'} ${_t('pages.tools_freight_query.days', '天')}</div>
+                            <div><span class="text-muted">${_t('pages.tools_freight_query.channel', '渠道')}：</span>${item.channel||'--'}</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => { loadCountries(); loadRoutes(); });
+</script>
+{{end}}

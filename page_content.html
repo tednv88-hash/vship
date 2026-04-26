@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>集运系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="assets/common/i/favicon.ico"/>
+    <link href="assets/common/css/animate.compat.css" rel="stylesheet">
+    <meta name="apple-mobile-web-app-title" content="集运系统"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/common/css/amazeui.datetimepicker.css"/>
+    
+    <!--原始背景-->
+        <!--蓝色背景-->
+        <!--静态图背景-->
+        <!--数字粒子背景-->
+        <link rel="stylesheet" href="assets/store/css/app_shu1/app_shu.css?v=2.2.55"/>
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_783249_m68ye1gfnza.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/c/font_3768063_yu9jg4vyhs.css">
+    <script src="assets/common/js/jquery.min.js"></script>
+    <script src="assets/common/js/base.js"></script>
+    <script src="assets/common/js/amazeui.datetimepicker.min.js"></script>
+    <script src="//at.alicdn.com/t/font_783249_e5yrsf08rap.js"></script>
+    <script>
+        BASE_URL = 'https://zhuanyun.sllowly.cn/';
+        STORE_URL = 'index.php?s=/store';
+    </script>
+</head>
+
+<body data-type="">
+<div class="am-g tpl-g">
+    <!-- 头部 -->
+    <header class="tpl-header">
+        <!-- 右侧内容 -->
+        <div class="tpl-header-fluid">
+            <!-- 侧边切换 -->
+            <div class="am-fl tpl-header-button switch-button">
+                <i class="iconfont icon-menufold"></i>
+            </div>
+            <!-- 刷新页面 -->
+            <div class="am-fl tpl-header-button refresh-button">
+                <i class="iconfont icon-refresh"></i>
+            </div>
+            <!-- 其它功能-->
+            <div class="am-fr tpl-header-navbar">
+                <ul>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tr_order/payment_audit" style="color: #ff0000;    font-weight: 900;">
+                            <span >线下支付审核 (4)</span>
+                        </a>
+                    </li>
+                                        <li  class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/setting.certificate/index" style="color: #ff0000;    font-weight: 900;">
+                            <span >汇款凭证审核 (32)</span>
+                        </a>
+                    </li>
+                                        <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/tools/guide"><span>使用指南</span></a>
+                    </li>
+                                        <li style="margin-top:10px" class="am-text-sm tpl-header-navbar-welcome">
+                        <div class="am-dropdown" data-am-dropdown>
+                              <button class="am-btn am-btn-danger am-dropdown-toggle" data-am-dropdown-toggle>待处理 <span class="am-icon-caret-down"></span></button>
+                              <ul class="am-dropdown-content">
+                                <li class="am-dropdown-header"><a style="line-height:20px;" href="index.php?s=/store/tr_order/exceedorder" >超时订单 <span class="tipsspan"> 4 </span></a></li>
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >待发货订单 <span class="tipsspan">1</span></a></li>-->
+                                <!--<li class="am-dropdown-header"><a style="line-height:20px;" href="###" >问题包裹 <span class="tipsspan">1</span></a></li>-->
+                              </ul>
+                            </div>
+                    </li>
+                                        <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="javascript:;">有限期：<span>2030-02-01</span>
+                        </a>
+                    </li>
+                    <!-- 欢迎语 -->
+                    <li class="am-text-sm tpl-header-navbar-welcome">
+                        <a href="index.php?s=/store/store.user/renew">欢迎你，<span>admin</span>
+                        </a>
+                    </li>
+                    <!-- 退出 -->
+                    <li class="am-text-sm">
+                        <a href="index.php?s=/store/passport/logout">
+                            <i class="iconfont icon-tuichu"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!-- 侧边导航栏 -->
+    <div class="left-sidebar dis-flex" id="particles-js">
+                    <canvas class="particles-js-canvas-el" style="width: 100%; height: 100%;" width="472" height="625"></canvas>
+                    <div class="sidebar-scroll ">
+            <!-- 一级菜单 -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-heading">集运系统</li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-home"
+                                   style=""></i>
+                                                        总览                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/package.index/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-miaosha"
+                                   style=""></i>
+                                                        包裹管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tr_order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        集运订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-user"
+                                   style=""></i>
+                                                        用户管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/shop/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shop"
+                                   style=""></i>
+                                                        仓库管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/batch/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        批次管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/goods/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-goods"
+                                   style=""></i>
+                                                        商品管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/order/all_list"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-order"
+                                   style=""></i>
+                                                        商城订单                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/content.article/index"
+                           class="active">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wenzhang"
+                                   style=""></i>
+                                                        内容管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/market.coupon/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-marketing"
+                                   style=""></i>
+                                                        营销管理                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/statistics.data/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-qushitu"
+                                   style=""></i>
+                                                        数据统计                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/wxapp/setting"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-wxapp"
+                                   style="color:#36b313;"></i>
+                                                        客户端                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/apps.dealer.apply/index"
+                           class="">
+                                                            <svg class="icon sidebar-nav-link-logo" aria-hidden="true">
+                                    <use xlink:href="#icon-application"></use>
+                                </svg>
+                                                        应用中心                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/store.user/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        管理员                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/setting/store"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-setting"
+                                   style=""></i>
+                                                        设置                        </a>
+                    </li>
+                                    <li class="sidebar-nav-link">
+                        <a href="index.php?s=/store/tools/index"
+                           class="">
+                                                            <i class="iconfont sidebar-nav-link-logo icon-shangcheng"
+                                   style=""></i>
+                                                        工具箱                        </a>
+                    </li>
+                            </ul>
+        </div>
+        <!-- 子级菜单-->
+                    <div class="sidebar-second-scroll">
+                <ul class="left-sidebar-second">
+                    <li class="sidebar-second-title">内容管理</li>
+                    <li class="sidebar-second-item">
+                                                        <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title active">
+                                        <i class="iconfont icon-caret"></i>
+                                        文章管理                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class="active"
+                                                   href="index.php?s=/store/content.article/index"
+                                                   >
+                                                    文章列表</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/content.article.category/index"
+                                                   >
+                                                    文章分类</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                            <!-- 三级菜单-->
+                                <div class="sidebar-third-item">
+                                    <a href="javascript:void(0);"
+                                       class="sidebar-nav-sub-title ">
+                                        <i class="iconfont icon-caret"></i>
+                                        文件库管理                                    </a>
+                                    <ul class="sidebar-third-nav-sub">
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/content.files.group/index"
+                                                   >
+                                                    文件分组</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/content.files/index"
+                                                   >
+                                                    文件列表</a>
+                                            </li>
+                                                                                    <li>
+                                                <a class=""
+                                                   href="index.php?s=/store/content.files/recycle"
+                                                   >
+                                                    回收站</a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                                                </li>
+                </ul>
+            </div>
+            </div>
+
+    <!-- 内容区域 start -->
+    <div class="tpl-content-wrapper ">
+        <div class="row-content am-cf">
+    <div class="row">
+        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+            <div class="widget am-cf">
+                <div class="widget-head am-cf">
+                    <div class="widget-title am-cf">文章列表</div>
+                </div>
+                <div class="widget-body am-fr">
+                    <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                        <div class="am-form-group">
+                            <div class="am-btn-toolbar">
+                                                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a class="am-btn am-btn-default am-btn-success am-radius"
+                                           href="index.php?s=/store/content.article/add">
+                                            <span class="am-icon-plus"></span> 新增
+                                        </a>
+                                    </div>
+                                                            </div>
+                        </div>
+                    </div>
+                    <div class="am-scrollable-horizontal am-u-sm-12">
+                        <table width="100%" class="am-table am-table-compact am-table-striped
+                         tpl-table-black am-text-nowrap">
+                            <thead>
+                            <tr>
+                                <th>文章ID</th>
+                                <th>文章标题</th>
+                                <th>封面图</th>
+                                <th>语言类型</th>
+                                <th>文章分类</th>
+                                <th>实际阅读量</th>
+                                <th>文章排序</th>
+                                <th>状态</th>
+                                <th>添加时间</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                                            <tr>
+                                    <td class="am-text-middle">10231</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">保险协议</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://zhuanyun.sllowly.cn/uploads/20250506215548dd6344913.gif" title="点击查看大图" target="_blank">
+                                            <img src="https://zhuanyun.sllowly.cn/uploads/20250506215548dd6344913.gif" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle">zhHans</td>
+                                    <td class="am-text-middle">保险协议</td>
+                                    <td class="am-text-middle">0</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2025-07-17 20:55:10</td>
+                                    <td class="am-text-middle">2025-09-21 09:25:56</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10231">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10231">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10228</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">集运仓库地址</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202406211107012319e0163.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202406211107012319e0163.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">新手问题</td>
+                                    <td class="am-text-middle">209</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-07-25 09:45:34</td>
+                                    <td class="am-text-middle">2025-05-07 08:58:11</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10228">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10228">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10227</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">佛挡杀佛</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://logistics-xiaosi.oss-accelerate.aliyuncs.com/2025082210224597a2d7855.png" title="点击查看大图" target="_blank">
+                                            <img src="https://logistics-xiaosi.oss-accelerate.aliyuncs.com/2025082210224597a2d7855.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle">zhHans</td>
+                                    <td class="am-text-middle">违禁物品</td>
+                                    <td class="am-text-middle">13</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-07-14 17:06:51</td>
+                                    <td class="am-text-middle">2025-09-21 09:28:57</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10227">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10227">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10226</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">货物保障</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20240629185444bcb435463.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20240629185444bcb435463.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">新手问题</td>
+                                    <td class="am-text-middle">41</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-07-14 17:06:04</td>
+                                    <td class="am-text-middle">2024-07-14 17:06:04</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10226">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10226">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10225</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">邮路保障</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20240626152233847245151.png" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20240626152233847245151.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">新手问题</td>
+                                    <td class="am-text-middle">370</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-07-14 17:05:42</td>
+                                    <td class="am-text-middle">2024-07-14 17:05:42</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10225">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10225">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10224</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">保险协议</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202506061252388c0792800.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202506061252388c0792800.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">邮寄保障</td>
+                                    <td class="am-text-middle">106</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-07-12 01:30:15</td>
+                                    <td class="am-text-middle">2025-06-06 12:53:03</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10224">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10224">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10216</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">教学视频</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202506061252388c0792800.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202506061252388c0792800.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">违禁物品</td>
+                                    <td class="am-text-middle">38</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2024-01-27 11:40:15</td>
+                                    <td class="am-text-middle">2025-06-06 12:54:19</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10216">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10216">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10170</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">小思集运物流信息今天发布重要更新</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20230215214239caf1a2653.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20230215214239caf1a2653.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">公司新闻</td>
+                                    <td class="am-text-middle">11</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2023-05-18 22:05:17</td>
+                                    <td class="am-text-middle">2025-05-07 08:27:54</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10170">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10170">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10119</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">邀请好用xxx</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202211141754011a0332768.png" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/202211141754011a0332768.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">通知公告</td>
+                                    <td class="am-text-middle">440</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2023-02-02 15:28:34</td>
+                                    <td class="am-text-middle">2023-04-29 23:58:31</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10119">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10119">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10016</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">用户隐私协议</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://zhuanyun.sllowly.cn/uploads/20220325092651b47f42868.png" title="点击查看大图" target="_blank">
+                                            <img src="https://zhuanyun.sllowly.cn/uploads/20220325092651b47f42868.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">用户隐私协议</td>
+                                    <td class="am-text-middle">10</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-04-24 16:47:58</td>
+                                    <td class="am-text-middle">2022-11-11 22:31:06</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10016">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10016">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10007</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">关于我们</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://zhuanyun.sllowly.cn/uploads/202505060648467b7fd8395.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://zhuanyun.sllowly.cn/uploads/202505060648467b7fd8395.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">关于我们</td>
+                                    <td class="am-text-middle">76</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-01-05 17:24:46</td>
+                                    <td class="am-text-middle">2025-05-07 09:30:08</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10007">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10007">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10006</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">海运路线违禁物品</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://zhuanyun.sllowly.cn/uploads/20211230190734857fc6884.png" title="点击查看大图" target="_blank">
+                                            <img src="https://zhuanyun.sllowly.cn/uploads/20211230190734857fc6884.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">违禁物品</td>
+                                    <td class="am-text-middle">146</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-01-05 10:43:28</td>
+                                    <td class="am-text-middle">2023-12-18 22:22:06</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10006">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10006">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10005</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">空运路线违禁物品</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://zhuanyun.sllowly.cn/uploads/20211230190734857fc6884.png" title="点击查看大图" target="_blank">
+                                            <img src="https://zhuanyun.sllowly.cn/uploads/20211230190734857fc6884.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">违禁物品</td>
+                                    <td class="am-text-middle">149</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-01-05 10:42:55</td>
+                                    <td class="am-text-middle">2022-01-05 10:42:55</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10005">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10005">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10004</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">集运知识解答-线路详解</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20230215214239caf1a2653.jpg" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/20230215214239caf1a2653.jpg" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">新手问题</td>
+                                    <td class="am-text-middle">950</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-01-04 20:00:39</td>
+                                    <td class="am-text-middle">2023-12-15 03:48:17</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10004">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10004">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                            <tr>
+                                    <td class="am-text-middle">10003</td>
+                                    <td class="am-text-middle">
+                                        <p class="item-title"
+                                           style="max-width: 400px;">如何使用集运小程序</p>
+                                    </td>
+                                    <td class="am-text-middle">
+                                        <a href="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/2022111417540241d926502.png" title="点击查看大图" target="_blank">
+                                            <img src="https://sllowly-culture.oss-cn-hangzhou.aliyuncs.com/2022111417540241d926502.png" height="72" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="am-text-middle"></td>
+                                    <td class="am-text-middle">新手问题</td>
+                                    <td class="am-text-middle">699</td>
+                                    <td class="am-text-middle">100</td>
+                                    <td class="am-text-middle">
+                                           <span class="am-badge am-badge-success">
+                                               显示                                           </span>
+                                    </td>
+                                    <td class="am-text-middle">2022-01-04 19:59:06</td>
+                                    <td class="am-text-middle">2023-12-15 04:01:11</td>
+                                    <td class="am-text-middle">
+                                        <div class="tpl-table-black-operation">
+                                                                                            <a href="index.php?s=/store/content.article/edit/article_id/10003">
+                                                    <i class="am-icon-pencil"></i> 编辑
+                                                </a>
+                                                                                            <a href="javascript:void(0);"
+                                                   class="item-delete tpl-table-black-operation-del"
+                                                   data-id="10003">
+                                                    <i class="am-icon-trash"></i> 删除
+                                                </a>
+                                                                                    </div>
+                                    </td>
+                                </tr>
+                                                        </tbody>
+                        </table>
+                    </div>
+                    <div class="am-u-lg-12 am-cf">
+                        <div class="am-fr"> </div>
+                        <div class="am-fr pagination-total am-margin-right">
+                            <div class="am-vertical-align-middle">总记录：15</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+
+        // 删除元素
+        var url = "index.php?s=/store/content.article/delete";
+        $('.item-delete').delete('article_id', url);
+
+    });
+</script>
+
+
+    </div>
+    <!-- 内容区域 end -->
+    
+    <!-- 订单提醒弹窗 -->
+    <div id="inpack-notify-popup" style="display:none; position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 15px 20px; z-index: 99999; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="iconfont icon-lingdang" style="font-size: 24px; margin-right: 15px; animation: bell-ring 0.5s ease-in-out infinite;"></i>
+                <div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">你有新集运订单需要处理</div>
+                    <div style="font-size: 14px; opacity: 0.9;" id="notify-order-sn">订单号：<span id="notify-order-sn-value"></span></div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="javascript:;" id="notify-goto-order" style="color: #fff; text-decoration: none; padding: 8px 20px; background: rgba(255,255,255,0.2); border-radius: 4px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">查看订单</a>
+                <a href="javascript:;" id="notify-close" style="color: #fff; text-decoration: none; font-size: 20px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes bell-ring {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        #inpack-notify-popup.show {
+            animation: slideDown 0.3s ease-out;
+        }
+    </style>
+
+</div>
+<script src="assets/common/plugins/layer/layer.js"></script>
+<script src="assets/common/js/jquery.form.min.js"></script>
+<script src="assets/common/js/amazeui.min.js"></script>
+<script src="assets/common/js/webuploader.html5only.js"></script>
+<script src="assets/common/js/art-template.js"></script>
+<script src="assets/store/js/app.js?v=2.2.55"></script>
+<script src="assets/store/js/file.library.js?v=2.2.55"></script>
+        <script src="assets/store/css/app_shu1/jiyunbg.js"></script>
+    <script src="assets/store/css/app_shu1/jiyunApp.js"></script>
+    <script>
+// 菜单链接打开方式：根据配置文件中的 open_new_tab 参数决定
+// 如果菜单项设置了 target="_blank"，则在新标签页打开，否则在当前页打开
+$(document).ready(function() {
+    // 一级菜单：在当前页面跳转
+    $('.sidebar-nav a').on('click', function(e) {
+        var href = $(this).attr('href');
+        // 如果不是 javascript:void(0) 这样的伪链接
+        if (href && href !== 'javascript:void(0);' && href.indexOf('javascript:') !== 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = href; // 当前页面跳转
+        }
+    });
+    
+    // 注意：二级、三级菜单现在由 HTML 的 target 属性控制
+    // 如果菜单配置中有 'open_new_tab' => true，会自动添加 target="_blank"
+});
+
+// 订单提醒功能
+(function() {
+    'use strict';
+    
+    // 配置
+    var POLL_INTERVAL = 30000; // 30秒轮询间隔
+    var STORAGE_KEY = 'inpack_notify_last_check';
+    var AUDIO_PATH = 'assets/store/order.MP3';
+    
+    // 音频对象（延迟加载，等待用户交互）
+    var audio = null;
+    var audioInitialized = false;
+    
+    // 初始化音频对象
+    function initAudio() {
+        if (audioInitialized || audio) return;
+        
+        try {
+            audio = new Audio(AUDIO_PATH);
+            audio.preload = 'auto';
+            audio.volume = 0.8;
+            
+            // 处理音频加载错误
+            audio.addEventListener('error', function(e) {
+                console.warn('订单提醒音频加载失败:', e);
+                audio = null;
+            });
+            
+            audioInitialized = true;
+        } catch (e) {
+            console.warn('初始化音频对象失败:', e);
+        }
+    }
+    
+    // 播放提醒音频
+    function playNotifySound() {
+        if (!audio) {
+            initAudio();
+        }
+        
+        if (audio && audioInitialized) {
+            try {
+                // 重置音频到开始位置
+                audio.currentTime = 0;
+                var playPromise = audio.play();
+                
+                // 处理播放错误
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        console.warn('音频播放失败（可能是浏览器自动播放限制）:', error);
+                        // 如果自动播放失败，尝试在用户交互后播放
+                        var onceInteraction = function() {
+                            if (audio) {
+                                audio.play().catch(function() {});
+                            }
+                            document.removeEventListener('click', onceInteraction);
+                            document.removeEventListener('touchstart', onceInteraction);
+                            document.removeEventListener('keydown', onceInteraction);
+                        };
+                        document.addEventListener('click', onceInteraction, { once: true });
+                        document.addEventListener('touchstart', onceInteraction, { once: true });
+                        document.addEventListener('keydown', onceInteraction, { once: true });
+                    });
+                }
+            } catch (e) {
+                console.warn('播放音频时出错:', e);
+            }
+        }
+    }
+    
+    // 显示顶部通知
+    function showNotifyPopup(orderSn, orderId) {
+        var $popup = $('#inpack-notify-popup');
+        var $orderSnValue = $('#notify-order-sn-value');
+        
+        if ($orderSnValue.length) {
+            $orderSnValue.text(orderSn || '');
+        }
+        
+        // 设置跳转链接
+        var $gotoLink = $('#notify-goto-order');
+        if ($gotoLink.length && orderId) {
+            var orderUrl = BASE_URL + 'index.php?s=/store/tr_order/edit&id=' + orderId;
+            $gotoLink.attr('href', orderUrl);
+        }
+        
+        // 显示弹窗
+        $popup.fadeIn(300).addClass('show');
+        
+        // 自动关闭（5秒后）
+        setTimeout(function() {
+            hideNotifyPopup();
+        }, 5000);
+    }
+    
+    // 隐藏顶部通知
+    function hideNotifyPopup() {
+        var $popup = $('#inpack-notify-popup');
+        $popup.fadeOut(300, function() {
+            $(this).removeClass('show');
+        });
+    }
+    
+    // 检查是否有新订单
+    function checkNewInpack() {
+        // 检查设置是否启用（从后端获取，暂时默认启用）
+        // 这里可以通过AJAX获取设置，或者从页面变量中获取
+        // 为了简化，我们默认启用，如果需要可以在后端返回设置值
+        
+        // 只在页面可见时检查
+        if (document.hidden) {
+            return;
+        }
+        
+        $.ajax({
+            url: BASE_URL + 'index.php?s=/store/package.Index/getLatestInpackTime',
+            type: 'GET',
+            dataType: 'json',
+            timeout: 10000,
+            success: function(res) {
+                if (res.code == 1 && res.data) {
+                    // 检查是否启用提醒
+                    var notifyEnabled = res.data.notify_enabled !== false; // 默认为true
+                    
+                    if (!notifyEnabled) {
+                        // 如果未启用，直接返回，不进行后续检查
+                        return;
+                    }
+                    
+                    var latestTime = res.data.latest_time || 0;
+                    var latestId = res.data.latest_id || 0;
+                    var latestOrderSn = res.data.latest_order_sn || '';
+                    
+                    if (latestTime > 0 && latestId > 0) {
+                        // 获取本地存储的最后检查信息
+                        var lastCheck = localStorage.getItem(STORAGE_KEY);
+                        var lastCheckData = lastCheck ? JSON.parse(lastCheck) : { time: 0, id: 0 };
+                        
+                        // 检查是否有新订单
+                        if (latestTime > lastCheckData.time && latestId != lastCheckData.id) {
+                            // 有新订单，播放提醒
+                            playNotifySound();
+                            showNotifyPopup(latestOrderSn, latestId);
+                            
+                            // 更新本地存储
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        } else if (latestTime > lastCheckData.time) {
+                            // 时间更新了但ID相同，只更新时间
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                                time: latestTime,
+                                id: latestId,
+                                orderSn: latestOrderSn
+                            }));
+                        }
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                // 静默失败，不显示错误
+                console.warn('检查新订单失败:', status, error);
+            }
+        });
+    }
+    
+    // 初始化
+    $(document).ready(function() {
+        // 用户交互后初始化音频（解决浏览器自动播放限制）
+        var initOnInteraction = function() {
+            initAudio();
+            // 只初始化一次
+            $(document).off('click touchstart keydown', initOnInteraction);
+        };
+        $(document).on('click touchstart keydown', initOnInteraction);
+        
+        // 关闭通知按钮事件
+        $('#notify-close').on('click', function() {
+            hideNotifyPopup();
+        });
+        
+        // 点击通知区域外部也可关闭（可选）
+        $('#inpack-notify-popup').on('click', function(e) {
+            if ($(e.target).closest('#notify-goto-order, #notify-close').length === 0) {
+                // 点击通知内容区域，跳转到订单
+                var href = $('#notify-goto-order').attr('href');
+                if (href && href !== 'javascript:;') {
+                    window.location.href = href;
+                }
+            }
+        });
+        
+        // 首次检查（延迟2秒，避免页面加载时立即请求）
+        setTimeout(checkNewInpack, 2000);
+        
+        // 设置定时轮询
+        setInterval(checkNewInpack, POLL_INTERVAL);
+        
+        // 页面可见性变化时检查
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面变为可见时立即检查一次
+                setTimeout(checkNewInpack, 1000);
+            }
+        });
+    });
+})();
+</script>
+</body>
+
+</html>

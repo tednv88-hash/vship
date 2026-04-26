@@ -1,0 +1,99 @@
+{{define "pages/tools_guide"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.tools_guide.title">使用指南</h5>
+        <a href="/tools" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><span data-i18n="common.back">返回</span></a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="nav flex-column nav-pills" id="guideNav">
+                    <a class="nav-link active" href="#" onclick="showSection('quickstart', event)" data-i18n="pages.tools_guide.quick_start">快速入門</a>
+                    <a class="nav-link" href="#" onclick="showSection('packages', event)" data-i18n="pages.tools_guide.package_management">包裹管理</a>
+                    <a class="nav-link" href="#" onclick="showSection('orders', event)" data-i18n="pages.tools_guide.consolidation_orders">集運訂單</a>
+                    <a class="nav-link" href="#" onclick="showSection('batches', event)" data-i18n="pages.tools_guide.batch_management">批次管理</a>
+                    <a class="nav-link" href="#" onclick="showSection('warehouses', event)" data-i18n="pages.tools_guide.warehouse_management">倉庫管理</a>
+                    <a class="nav-link" href="#" onclick="showSection('members', event)" data-i18n="pages.tools_guide.member_management">會員管理</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div id="section-quickstart" class="guide-section">
+                    <h4 data-i18n="pages.tools_guide.quick_start">快速入門</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.system_overview">1. 系統概述</h6>
+                    <p data-i18n="pages.tools_guide.system_overview_desc">vShip 是一套專業的集運管理系統，支持包裹收寄、合併打包、國際運輸等全流程管理。</p>
+                    <h6 data-i18n="pages.tools_guide.basic_flow">2. 基本流程</h6>
+                    <ol>
+                        <li data-i18n="pages.tools_guide.flow_step1">客戶預報包裹（提供運單號）</li>
+                        <li data-i18n="pages.tools_guide.flow_step2">倉庫掃碼入庫（確認收貨）</li>
+                        <li data-i18n="pages.tools_guide.flow_step3">客戶提交集運訂單（選擇包裹、路線）</li>
+                        <li data-i18n="pages.tools_guide.flow_step4">後台審核訂單、打包出庫</li>
+                        <li data-i18n="pages.tools_guide.flow_step5">建立批次、發貨運輸</li>
+                        <li data-i18n="pages.tools_guide.flow_step6">更新物流軌跡、完成配送</li>
+                    </ol>
+                    <h6 data-i18n="pages.tools_guide.account_management">3. 帳號管理</h6>
+                    <p data-i18n="pages.tools_guide.account_management_desc">管理員可在「用戶管理」中新增員工帳號並分配角色權限。</p>
+                </div>
+                <div id="section-packages" class="guide-section d-none">
+                    <h4 data-i18n="pages.tools_guide.package_management">包裹管理</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.forecast_package">預報包裹</h6>
+                    <p data-i18n="pages.tools_guide.forecast_package_desc">客戶可透過前端預報包裹，填寫運單號、包裹分類等信息。管理員也可在後台手動新增。</p>
+                    <h6 data-i18n="pages.tools_guide.inbound_operation">入庫操作</h6>
+                    <p data-i18n="pages.tools_guide.inbound_operation_desc">使用「掃碼入庫」功能，掃描運單號條碼即可快速確認收貨。系統會自動匹配預報記錄。</p>
+                    <h6 data-i18n="pages.tools_guide.problem_handling">問題件處理</h6>
+                    <p data-i18n="pages.tools_guide.problem_handling_desc">無法匹配或有異常的包裹會進入「問題件」列表，等待人工處理。</p>
+                </div>
+                <div id="section-orders" class="guide-section d-none">
+                    <h4 data-i18n="pages.tools_guide.consolidation_orders">集運訂單</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.create_order">建立訂單</h6>
+                    <p data-i18n="pages.tools_guide.create_order_desc">客戶選擇已入庫的包裹，選擇運輸路線和收件地址，提交集運訂單。</p>
+                    <h6 data-i18n="pages.tools_guide.order_review">訂單審核</h6>
+                    <p data-i18n="pages.tools_guide.order_review_desc">管理員審核訂單信息，確認重量和費用後，進行打包出庫操作。</p>
+                    <h6 data-i18n="pages.tools_guide.cost_calculation">費用計算</h6>
+                    <p data-i18n="pages.tools_guide.cost_calculation_desc">系統根據路線計費規則、包裹重量/體積自動計算運費，支持增值服務加價。</p>
+                </div>
+                <div id="section-batches" class="guide-section d-none">
+                    <h4 data-i18n="pages.tools_guide.batch_management">批次管理</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.create_batch">建立批次</h6>
+                    <p data-i18n="pages.tools_guide.create_batch_desc">將多個待發貨訂單合併為一個批次，統一安排物流發貨。</p>
+                    <h6 data-i18n="pages.tools_guide.batch_shipping">批次發貨</h6>
+                    <p data-i18n="pages.tools_guide.batch_shipping_desc">填寫物流公司和運單號，系統自動通知相關客戶。</p>
+                    <h6 data-i18n="pages.tools_guide.tracking_update">軌跡更新</h6>
+                    <p data-i18n="pages.tools_guide.tracking_update_desc">支持手動或自動同步物流軌跡信息。</p>
+                </div>
+                <div id="section-warehouses" class="guide-section d-none">
+                    <h4 data-i18n="pages.tools_guide.warehouse_management">倉庫管理</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.warehouse_setup">倉庫設置</h6>
+                    <p data-i18n="pages.tools_guide.warehouse_setup_desc">支持多倉庫管理，每個倉庫有獨立的地址和聯繫信息。</p>
+                    <h6 data-i18n="pages.tools_guide.inventory_view">庫存查看</h6>
+                    <p data-i18n="pages.tools_guide.inventory_view_desc">可查看各倉庫的包裹庫存數量和狀態分佈。</p>
+                </div>
+                <div id="section-members" class="guide-section d-none">
+                    <h4 data-i18n="pages.tools_guide.member_management">會員管理</h4>
+                    <hr>
+                    <h6 data-i18n="pages.tools_guide.member_levels">會員等級</h6>
+                    <p data-i18n="pages.tools_guide.member_levels_desc">支持多級會員體系，不同等級享有不同折扣和權益。</p>
+                    <h6 data-i18n="pages.tools_guide.points_system">積分系統</h6>
+                    <p data-i18n="pages.tools_guide.points_system_desc">會員消費可獲得積分，積分可用於抵扣運費。</p>
+                    <h6 data-i18n="pages.tools_guide.coupons">優惠券</h6>
+                    <p data-i18n="pages.tools_guide.coupons_desc">支持發放各類優惠券，可設定使用條件和有效期。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showSection(section, event) {
+    if (event) event.preventDefault();
+    document.querySelectorAll('#guideNav .nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.guide-section').forEach(el => el.classList.add('d-none'));
+    event.target.classList.add('active');
+    document.getElementById('section-' + section).classList.remove('d-none');
+}
+</script>
+{{end}}

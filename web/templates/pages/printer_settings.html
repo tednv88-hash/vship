@@ -1,0 +1,85 @@
+{{define "pages/printer_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.printer_settings.title">打印機設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.printer_settings.printer_type">打印機類型</label>
+                <select class="form-select" name="printer_type">
+                    <option value="" data-i18n="common.please_select">請選擇</option>
+                    <option value="feie" data-i18n="pages.printer_settings.feie">飛鵝打印機</option>
+                    <option value="yilianyun" data-i18n="pages.printer_settings.yilianyun">易聯雲</option>
+                    <option value="usb" data-i18n="pages.printer_settings.usb_printer">USB 打印機</option>
+                    <option value="network" data-i18n="pages.printer_settings.network_printer">網絡打印機</option>
+                </select>
+            </div>
+            <hr>
+            <h6 class="mb-3" data-i18n="pages.printer_settings.api_config">API 配置</h6>
+            <div class="mb-3">
+                <label class="form-label">API URL</label>
+                <input type="url" class="form-control" name="api_url" placeholder="https://">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">API Key / User</label>
+                <input type="text" class="form-control" name="api_key">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">API Secret</label>
+                <input type="password" class="form-control" name="api_secret">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.printer_settings.device_sn">設備編號 (SN)</label>
+                <input type="text" class="form-control" name="device_sn">
+            </div>
+            <hr>
+            <h6 class="mb-3" data-i18n="pages.printer_settings.template_settings">模板設置</h6>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.printer_settings.print_width">打印寬度</label>
+                <select class="form-select" name="print_width">
+                    <option value="58">58mm</option>
+                    <option value="80">80mm</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.printer_settings.print_copies">打印份數</label>
+                <input type="number" class="form-control" name="print_copies" data-type="number" value="1" min="1">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="auto_print" id="autoPrint" value="true">
+                <label class="form-check-label" for="autoPrint" data-i18n="pages.printer_settings.auto_print">自動打印</label>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()" data-i18n="common.save_settings">儲存設置</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const SETTING_KEY = 'printer_setting';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+            document.getElementById('autoPrint').checked = !!val.auto_print;
+        }
+    } catch (e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    data.auto_print = document.getElementById('autoPrint').checked;
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('common.save_success', '儲存成功'));
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

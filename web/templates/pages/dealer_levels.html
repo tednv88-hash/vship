@@ -1,0 +1,127 @@
+{{define "pages/dealer_levels"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.dealer_levels.title">分銷等級</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.dealer_levels.level_name">等級名稱</th>
+                <th data-i18n="pages.dealer_levels.level_no">等級號</th>
+                <th data-i18n="pages.dealer_levels.commission_rate_1">一級佣金率</th>
+                <th data-i18n="pages.dealer_levels.commission_rate_2">二級佣金率</th>
+                <th data-i18n="pages.dealer_levels.commission_rate_3">三級佣金率</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.dealer_levels.add_level">新增等級</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <form id="itemForm">
+            <input type="hidden" name="id" id="itemId">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_levels.level_name">等級名稱 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_levels.level_no">等級號 <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" name="level_no" required min="1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_levels.commission_rate_1">一級佣金率 (%) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" name="commission_rate_1" required step="0.01" min="0" max="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_levels.commission_rate_2">二級佣金率 (%)</label>
+                <input type="number" class="form-control" name="commission_rate_2" step="0.01" min="0" max="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_levels.commission_rate_3">三級佣金率 (%)</label>
+                <input type="number" class="form-control" name="commission_rate_3" step="0.01" min="0" max="100">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+    </div>
+</div></div></div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/dealer/levels';
+
+function loadData(page) {
+    currentPage = page;
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.name || '--'}</td>
+        <td>${item.level_no ?? '--'}</td>
+        <td>${item.commission_rate_1 != null ? item.commission_rate_1 + '%' : '--'}</td>
+        <td>${item.commission_rate_2 != null ? item.commission_rate_2 + '%' : '--'}</td>
+        <td>${item.commission_rate_3 != null ? item.commission_rate_3 + '%' : '--'}</td>
+        <td><div class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.dealer_levels.add_level', '新增等級');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.dealer_levels.add_level');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.dealer_levels.edit_level', '編輯等級');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.dealer_levels.edit_level');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch(e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if (editingId) {
+            await apiRequest('PUT', API_PATH + '/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', API_PATH, data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.dealer_levels.confirm_delete', '確定要刪除此等級嗎？'))) return;
+    try {
+        await apiRequest('DELETE', API_PATH + '/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+</script>
+{{end}}

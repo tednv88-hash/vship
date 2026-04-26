@@ -1,0 +1,53 @@
+{{define "pages/stats_first_entry"}}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.stats_first_entry.title">首次入庫統計</h5>
+        <div class="d-flex gap-2">
+            <input type="date" class="form-control" id="startDate" style="max-width:160px;">
+            <input type="date" class="form-control" id="endDate" style="max-width:160px;">
+            <button class="btn btn-primary btn-sm" onclick="loadStats()"><i class="fas fa-search me-1"></i><span data-i18n="pages.statistics.query">查詢</span></button>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_first_entry.new_user_storage">新用戶入庫數</h6><h3 id="newUserCount" class="text-primary">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_first_entry.first_entry_packages">首次入庫包裹</h6><h3 id="firstEntryCount" class="text-success">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_first_entry.conversion_rate">轉化率</h6><h3 id="conversionRate" class="text-info">0%</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_first_entry.avg_first_order_days">平均首單天數</h6><h3 id="avgDays" class="text-warning">0</h3></div></div>
+</div>
+<div class="card">
+    <div class="card-body"><div id="trendChart" style="height:400px;"></div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let chart;
+function initChart() { chart = echarts.init(document.getElementById('trendChart')); }
+function setDefaultDates() {
+    const end = new Date(); const start = new Date(); start.setDate(start.getDate() - 30);
+    document.getElementById('startDate').value = start.toISOString().split('T')[0];
+    document.getElementById('endDate').value = end.toISOString().split('T')[0];
+}
+async function loadStats() {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    try {
+        const res = await apiRequest('GET', '/statistics?type=first_entry&start_date=' + start + '&end_date=' + end);
+        const d = res.data || res;
+        document.getElementById('newUserCount').textContent = d.new_user_count || 0;
+        document.getElementById('firstEntryCount').textContent = d.first_entry_count || 0;
+        document.getElementById('conversionRate').textContent = (d.conversion_rate || 0) + '%';
+        document.getElementById('avgDays').textContent = d.avg_days || 0;
+        chart.setOption({
+            title: { text: _t('pages.stats_first_entry.first_entry_trend', '首次入庫趨勢'), left: 'center' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: d.dates || [] },
+            yAxis: { type: 'value' },
+            series: [{ name: _t('pages.stats_first_entry.first_entry', '首次入庫'), type: 'bar', data: d.counts || [], itemStyle: { color: '#05ce78' } }]
+        });
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { initChart(); setDefaultDates(); loadStats(); });
+window.addEventListener('resize', () => chart && chart.resize());
+</script>
+{{end}}

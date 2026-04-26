@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="340" viewBox="0 0 750 340">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f3a57"/>
+      <stop offset="100%" style="stop-color:#1a6b8a"/>
+    </linearGradient>
+    <linearGradient id="accent1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d6a93a"/>
+      <stop offset="100%" style="stop-color:#f0c75e"/>
+    </linearGradient>
+  </defs>
+  <rect width="750" height="340" fill="url(#bg1)"/>
+  <!-- Decorative circles -->
+  <circle cx="650" cy="50" r="120" fill="rgba(255,255,255,0.04)"/>
+  <circle cx="700" cy="280" r="80" fill="rgba(255,255,255,0.03)"/>
+  <circle cx="100" cy="300" r="60" fill="rgba(255,255,255,0.03)"/>
+  <!-- Wave decoration -->
+  <path d="M0 280 Q150 240 300 270 T600 250 T750 270 L750 340 L0 340 Z" fill="rgba(255,255,255,0.05)"/>
+  <!-- Shipping icon -->
+  <g transform="translate(480, 80)">
+    <rect x="0" y="40" width="180" height="100" rx="8" fill="rgba(255,255,255,0.12)"/>
+    <rect x="140" y="60" width="70" height="80" rx="4" fill="rgba(255,255,255,0.10)"/>
+    <circle cx="40" cy="150" r="18" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+    <circle cx="40" cy="150" r="6" fill="rgba(255,255,255,0.25)"/>
+    <circle cx="155" cy="150" r="18" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+    <circle cx="155" cy="150" r="6" fill="rgba(255,255,255,0.25)"/>
+    <!-- Package boxes on truck -->
+    <rect x="15" y="50" width="45" height="40" rx="3" fill="url(#accent1)" opacity="0.6"/>
+    <rect x="70" y="60" width="35" height="30" rx="3" fill="url(#accent1)" opacity="0.4"/>
+    <rect x="30" y="20" width="35" height="30" rx="3" fill="url(#accent1)" opacity="0.5"/>
+  </g>
+  <!-- Main text -->
+  <text x="60" y="110" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="42" font-weight="700" fill="#ffffff">全球集運專家</text>
+  <text x="60" y="160" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="20" fill="rgba(255,255,255,0.85)">快速 · 安全 · 低運費</text>
+  <!-- CTA Button -->
+  <rect x="60" y="190" width="180" height="44" rx="22" fill="url(#accent1)"/>
+  <text x="150" y="218" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="16" font-weight="600" fill="#0f3a57" text-anchor="middle">立即下單寄件</text>
+  <!-- Badge -->
+  <rect x="60" y="260" width="100" height="28" rx="14" fill="rgba(255,255,255,0.15)"/>
+  <text x="110" y="279" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="12" fill="#d6a93a" text-anchor="middle">新用戶優惠</text>
+  <rect x="170" y="260" width="120" height="28" rx="14" fill="rgba(255,255,255,0.15)"/>
+  <text x="230" y="279" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle">首單免運費</text>
+</svg>

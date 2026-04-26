@@ -1,0 +1,72 @@
+{{define "pages/email_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.email_settings.title">郵件設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label class="form-label" data-i18n="pages.email_settings.smtp_server">SMTP Host</label>
+                    <input type="text" class="form-control" name="smtp_host" placeholder="smtp.example.com">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" data-i18n="pages.email_settings.port">Port</label>
+                    <input type="number" class="form-control" name="smtp_port" data-type="number" placeholder="465">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="smtp_username">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="smtp_password">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.email_settings.sender_name">From Name</label>
+                    <input type="text" class="form-control" name="from_name" data-i18n-placeholder="pages.email_settings.system_notification" placeholder="系統通知">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.email_settings.from_email">From Email</label>
+                    <input type="email" class="form-control" name="from_email" placeholder="noreply@example.com">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.email_settings.encryption">加密方式</label>
+                <select class="form-select" name="encryption">
+                    <option value="ssl">SSL</option>
+                    <option value="tls">TLS</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span></button>
+        </form>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'email_setting';
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings/' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', val);
+        }
+    } catch (e) {}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings/' + SETTING_KEY, { key: SETTING_KEY, value: JSON.stringify(data) });
+        showToast(_t('pages.email_settings.save_success', '儲存成功'));
+    } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

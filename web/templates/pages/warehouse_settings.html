@@ -1,0 +1,78 @@
+{{define "pages/warehouse_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouse_settings.title">倉庫設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_settings.default_warehouse">預設倉庫</label>
+                <select class="form-select" name="default_warehouse_id" id="warehouseSelect">
+                    <option value="" data-i18n="common.please_select">請選擇</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_settings.inbound_rule">入庫規則</label>
+                <select class="form-select" name="inbound_rule">
+                    <option value="auto" data-i18n="pages.warehouse_settings.inbound_auto">自動入庫</option>
+                    <option value="manual" data-i18n="pages.warehouse_settings.inbound_manual">手動入庫</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_settings.charge_mode">收費方式</label>
+                <select class="form-select" name="charge_mode">
+                    <option value="per_order" data-i18n="pages.warehouse_settings.charge_per_order">按訂單</option>
+                    <option value="per_weight" data-i18n="pages.warehouse_settings.charge_per_weight">按重量</option>
+                    <option value="per_volume" data-i18n="pages.warehouse_settings.charge_per_volume">按體積</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_settings.free_storage_days">免費存儲天數</label>
+                <input type="number" class="form-control" name="free_storage_days" min="0">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.warehouse_settings.storage_fee_per_day">超期存儲費 (每天)</label>
+                <input type="number" class="form-control" name="storage_fee_per_day" step="0.01" min="0">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                <i class="fas fa-save me-1"></i><span data-i18n="pages.warehouse_settings.save_settings">儲存設置</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'warehouse_setting';
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings?key=' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const settings = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', settings);
+        }
+    } catch(e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings', { key: SETTING_KEY, value: data });
+        showToast(_t('pages.warehouse_settings.save_success', '設置已儲存'), 'success');
+    } catch(e) {}
+}
+
+async function loadWarehouses() {
+    try {
+        const res = await apiRequest('GET', '/warehouses?limit=100');
+        const items = res.data || res || [];
+        const sel = document.getElementById('warehouseSelect');
+        items.forEach(w => sel.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`));
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadSettings(); loadWarehouses(); });
+</script>
+{{end}}

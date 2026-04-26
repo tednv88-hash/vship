@@ -1,0 +1,141 @@
+{{define "pages/members"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.members.title">會員管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.members.search_placeholder" placeholder="搜尋會員名稱/郵件/手機...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="common.status_active">啟用</option>
+            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+            <option value="blocked" data-i18n="pages.members.status_blocked">封鎖</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.members.member_name">會員名稱</th>
+                    <th data-i18n="pages.members.email">電子郵件</th>
+                    <th data-i18n="pages.members.phone">手機號碼</th>
+                    <th data-i18n="pages.members.member_level">會員等級</th>
+                    <th data-i18n="pages.members.balance">餘額</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="pages.members.register_time">註冊時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.members.add_member">新增會員</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id" id="itemId">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.members.member_name">會員名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.members.email">電子郵件 <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.members.phone">手機號碼</label>
+                        <input type="text" class="form-control" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.members.member_level">會員等級</label>
+                        <select class="form-select" name="member_level_id" id="levelSelect">
+                            <option value="" data-i18n="pages.members.default_level">預設</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.members.balance">餘額</label>
+                        <input type="number" class="form-control" name="balance" step="0.01" data-type="number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="common.status">狀態</label>
+                        <select class="form-select" name="status">
+                            <option value="active" data-i18n="common.status_active">啟用</option>
+                            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+                            <option value="blocked" data-i18n="pages.members.status_blocked">封鎖</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/members';
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, status });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    return `<tr>
+        <td>${item.name || '--'}</td>
+        <td>${item.email || '--'}</td>
+        <td>${item.phone || '--'}</td>
+        <td>${item.member_level_name || _t('pages.members.default_level', '預設')}</td>
+        <td>${formatMoney(item.balance)}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+function openCreateModal() { editingId = null; document.getElementById('modalTitle').textContent = _t('pages.members.add_member', '新增會員'); resetForm('itemForm'); openModal('formModal'); }
+async function editItem(id) { editingId = id; document.getElementById('modalTitle').textContent = _t('pages.members.edit_member', '編輯會員'); try { const res = await apiRequest('GET', API_PATH + '/' + id); populateForm('itemForm', res.data || res); openModal('formModal'); } catch (e) {} }
+async function saveItem() { const data = getFormData('itemForm'); try { if (editingId) { await apiRequest('PUT', API_PATH + '/' + editingId, data); showToast(_t('common.update_success', '更新成功')); } else { await apiRequest('POST', API_PATH, data); showToast(_t('common.create_success', '建立成功')); } closeModal('formModal'); loadData(currentPage); } catch (e) {} }
+async function deleteItem(id) { if (!confirmDelete()) return; try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功')); loadData(currentPage); } catch (e) {} }
+document.addEventListener('DOMContentLoaded', async function() {
+    loadData(1);
+    try {
+        const levels = await apiRequest('GET', '/member-levels?limit=100');
+        const sel = document.getElementById('levelSelect');
+        (levels.data || levels || []).forEach(l => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${l.id}">${l.name}</option>`);
+        });
+    } catch (e) {}
+});
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

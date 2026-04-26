@@ -1,0 +1,142 @@
+{{define "pages/package_scan_in"}}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="fas fa-qrcode me-2"></i><span data-i18n="pages.package_scan_in.title">掃碼入庫</span></h5>
+    </div>
+    <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="input-group input-group-lg">
+                    <input type="text" class="form-control" id="scanInput" data-i18n-placeholder="pages.package_scan_in.scan_placeholder" placeholder="掃描或輸入運單號..." autofocus>
+                    <button class="btn btn-primary" onclick="scanReceive()"><i class="fas fa-search me-1"></i><span data-i18n="common.search">查詢</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3 d-none" id="packageDetail">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_scan_in.package_detail">包裹詳情</h5>
+        <button class="btn btn-success" onclick="confirmReceive()" id="receiveBtn"><i class="fas fa-check me-1"></i><span data-i18n="pages.package_scan_in.confirm_receive">確認入庫</span></button>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.tracking_no_label">運單號：</strong><span id="detailTrackingNo">--</span></div>
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.package_no_label">包裹編號：</strong><span id="detailPackageNo">--</span></div>
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.user_label">用戶：</strong><span id="detailUser">--</span></div>
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.category_label">分類：</strong><span id="detailCategory">--</span></div>
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.weight_label">重量：</strong><span id="detailWeight">--</span></div>
+            <div class="col-md-3 mb-2"><strong data-i18n="pages.package_scan_in.status_label">狀態：</strong><span id="detailStatus">--</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.package_scan_in.recent_records">最近入庫記錄</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.package_scan_in.time">時間</th>
+                    <th data-i18n="pages.package_scan_in.tracking_no">運單號</th>
+                    <th data-i18n="pages.package_scan_in.package_no">包裹編號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="common.status">狀態</th>
+                </tr>
+            </thead>
+            <tbody id="scanHistory">
+                <tr><td colspan="5" class="text-center py-4 text-muted" data-i18n="common.no_records">暫無記錄</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPackage = null;
+const scanRecords = [];
+
+document.getElementById('scanInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') scanReceive();
+});
+
+async function scanReceive() {
+    const trackingNo = document.getElementById('scanInput').value.trim();
+    if (!trackingNo) return;
+
+    try {
+        const res = await apiRequest('GET', '/packages?search=' + encodeURIComponent(trackingNo) + '&limit=1');
+        const items = res.data || res || [];
+        if (items.length === 0) {
+            showToast(_t('pages.package_scan_in.package_not_found', '未找到匹配的包裹'), 'warning');
+            document.getElementById('packageDetail').classList.add('d-none');
+            currentPackage = null;
+            return;
+        }
+        currentPackage = items[0];
+        document.getElementById('detailTrackingNo').textContent = currentPackage.tracking_no || '--';
+        document.getElementById('detailPackageNo').textContent = currentPackage.package_no || '--';
+        document.getElementById('detailUser').textContent = currentPackage.user_name || currentPackage.user_id || '--';
+        document.getElementById('detailCategory').textContent = currentPackage.category_name || '--';
+        document.getElementById('detailWeight').textContent = (currentPackage.weight || 0) + ' kg';
+        document.getElementById('detailStatus').innerHTML = getStatusBadge(currentPackage.status);
+        document.getElementById('packageDetail').classList.remove('d-none');
+
+        const btn = document.getElementById('receiveBtn');
+        if (currentPackage.status === 'received' || currentPackage.status === 'in_warehouse') {
+            btn.disabled = true;
+            btn.textContent = _t('pages.package_scan_in.already_received', '已入庫');
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>' + _t('pages.package_scan_in.confirm_receive', '確認入庫');
+        }
+    } catch (e) {
+        showToast(_t('pages.package_scan_in.query_failed', '查詢失敗'), 'error');
+    }
+}
+
+async function confirmReceive() {
+    if (!currentPackage) return;
+    try {
+        await apiRequest('PUT', '/packages/' + currentPackage.id + '/receive');
+        showToast(_t('pages.package_scan_in.receive_success', '入庫成功'));
+
+        scanRecords.unshift({
+            time: new Date().toLocaleString(),
+            tracking_no: currentPackage.tracking_no,
+            package_no: currentPackage.package_no,
+            user: currentPackage.user_name || currentPackage.user_id || '--',
+            status: 'received'
+        });
+        renderHistory();
+
+        document.getElementById('receiveBtn').disabled = true;
+        document.getElementById('receiveBtn').textContent = _t('pages.package_scan_in.already_received', '已入庫');
+        document.getElementById('detailStatus').innerHTML = getStatusBadge('received');
+        document.getElementById('scanInput').value = '';
+        document.getElementById('scanInput').focus();
+    } catch (e) {}
+}
+
+function renderHistory() {
+    const tbody = document.getElementById('scanHistory');
+    if (scanRecords.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">' + _t('common.no_records', '暫無記錄') + '</td></tr>';
+        return;
+    }
+    tbody.innerHTML = scanRecords.slice(0, 50).map(r => `<tr>
+        <td>${r.time}</td>
+        <td>${r.tracking_no || '--'}</td>
+        <td>${r.package_no || '--'}</td>
+        <td>${r.user}</td>
+        <td>${getStatusBadge(r.status)}</td>
+    </tr>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => document.getElementById('scanInput').focus());
+</script>
+{{end}}

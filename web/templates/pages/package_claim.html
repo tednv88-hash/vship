@@ -1,0 +1,148 @@
+{{define "pages/package_claim"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_claim.title">客戶認領</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadPackages(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.package_claim.search_tracking" placeholder="搜尋快遞單號...">
+        </div>
+        <select class="form-select" id="filterWarehouse" style="max-width:180px;">
+            <option value="" data-i18n="common.filter_all_warehouse">全部倉庫</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                    <th data-i18n="pages.package_claim.tracking_no">快遞單號</th>
+                    <th data-i18n="pages.package_claim.warehouse">倉庫</th>
+                    <th data-i18n="pages.packages.weight">重量</th>
+                    <th data-i18n="pages.packages.category">分類</th>
+                    <th data-i18n="pages.package_claim.storage_time">入庫時間</th>
+                    <th data-i18n="pages.package_claim.pending_days">待認領天數</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- 認領 Modal -->
+<div class="modal fade" id="claimModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-i18n="pages.package_claim.assign_user">指定認領用戶</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label" data-i18n="pages.package_claim.search_user">搜尋用戶</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="claimUserSearch" data-i18n-placeholder="pages.package_claim.search_user_placeholder" placeholder="用戶名/手機號...">
+                        <button class="btn btn-outline-secondary" onclick="searchClaimUsers()"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <select class="form-select" id="claimUserSelect" size="5" style="display:none;"></select>
+                <input type="hidden" id="claimPackageId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitClaim()" data-i18n="pages.package_claim.confirm_claim">確認認領</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1;
+const limit = 20;
+
+async function loadWarehouses() {
+    try {
+        const res = await apiRequest('GET', '/warehouses?limit=100');
+        const sel = document.getElementById('filterWarehouse');
+        (res.data || []).forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name}</option>`; });
+    } catch(e) {}
+}
+
+function loadPackages(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const warehouse_id = document.getElementById('filterWarehouse').value;
+    const params = buildQueryParams({ search, status: 'unclaimed', warehouse_id });
+    loadTableData('/packages', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    const days = Math.floor((new Date() - new Date(item.created_at)) / (1000*60*60*24));
+    const urgency = days > 30 ? 'text-danger' : days > 7 ? 'text-warning' : '';
+    return `<tr>
+        <td><input type="checkbox" class="row-check" value="${item.id}"></td>
+        <td>${item.tracking_no || '--'}</td>
+        <td>${item.warehouse_name || '--'}</td>
+        <td>${item.weight || 0} kg</td>
+        <td>${item.category_name || '--'}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td><span class="${urgency} fw-bold">${days} ${_t('pages.package_claim.days', '天')}</span></td>
+        <td>
+            <button class="btn btn-sm btn-outline-primary" onclick="openClaim('${item.id}')" title="${_t('pages.packages.claim', '認領')}"><i class="fas fa-user-check"></i></button>
+        </td>
+    </tr>`;
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
+}
+
+function openClaim(id) {
+    document.getElementById('claimPackageId').value = id;
+    document.getElementById('claimUserSearch').value = '';
+    document.getElementById('claimUserSelect').style.display = 'none';
+    openModal('claimModal');
+}
+
+async function searchClaimUsers() {
+    const search = document.getElementById('claimUserSearch').value.trim();
+    if (!search) return;
+    try {
+        const res = await apiRequest('GET', '/users?search=' + encodeURIComponent(search) + '&limit=10');
+        const sel = document.getElementById('claimUserSelect');
+        sel.innerHTML = '';
+        (res.data || []).forEach(u => {
+            sel.innerHTML += `<option value="${u.id}">${u.name || u.user_name} (${u.phone || u.email})</option>`;
+        });
+        sel.style.display = 'block';
+    } catch(e) {}
+}
+
+async function submitClaim() {
+    const pkgId = document.getElementById('claimPackageId').value;
+    const sel = document.getElementById('claimUserSelect');
+    if (!sel.value) { showToast(_t('pages.package_admin_forecast.please_select_user', '請選擇用戶'), 'error'); return; }
+    try {
+        await apiRequest('PUT', '/packages/' + pkgId, { user_id: sel.value, status: 'received' });
+        showToast(_t('pages.packages.claim_success', '認領成功'), 'success');
+        closeModal('claimModal');
+        loadPackages(currentPage);
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadWarehouses(); loadPackages(1); });
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadPackages(1)));
+document.getElementById('filterWarehouse').addEventListener('change', () => loadPackages(1));
+</script>
+{{end}}

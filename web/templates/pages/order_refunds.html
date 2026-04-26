@@ -1,0 +1,93 @@
+{{define "pages/order_refunds"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.order_refunds.title">售後管理</h5>
+    </div>
+    <ul class="nav nav-tabs px-3" id="statusTabs">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('')" data-i18n="pages.order_refunds.all">全部</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('pending')" data-i18n="pages.order_refunds.pending_review">待審核</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('approved')" data-i18n="pages.order_refunds.approved">已同意</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('rejected')" data-i18n="pages.order_refunds.rejected">已拒絕</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('completed')" data-i18n="pages.order_refunds.completed">已完成</a></li>
+    </ul>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.order_refunds.search_refund_order" placeholder="搜尋退款單號/訂單號..."></div>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.order_refunds.refund_number">退款單號</th>
+                <th data-i18n="pages.order_refunds.order_number">訂單號</th>
+                <th data-i18n="pages.orders.user">用戶</th>
+                <th data-i18n="common.type">類型</th>
+                <th data-i18n="pages.orders.amount">金額</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="common.created_at">建立時間</th>
+                <th data-i18n="common.actions">操作</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="auditModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="auditModalTitle" data-i18n="pages.order_refunds.audit">審核</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="auditForm"><input type="hidden" name="id" id="auditId"><input type="hidden" name="action" id="auditAction">
+        <div class="mb-3"><label class="form-label" data-i18n="pages.order_refunds.audit_remark">審核備註</label><textarea class="form-control" name="audit_remark" rows="3" data-i18n-placeholder="pages.order_refunds.enter_audit_remark" placeholder="請輸入審核備註..."></textarea></div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" id="auditSubmitBtn" onclick="submitAudit()" data-i18n="common.confirm_action">確認</button></div>
+</div></div></div>
+<script>
+let currentPage = 1; const limit = 20; let currentStatus = ''; const API_PATH = '/order-refunds';
+
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+const typeMap = {
+    refund_only: _t('pages.order_refunds.refund_only', '僅退款'),
+    refund_return: _t('pages.order_refunds.refund_return', '退貨退款')
+};
+
+function switchTab(status) {
+    currentStatus = status;
+    document.querySelectorAll('#statusTabs .nav-link').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    loadData(1);
+}
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, status: currentStatus });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const type = typeMap[item.type] || item.type || '--';
+    let actions = '';
+    if (item.status === 'pending') {
+        actions = `<button class="btn btn-sm btn-outline-success" onclick="openAuditModal('${item.id}','approve')"><i class="fas fa-check"></i></button> <button class="btn btn-sm btn-outline-danger" onclick="openAuditModal('${item.id}','reject')"><i class="fas fa-times"></i></button>`;
+    }
+    return `<tr><td>${item.refund_no||'--'}</td><td>${item.order_no||'--'}</td><td>${item.user_name||'--'}</td><td>${type}</td><td>${formatMoney(item.amount)}</td><td>${getStatusBadge(item.status)}</td><td>${formatDate(item.created_at)}</td><td><div class="action-buttons">${actions}</div></td></tr>`;
+}
+function openAuditModal(id, action) {
+    document.getElementById('auditId').value = id;
+    document.getElementById('auditAction').value = action;
+    document.getElementById('auditModalTitle').textContent = action === 'approve' ? _t('pages.order_refunds.approve_refund', '同意退款') : _t('pages.order_refunds.reject_refund', '拒絕退款');
+    document.getElementById('auditSubmitBtn').className = action === 'approve' ? 'btn btn-success' : 'btn btn-danger';
+    document.getElementById('auditSubmitBtn').textContent = action === 'approve' ? _t('pages.order_refunds.confirm_approve', '確認同意') : _t('pages.order_refunds.confirm_reject', '確認拒絕');
+    document.querySelector('#auditForm textarea[name="audit_remark"]').value = '';
+    openModal('auditModal');
+}
+async function submitAudit() {
+    const id = document.getElementById('auditId').value;
+    const action = document.getElementById('auditAction').value;
+    const remark = document.querySelector('#auditForm textarea[name="audit_remark"]').value;
+    try {
+        await apiRequest('PUT', API_PATH+'/'+id+'/'+action, { audit_remark: remark });
+        showToast(action === 'approve' ? _t('pages.order_refunds.refund_approved', '已同意退款') : _t('pages.order_refunds.refund_rejected', '已拒絕退款'));
+        closeModal('auditModal');
+        loadData(currentPage);
+    } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

@@ -1,0 +1,72 @@
+{{define "pages/stats_order"}}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.stats_order.title">訂單統計</h5>
+        <div class="d-flex gap-2">
+            <input type="date" class="form-control" id="startDate" style="max-width:160px;">
+            <input type="date" class="form-control" id="endDate" style="max-width:160px;">
+            <select class="form-select" id="groupBy" style="max-width:120px;">
+                <option value="day" data-i18n="pages.stats_order.by_day">按天</option>
+                <option value="week" data-i18n="pages.stats_order.by_week">按週</option>
+                <option value="month" data-i18n="pages.stats_order.by_month">按月</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="loadStats()"><i class="fas fa-search me-1"></i><span data-i18n="pages.statistics.query">查詢</span></button>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_order.total_orders">總訂單數</h6><h3 id="totalOrders" class="text-primary">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_order.total_amount">總金額</h6><h3 id="totalAmount" class="text-success">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_order.avg_order_value">平均客單價</h6><h3 id="avgAmount" class="text-info">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.stats_order.completion_rate">完成率</h6><h3 id="completeRate" class="text-warning">0%</h3></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6"><div class="card"><div class="card-body"><div id="orderChart" style="height:350px;"></div></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><div id="amountChart" style="height:350px;"></div></div></div></div>
+</div>
+<div class="card mt-3">
+    <div class="card-body"><div id="statusChart" style="height:300px;"></div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let orderChart, amountChart, statusChart;
+function initCharts() {
+    orderChart = echarts.init(document.getElementById('orderChart'));
+    amountChart = echarts.init(document.getElementById('amountChart'));
+    statusChart = echarts.init(document.getElementById('statusChart'));
+}
+function setDefaultDates() {
+    const end = new Date(); const start = new Date(); start.setDate(start.getDate() - 30);
+    document.getElementById('startDate').value = start.toISOString().split('T')[0];
+    document.getElementById('endDate').value = end.toISOString().split('T')[0];
+}
+async function loadStats() {
+    const start = document.getElementById('startDate').value, end = document.getElementById('endDate').value;
+    const groupBy = document.getElementById('groupBy').value;
+    try {
+        const res = await apiRequest('GET', '/statistics?start_date=' + start + '&end_date=' + end + '&group_by=' + groupBy);
+        const d = res.data || res;
+        document.getElementById('totalOrders').textContent = d.total_orders || 0;
+        document.getElementById('totalAmount').textContent = formatMoney(d.total_amount || 0);
+        document.getElementById('avgAmount').textContent = formatMoney(d.avg_amount || 0);
+        document.getElementById('completeRate').textContent = (d.complete_rate || 0) + '%';
+
+        const orderCountLabel = _t('pages.stats_order.total_orders', '訂單數');
+        const amountLabel = _t('pages.stats_dashboard.amount', '金額');
+
+        orderChart.setOption({ title: { text: _t('pages.stats_order.order_trend', '訂單趨勢'), left: 'center' }, tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: d.dates || [] }, yAxis: { type: 'value' },
+            series: [{ name: orderCountLabel, type: 'line', data: d.order_counts || [], smooth: true, itemStyle: { color: '#05ce78' } }] });
+        amountChart.setOption({ title: { text: _t('pages.stats_order.amount_trend', '金額趨勢'), left: 'center' }, tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: d.dates || [] }, yAxis: { type: 'value' },
+            series: [{ name: amountLabel, type: 'bar', data: d.amounts || [], itemStyle: { color: '#05ce78' } }] });
+        const statusData = d.status_stats || [];
+        statusChart.setOption({ title: { text: _t('pages.stats_order.order_status_distribution', '訂單狀態分佈'), left: 'center' }, tooltip: { trigger: 'item' },
+            series: [{ type: 'pie', radius: ['40%', '65%'], data: statusData }] });
+    } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { initCharts(); setDefaultDates(); loadStats(); });
+window.addEventListener('resize', () => { orderChart && orderChart.resize(); amountChart && amountChart.resize(); statusChart && statusChart.resize(); });
+</script>
+{{end}}

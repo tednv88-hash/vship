@@ -1,0 +1,98 @@
+{{define "pages/stats_dashboard"}}
+<style>
+    .stats-dashboard { background: #1a1a2e; color: #fff; min-height: 100vh; margin: -1.5rem; padding: 1.5rem; }
+    .stats-dashboard .stat-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-align: center; }
+    .stats-dashboard .stat-card h3 { color: #05ce78; font-size: 2rem; margin: 0; }
+    .stats-dashboard .stat-card p { color: rgba(255,255,255,0.7); margin: 5px 0 0; }
+    .stats-dashboard .chart-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; }
+</style>
+<div class="stats-dashboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" data-i18n="pages.stats_dashboard.title">vShip 數據大屏</h4>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="text-muted" id="currentTime"></span>
+            <button class="btn btn-sm btn-outline-light" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
+            <button class="btn btn-sm btn-outline-light" onclick="loadAllStats()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-2"><div class="stat-card"><h3 id="todayOrders">0</h3><p data-i18n="pages.stats_dashboard.today_orders">今日訂單</p></div></div>
+        <div class="col-md-2"><div class="stat-card"><h3 id="todayRevenue">0</h3><p data-i18n="pages.stats_dashboard.today_revenue">今日營收</p></div></div>
+        <div class="col-md-2"><div class="stat-card"><h3 id="todayPackages">0</h3><p data-i18n="pages.stats_dashboard.today_storage">今日入庫</p></div></div>
+        <div class="col-md-2"><div class="stat-card"><h3 id="totalUsers">0</h3><p data-i18n="pages.stats_dashboard.total_users">總用戶數</p></div></div>
+        <div class="col-md-2"><div class="stat-card"><h3 id="pendingOrders">0</h3><p data-i18n="pages.stats_dashboard.pending_orders">待處理訂單</p></div></div>
+        <div class="col-md-2"><div class="stat-card"><h3 id="monthRevenue">0</h3><p data-i18n="pages.stats_dashboard.monthly_revenue">本月營收</p></div></div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col-md-8"><div class="chart-card"><div id="trendChart" style="height:350px;"></div></div></div>
+        <div class="col-md-4"><div class="chart-card"><div id="routeChart" style="height:350px;"></div></div></div>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-4"><div class="chart-card"><div id="countryChart" style="height:300px;"></div></div></div>
+        <div class="col-md-4"><div class="chart-card"><div id="statusChart" style="height:300px;"></div></div></div>
+        <div class="col-md-4"><div class="chart-card"><div id="categoryChart" style="height:300px;"></div></div></div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let trendChart, routeChart, countryChart, statusChart, categoryChart;
+const darkTheme = { backgroundColor: 'transparent', textStyle: { color: 'rgba(255,255,255,0.8)' },
+    title: { textStyle: { color: '#fff' } }, legend: { textStyle: { color: 'rgba(255,255,255,0.7)' } } };
+
+function initCharts() {
+    trendChart = echarts.init(document.getElementById('trendChart'));
+    routeChart = echarts.init(document.getElementById('routeChart'));
+    countryChart = echarts.init(document.getElementById('countryChart'));
+    statusChart = echarts.init(document.getElementById('statusChart'));
+    categoryChart = echarts.init(document.getElementById('categoryChart'));
+}
+
+async function loadAllStats() {
+    try {
+        const res = await apiRequest('GET', '/statistics/overview');
+        const d = res.data || res;
+        document.getElementById('todayOrders').textContent = d.today_orders || 0;
+        document.getElementById('todayRevenue').textContent = formatMoney(d.today_revenue || 0);
+        document.getElementById('todayPackages').textContent = d.today_packages || 0;
+        document.getElementById('totalUsers').textContent = d.total_users || 0;
+        document.getElementById('pendingOrders').textContent = d.pending_orders || 0;
+        document.getElementById('monthRevenue').textContent = formatMoney(d.month_revenue || 0);
+
+        const orderCountLabel = _t('pages.stats_dashboard.order_count', '訂單數');
+        const amountLabel = _t('pages.stats_dashboard.amount', '金額');
+
+        trendChart.setOption({ ...darkTheme, title: { text: _t('pages.stats_dashboard.order_trend_30', '近30天訂單趨勢'), left: 'center', ...darkTheme.title },
+            tooltip: { trigger: 'axis' }, xAxis: { type: 'category', data: d.trend_dates || [] },
+            yAxis: [{ type: 'value', name: orderCountLabel }, { type: 'value', name: amountLabel }],
+            series: [{ name: orderCountLabel, type: 'line', data: d.trend_orders || [], smooth: true, itemStyle: { color: '#05ce78' } },
+                     { name: amountLabel, type: 'bar', yAxisIndex: 1, data: d.trend_amounts || [], itemStyle: { color: 'rgba(5,206,120,0.3)' } }] });
+        routeChart.setOption({ ...darkTheme, title: { text: _t('pages.stats_dashboard.route_distribution', '線路分佈'), left: 'center', ...darkTheme.title },
+            tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: '65%', data: d.route_stats || [] }] });
+        countryChart.setOption({ ...darkTheme, title: { text: _t('pages.stats_dashboard.country_distribution', '國家分佈'), left: 'center', ...darkTheme.title },
+            tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: ['35%','60%'], data: d.country_stats || [] }] });
+        statusChart.setOption({ ...darkTheme, title: { text: _t('pages.stats_dashboard.order_status', '訂單狀態'), left: 'center', ...darkTheme.title },
+            tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: '65%', data: d.status_stats || [] }] });
+        categoryChart.setOption({ ...darkTheme, title: { text: _t('pages.stats_dashboard.category_distribution', '品類分佈'), left: 'center', ...darkTheme.title },
+            tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: ['35%','60%'], data: d.category_stats || [] }] });
+    } catch(e) {}
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { document.exitFullscreen(); }
+}
+
+function updateTime() {
+    document.getElementById('currentTime').textContent = new Date().toLocaleString('zh-TW');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initCharts(); loadAllStats(); updateTime();
+    setInterval(updateTime, 1000);
+    setInterval(loadAllStats, 60000);
+});
+window.addEventListener('resize', () => {
+    [trendChart, routeChart, countryChart, statusChart, categoryChart].forEach(c => c && c.resize());
+});
+</script>
+{{end}}

@@ -1,0 +1,64 @@
+{{define "pages/warehouse_shelf_data"}}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.warehouse_shelf_data.title">貨位數據</h5>
+        <div class="d-flex gap-2">
+            <select class="form-select" id="filterWarehouse" style="max-width:180px;"><option value="" data-i18n="common.filter_all_warehouse">全部倉庫</option></select>
+            <button class="btn btn-outline-secondary btn-sm" onclick="loadData()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_shelf_data.total_positions">總貨位</h6><h3 id="totalSlots" class="text-primary">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_shelf_data.occupied">已佔用</h6><h3 id="usedSlots" class="text-danger">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_shelf_data.available">空閒</h6><h3 id="freeSlots" class="text-success">0</h3></div></div>
+    <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted" data-i18n="pages.warehouse_shelf_data.usage_rate">使用率</h6><h3 id="usageRate" class="text-warning">0%</h3></div></div>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr>
+                <th data-i18n="pages.warehouse_shelf_data.position_number">貨位編號</th>
+                <th data-i18n="pages.warehouse_shelf_data.warehouse">倉庫</th>
+                <th data-i18n="pages.warehouse_shelf_data.rack">貨架</th>
+                <th data-i18n="pages.warehouse_shelf_data.package_count">包裹數</th>
+                <th data-i18n="pages.warehouse_shelf_data.total_weight">總重量(kg)</th>
+                <th data-i18n="common.status">狀態</th>
+                <th data-i18n="pages.warehouse_shelf_data.last_updated">最後更新</th>
+            </tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20;
+async function loadWarehouses() { try { const res = await apiRequest('GET', '/warehouses?limit=100');
+    const sel = document.getElementById('filterWarehouse'); (res.data || []).forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name}</option>`; }); } catch(e) {} }
+async function loadData() {
+    const wid = document.getElementById('filterWarehouse').value;
+    const params = buildQueryParams({ warehouse_id: wid });
+    try {
+        const res = await apiRequest('GET', '/warehouses/' + (wid || 'all') + '/shelves?limit=200');
+        const data = res.data || [];
+        const total = data.length; const used = data.filter(s => s.package_count > 0).length;
+        document.getElementById('totalSlots').textContent = total;
+        document.getElementById('usedSlots').textContent = used;
+        document.getElementById('freeSlots').textContent = total - used;
+        document.getElementById('usageRate').textContent = total ? Math.round((used/total)*100) + '%' : '0%';
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.length ? data.map(s => `<tr><td>${s.code || s.name || '--'}</td><td>${s.warehouse_name || '--'}</td>
+            <td>${s.shelf_name || '--'}</td><td>${s.package_count || 0}</td><td>${(s.total_weight || 0).toFixed(2)}</td>
+            <td>${s.package_count > 0 ? '<span class="badge bg-warning">' + _t('pages.warehouse_shelf_data.occupied_badge', '已佔用') + '</span>' : '<span class="badge bg-success">' + _t('pages.warehouse_shelf_data.available_badge', '空閒') + '</span>'}</td>
+            <td>${formatDate(s.updated_at)}</td></tr>`).join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+    } catch(e) { loadTableData('/warehouses/' + (wid || '0') + '/shelves', 'tableBody', renderRow, 'pagination', 1, limit, params); }
+}
+function renderRow(item) { return `<tr><td>${item.code || item.name || '--'}</td><td>${item.warehouse_name || '--'}</td>
+    <td>${item.shelf_name || '--'}</td><td>${item.package_count || 0}</td><td>${(item.total_weight || 0).toFixed(2)}</td>
+    <td>${item.package_count > 0 ? '<span class="badge bg-warning">' + _t('pages.warehouse_shelf_data.occupied_badge', '已佔用') + '</span>' : '<span class="badge bg-success">' + _t('pages.warehouse_shelf_data.available_badge', '空閒') + '</span>'}</td>
+    <td>${formatDate(item.updated_at)}</td></tr>`; }
+document.addEventListener('DOMContentLoaded', () => { loadWarehouses(); loadData(); });
+document.getElementById('filterWarehouse').addEventListener('change', loadData);
+</script>
+{{end}}

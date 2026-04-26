@@ -1,0 +1,95 @@
+{{define "pages/packages"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.packages.title">包裹管理</h5>
+        <a href="/packages/create" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </a>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.packages.search_package" placeholder="搜尋包裹編號/追蹤號...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.all_status">全部狀態</option>
+            <option value="received" data-i18n="common.status_received">已入庫</option>
+            <option value="in_warehouse" data-i18n="common.status_in_warehouse">倉庫中</option>
+            <option value="dispatched" data-i18n="common.status_dispatched">已出庫</option>
+            <option value="shipping" data-i18n="common.status_shipping">運送中</option>
+            <option value="delivered" data-i18n="common.status_delivered">已送達</option>
+            <option value="returned" data-i18n="common.status_returned">已退回</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadPackages(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.packages.package_number">包裹編號</th>
+                    <th data-i18n="pages.packages.tracking_number">追蹤號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.packages.category">分類</th>
+                    <th data-i18n="pages.packages.weight">重量 (kg)</th>
+                    <th data-i18n="common.warehouse">倉庫</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="pages.packages.storage_time">入庫時間</th>
+                    <th data-i18n="common.operations">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<script>
+let currentPage = 1;
+const limit = 20;
+
+function loadPackages(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, status });
+
+    loadTableData('/packages', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td><a href="/packages/${item.id}/edit">${item.package_no || '--'}</a></td>
+        <td>${item.tracking_no || '--'}</td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.category_name || '--'}</td>
+        <td>${item.weight || 0}</td>
+        <td>${item.warehouse_name || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.received_at || item.created_at)}</td>
+        <td>
+            <div class="action-buttons">
+                <a href="/packages/${item.id}/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                <button class="btn btn-sm btn-outline-danger" onclick="deletePackage('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+async function deletePackage(id) {
+    if (!confirmDelete(typeof I18n !== 'undefined' ? I18n.t('pages.packages.confirm_delete') : '確定要刪除此包裹嗎？')) return;
+    try {
+        await apiRequest('DELETE', '/packages/' + id);
+        showToast(typeof I18n !== 'undefined' ? I18n.t('common.delete_success') : '刪除成功', 'success');
+        loadPackages(currentPage);
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadPackages(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadPackages(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadPackages(1));
+</script>
+{{end}}

@@ -1,0 +1,93 @@
+{{define "pages/orders_overdue"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.orders_overdue.title">超時件</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadOrders(1)">
+            <i class="fas fa-sync-alt me-1"></i><span data-i18n="common.refresh">刷新</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.order_sub.search_order_user" placeholder="搜尋訂單編號/用戶...">
+        </div>
+        <select class="form-select" id="filterOverdueDays" style="max-width:160px;">
+            <option value="" data-i18n="common.filter_all_timeout">全部超時</option>
+            <option value="7" data-i18n="pages.orders_overdue.over_7_days">超過7天</option>
+            <option value="15" data-i18n="pages.orders_overdue.over_15_days">超過15天</option>
+            <option value="30" data-i18n="pages.orders_overdue.over_30_days">超過30天</option>
+            <option value="60" data-i18n="pages.orders_overdue.over_60_days">超過60天</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.orders.order_number">訂單編號</th>
+                    <th data-i18n="pages.orders.user">用戶</th>
+                    <th data-i18n="pages.orders.route">線路</th>
+                    <th data-i18n="pages.orders.package_count">包裹數</th>
+                    <th data-i18n="pages.orders.amount">金額</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.created_at">建立時間</th>
+                    <th data-i18n="pages.orders_overdue.overdue_days">超時天數</th>
+                    <th data-i18n="common.operations">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1;
+const limit = 20;
+
+function loadOrders(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const overdue_days = document.getElementById('filterOverdueDays').value;
+    const params = buildQueryParams({ search, status: 'overdue', overdue_days });
+    loadTableData('/orders', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    const created = new Date(item.created_at);
+    const now = new Date();
+    const diffDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+    const urgencyClass = diffDays > 30 ? 'text-danger' : diffDays > 15 ? 'text-warning' : 'text-info';
+    return `<tr>
+        <td><a href="/orders/${item.id}">${item.order_no || '--'}</a></td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.route_name || '--'}</td>
+        <td>${item.package_count || 0}</td>
+        <td>${formatMoney(item.total_amount)}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>${formatDate(item.created_at)}</td>
+        <td><span class="${urgencyClass} fw-bold">${diffDays} ${_t('pages.orders_overdue.days', '天')}</span></td>
+        <td>
+            <div class="action-buttons">
+                <a href="/orders/${item.id}" class="btn btn-sm btn-outline-primary" title="${_t('common.view', '查看')}"><i class="fas fa-eye"></i></a>
+                <button class="btn btn-sm btn-outline-warning" onclick="notifyUser('${item.id}')" title="${_t('pages.orders_overdue.remind_user', '提醒用戶')}"><i class="fas fa-bell"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+async function notifyUser(id) {
+    if (!confirm(_t('pages.orders_overdue.confirm_send_reminder', '確定發送提醒通知嗎？'))) return;
+    try {
+        await apiRequest('POST', '/notifications', { type: 'overdue_reminder', order_id: id });
+        showToast(_t('pages.orders_overdue.reminder_sent', '提醒已發送'), 'success');
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadOrders(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadOrders(1)));
+document.getElementById('filterOverdueDays').addEventListener('change', () => loadOrders(1));
+</script>
+{{end}}

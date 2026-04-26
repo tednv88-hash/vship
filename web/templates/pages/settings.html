@@ -1,0 +1,174 @@
+{{define "pages/settings"}}
+<div class="row g-3">
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/countries" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-primary-light"><i class="fas fa-globe text-primary"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.countries">國家管理</h6><small class="text-muted" data-i18n="pages.settings.countries_desc">管理國家與地區</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/currencies" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-warning-light"><i class="fas fa-coins text-warning"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.currencies">幣種管理</h6><small class="text-muted" data-i18n="pages.settings.currencies_desc">管理貨幣與匯率</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/member-levels" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-info-light"><i class="fas fa-crown text-info"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.member_levels">會員等級</h6><small class="text-muted" data-i18n="pages.settings.member_levels_desc">管理會員等級與權益</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/package-categories" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-danger-light"><i class="fas fa-tags text-danger"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.package_categories">包裹分類</h6><small class="text-muted" data-i18n="pages.settings.package_categories_desc">管理包裹類型</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/route-categories" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-primary-light"><i class="fas fa-sitemap text-primary"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.route_categories">線路分類</h6><small class="text-muted" data-i18n="pages.settings.route_categories_desc">管理線路類型</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/logistics-companies" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-info-light"><i class="fas fa-truck text-info"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.logistics_companies">物流公司</h6><small class="text-muted" data-i18n="pages.settings.logistics_desc">管理物流服務商</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/insurance" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-success-light"><i class="fas fa-shield-alt text-success"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.insurance">保險產品</h6><small class="text-muted" data-i18n="pages.settings.insurance_desc">管理保險方案</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/consumables" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-warning-light"><i class="fas fa-box-open text-warning"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.consumables">耗材管理</h6><small class="text-muted" data-i18n="pages.settings.consumables_desc">管理包裝耗材</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/value-added-services" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-danger-light"><i class="fas fa-star text-danger"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.value_added_services">增值服務</h6><small class="text-muted" data-i18n="pages.settings.vas_desc">管理附加服務</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/tracking-templates" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-primary-light"><i class="fas fa-map-marker-alt text-primary"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.tracking_templates">軌跡模板</h6><small class="text-muted" data-i18n="pages.settings.tracking_desc">管理物流軌跡模板</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/banners" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-info-light"><i class="fas fa-images text-info"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.banners">輪播圖</h6><small class="text-muted" data-i18n="pages.settings.banners_desc">管理首頁輪播</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/articles" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-warning-light"><i class="fas fa-newspaper text-warning"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.articles">文章管理</h6><small class="text-muted" data-i18n="pages.settings.articles_desc">管理幫助文章</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/coupons" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-danger-light"><i class="fas fa-ticket-alt text-danger"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.coupons">優惠券</h6><small class="text-muted" data-i18n="pages.settings.coupons_desc">管理優惠與折扣</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/payment-audits" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-success-light"><i class="fas fa-file-invoice-dollar text-success"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.payment_audits">付款審核</h6><small class="text-muted" data-i18n="pages.settings.payment_audit_desc">審核付款記錄</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/shipping-marks" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-primary-light"><i class="fas fa-barcode text-primary"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.shipping_marks">貨運標記</h6><small class="text-muted" data-i18n="pages.settings.shipping_marks_desc">管理唛頭與標記</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/address-book" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-info-light"><i class="fas fa-address-book text-info"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.address_book">地址簿</h6><small class="text-muted" data-i18n="pages.settings.address_book_desc">管理收件地址</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a href="/settings/notifications" class="text-decoration-none">
+            <div class="card hover-shadow">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-card-icon bg-warning-light"><i class="fas fa-bell text-warning"></i></div>
+                    <div><h6 class="mb-1 text-dark" data-i18n="menu.notifications">通知管理</h6><small class="text-muted" data-i18n="pages.settings.notifications_desc">管理系統通知</small></div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{{end}}

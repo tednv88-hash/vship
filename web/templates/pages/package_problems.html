@@ -1,0 +1,100 @@
+{{define "pages/package_problems"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.package_problems.title">問題件</h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.package_problems.search_placeholder" placeholder="搜尋運單號...">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.package_scan_in.tracking_no">運單號</th>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.package_problems.problem_reason">問題原因</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<div class="modal fade" id="resolveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-i18n="pages.package_problems.process_problem">處理問題件</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="resolveForm">
+                    <input type="hidden" name="package_id" id="resolvePackageId">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.package_problems.resolve_note">處理備註</label>
+                        <textarea class="form-control" name="resolve_note" id="resolveNote" rows="3" data-i18n-placeholder="pages.package_problems.resolve_note_placeholder" placeholder="輸入處理說明..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-success" onclick="confirmResolve()" data-i18n="pages.package_problems.mark_resolved">標記已解決</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1; const limit = 20;
+const API_PATH = '/packages';
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const params = buildQueryParams({ search, is_problem: 'true' });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    return `<tr>
+        <td><strong>${item.tracking_no || '--'}</strong></td>
+        <td>${item.user_name || item.user_id || '--'}</td>
+        <td>${item.problem_reason || item.remark || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-success" onclick="openResolveModal('${item.id}')" title="${_t('pages.package_problems.mark_resolved', '標記已解決')}"><i class="fas fa-check-circle"></i></button>
+                <a href="/packages/${item.id}/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+            </div>
+        </td>
+    </tr>`;
+}
+function openResolveModal(packageId) {
+    document.getElementById('resolvePackageId').value = packageId;
+    document.getElementById('resolveNote').value = '';
+    openModal('resolveModal');
+}
+async function confirmResolve() {
+    const packageId = document.getElementById('resolvePackageId').value;
+    const note = document.getElementById('resolveNote').value;
+    try {
+        await apiRequest('PUT', API_PATH + '/' + packageId, { is_problem: false, problem_reason: '', remark: note || '' });
+        showToast(_t('pages.package_problems.resolved_success', '已標記為已解決'));
+        closeModal('resolveModal');
+        loadData(currentPage);
+    } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

@@ -1,0 +1,167 @@
+{{define "pages/batch_detail"}}
+<div class="mb-3">
+    <a href="/batches" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i><span data-i18n="pages.batch_detail.back_to_list">返回批次列表</span>
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" data-i18n="pages.batch_detail.batch_info">批次資訊</h5>
+                <span id="batchStatus"></span>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.batches.batch_number">批次編號</div>
+                        <div class="detail-value" id="batchNo">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="common.created_at">建立時間</div>
+                        <div class="detail-value" id="createdAt">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.batches.route">線路</div>
+                        <div class="detail-value" id="routeName">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.batches.logistics_company">物流公司</div>
+                        <div class="detail-value" id="logisticsCompany">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.batches.logistics_tracking_no">物流單號</div>
+                        <div class="detail-value" id="logisticsNo">--</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label" data-i18n="pages.batches.total_weight">總重量</div>
+                        <div class="detail-value" id="totalWeight">--</div>
+                    </div>
+                </div>
+                <div class="detail-divider"></div>
+                <div class="detail-label" data-i18n="common.remark">備註</div>
+                <div class="detail-value" id="batchRemark">--</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.batch_detail.batch_orders">批次訂單</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th data-i18n="pages.batch_create.order_number">訂單編號</th>
+                            <th data-i18n="common.user">用戶</th>
+                            <th data-i18n="pages.batch_create.package_count">包裹數</th>
+                            <th data-i18n="pages.batch_detail.weight">重量</th>
+                            <th data-i18n="pages.batch_create.amount">金額</th>
+                            <th data-i18n="common.status">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <tr><td colspan="6" class="text-center py-3 text-muted" data-i18n="common.loading">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.batch_detail.batch_operations">批次操作</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <button class="btn btn-primary" onclick="updateBatchStatus('processing')">
+                    <i class="fas fa-cog me-1"></i><span data-i18n="pages.batch_detail.start_processing">開始處理</span>
+                </button>
+                <button class="btn btn-info text-white" onclick="updateBatchStatus('shipping')">
+                    <i class="fas fa-truck me-1"></i><span data-i18n="pages.batch_detail.mark_shipping">標記運送中</span>
+                </button>
+                <button class="btn btn-success" onclick="updateBatchStatus('delivered')">
+                    <i class="fas fa-check me-1"></i><span data-i18n="pages.batch_detail.mark_delivered">標記已送達</span>
+                </button>
+                <button class="btn btn-outline-secondary" onclick="updateBatchStatus('completed')">
+                    <i class="fas fa-check-double me-1"></i><span data-i18n="pages.batch_detail.mark_completed">標記已完成</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.batch_detail.batch_stats">批次統計</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" data-i18n="pages.batches.order_count">訂單數</span>
+                    <span id="orderCount">0</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" data-i18n="pages.batch_detail.package_count">包裹數</span>
+                    <span id="packageCount">0</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted" data-i18n="pages.batch_detail.total_amount">總金額</span>
+                    <strong class="text-primary" id="totalAmount">--</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const batchId = window.location.pathname.split('/').filter(Boolean).pop();
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+document.addEventListener('DOMContentLoaded', loadBatchDetail);
+
+async function loadBatchDetail() {
+    if (!batchId) return;
+    try {
+        const res = await apiRequest('GET', '/batches/' + batchId);
+        const b = res.data || res;
+
+        document.getElementById('batchNo').textContent = b.batch_no || '--';
+        document.getElementById('createdAt').textContent = formatDate(b.created_at);
+        document.getElementById('routeName').textContent = b.route_name || '--';
+        document.getElementById('logisticsCompany').textContent = b.logistics_company || '--';
+        document.getElementById('logisticsNo').textContent = b.logistics_tracking_no || '--';
+        document.getElementById('totalWeight').textContent = (b.total_weight || 0) + ' kg';
+        document.getElementById('batchStatus').innerHTML = getStatusBadge(b.status);
+        document.getElementById('batchRemark').textContent = b.remark || _t('pages.batch_detail.no_remark', '無');
+        document.getElementById('orderCount').textContent = b.order_count || 0;
+        document.getElementById('packageCount').textContent = b.package_count || 0;
+        document.getElementById('totalAmount').textContent = formatMoney(b.total_amount);
+
+        const orders = b.orders || [];
+        const tbody = document.getElementById('orderTableBody');
+        if (orders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">${_t('pages.batch_detail.no_orders', '暫無訂單')}</td></tr>`;
+        } else {
+            tbody.innerHTML = orders.map(o => `<tr>
+                <td><a href="/orders/${o.id}">${o.order_no || '--'}</a></td>
+                <td>${o.user_name || '--'}</td>
+                <td>${o.package_count || 0}</td>
+                <td>${o.total_weight || 0} kg</td>
+                <td>${formatMoney(o.total_amount)}</td>
+                <td>${getStatusBadge(o.status)}</td>
+            </tr>`).join('');
+        }
+    } catch (e) {}
+}
+
+async function updateBatchStatus(status) {
+    const actionMap = { departed: 'depart', arrived: 'arrive' };
+    const action = actionMap[status] || status;
+    if (!confirm(_t('pages.batch_detail.confirm_status_update', '確定要更新批次狀態嗎？'))) return;
+    try {
+        await apiRequest('PUT', `/batches/${batchId}/${action}`);
+        showToast(_t('pages.batch_detail.status_update_success', '狀態更新成功'), 'success');
+        loadBatchDetail();
+    } catch (e) {}
+}
+</script>
+{{end}}

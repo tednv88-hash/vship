@@ -1,0 +1,189 @@
+{{define "pages/orders_monthly"}}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.orders_monthly.title">月結訂單</h5>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="monthlyTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="switchTab('overdue_users')" data-i18n="pages.orders_monthly.overdue_users">欠費用戶</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="switchTab('monthly_orders')" data-i18n="pages.orders_monthly.monthly_orders_tab">月結訂單</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 欠費用戶 -->
+<div class="card" id="overdueUsersCard">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0" data-i18n="pages.orders_monthly.overdue_users_list">欠費用戶列表</h6>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadOverdueUsers(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="userSearchInput" data-i18n-placeholder="pages.orders_monthly.search_user" placeholder="搜尋用戶名稱/手機號...">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.orders_monthly.username">用戶名</th>
+                    <th data-i18n="pages.orders_monthly.phone">手機號</th>
+                    <th data-i18n="pages.orders_monthly.debt_amount">欠費金額</th>
+                    <th data-i18n="pages.orders_monthly.unsettled_orders">未結訂單數</th>
+                    <th data-i18n="pages.orders_monthly.last_order_time">最後下單時間</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="userPagination"></div>
+</div>
+
+<!-- 月結訂單 -->
+<div class="card d-none" id="monthlyOrdersCard">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0" data-i18n="pages.orders_monthly.monthly_orders_list">月結訂單列表</h6>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadMonthlyOrders(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="orderSearchInput" data-i18n-placeholder="pages.orders_monthly.search_order" placeholder="搜尋訂單編號...">
+        </div>
+        <select class="form-select" id="filterMonth" style="max-width:160px;">
+            <option value="" data-i18n="common.filter_all_month">全部月份</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.orders.order_number">訂單編號</th>
+                    <th data-i18n="pages.orders.user">用戶</th>
+                    <th data-i18n="pages.orders.route">線路</th>
+                    <th data-i18n="pages.orders.package_count">包裹數</th>
+                    <th data-i18n="pages.orders.amount">金額</th>
+                    <th data-i18n="pages.orders_monthly.settlement_month">結算月份</th>
+                    <th data-i18n="pages.orders_monthly.settlement_status">結算狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="orderPagination"></div>
+</div>
+
+<script>
+let currentTab = 'overdue_users';
+let userPage = 1, orderPage = 1;
+const limit = 20;
+
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('#monthlyTabs .nav-link').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    if (tab === 'overdue_users') {
+        document.getElementById('overdueUsersCard').classList.remove('d-none');
+        document.getElementById('monthlyOrdersCard').classList.add('d-none');
+        loadOverdueUsers(1);
+    } else {
+        document.getElementById('overdueUsersCard').classList.add('d-none');
+        document.getElementById('monthlyOrdersCard').classList.remove('d-none');
+        loadMonthlyOrders(1);
+    }
+}
+
+function loadOverdueUsers(page) {
+    userPage = page;
+    const search = document.getElementById('userSearchInput').value;
+    const params = buildQueryParams({ search, payment_type: 'monthly', has_debt: true });
+    loadTableData('/users', 'userTableBody', renderUserRow, 'userPagination', page, limit, params);
+}
+
+function renderUserRow(item) {
+    return `<tr>
+        <td>${item.name || item.user_name || '--'}</td>
+        <td>${item.phone || '--'}</td>
+        <td class="text-danger fw-bold">${formatMoney(item.debt_amount || 0)}</td>
+        <td>${item.pending_orders || 0}</td>
+        <td>${formatDate(item.last_order_at || item.updated_at)}</td>
+        <td>
+            <button class="btn btn-sm btn-outline-primary" onclick="viewUserOrders('${item.id}')"><i class="fas fa-list"></i> <span>${_t('pages.orders_monthly.view_orders', '查看訂單')}</span></button>
+            <button class="btn btn-sm btn-outline-warning" onclick="notifyUser('${item.id}')"><i class="fas fa-bell"></i> <span>${_t('pages.orders_monthly.collect', '催款')}</span></button>
+        </td>
+    </tr>`;
+}
+
+function loadMonthlyOrders(page) {
+    orderPage = page;
+    const search = document.getElementById('orderSearchInput').value;
+    const month = document.getElementById('filterMonth').value;
+    const params = buildQueryParams({ search, payment_type: 'monthly', settlement_month: month });
+    loadTableData('/orders', 'orderTableBody', renderOrderRow, 'orderPagination', page, limit, params);
+}
+
+function renderOrderRow(item) {
+    return `<tr>
+        <td><a href="/orders/${item.id}">${item.order_no || '--'}</a></td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.route_name || '--'}</td>
+        <td>${item.package_count || 0}</td>
+        <td>${formatMoney(item.total_amount)}</td>
+        <td>${item.settlement_month || '--'}</td>
+        <td>${getStatusBadge(item.payment_status)}</td>
+        <td>
+            <a href="/orders/${item.id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+        </td>
+    </tr>`;
+}
+
+function viewUserOrders(userId) {
+    switchTab('monthly_orders');
+    document.getElementById('orderSearchInput').value = userId;
+    loadMonthlyOrders(1);
+}
+
+async function notifyUser(id) {
+    if (!confirm(_t('pages.orders_monthly.confirm_send_collect', '確定發送催款通知嗎？'))) return;
+    try {
+        await apiRequest('POST', '/notifications', { type: 'monthly_payment_reminder', user_id: id });
+        showToast(_t('pages.orders_monthly.collect_sent', '催款通知已發送'), 'success');
+    } catch (e) {}
+}
+
+function initMonthFilter() {
+    const select = document.getElementById('filterMonth');
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const val = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        select.innerHTML += `<option value="${val}">${val}</option>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMonthFilter();
+    loadOverdueUsers(1);
+});
+document.getElementById('userSearchInput').addEventListener('input', debounce(() => loadOverdueUsers(1)));
+document.getElementById('orderSearchInput').addEventListener('input', debounce(() => loadMonthlyOrders(1)));
+document.getElementById('filterMonth').addEventListener('change', () => loadMonthlyOrders(1));
+</script>
+{{end}}

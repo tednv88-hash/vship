@@ -1,0 +1,72 @@
+{{define "pages/cache_clear"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.cache_clear.title">清除緩存</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-1"></i><span data-i18n="pages.cache_clear.warning">清除緩存可能會暫時影響系統性能，請謹慎操作。</span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-cog fa-3x text-primary mb-3"></i>
+                        <h6 data-i18n="pages.cache_clear.system_cache">系統緩存</h6>
+                        <p class="text-muted small" data-i18n="pages.cache_clear.system_cache_desc">清除系統配置、路由等緩存</p>
+                        <button class="btn btn-outline-primary" onclick="clearCache('system')" id="btnSystem">
+                            <i class="fas fa-broom me-1"></i><span data-i18n="pages.cache_clear.clear_system">清除系統緩存</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-file-code fa-3x text-info mb-3"></i>
+                        <h6 data-i18n="pages.cache_clear.template_cache">模板緩存</h6>
+                        <p class="text-muted small" data-i18n="pages.cache_clear.template_cache_desc">清除頁面模板編譯緩存</p>
+                        <button class="btn btn-outline-info" onclick="clearCache('template')" id="btnTemplate">
+                            <i class="fas fa-broom me-1"></i><span data-i18n="pages.cache_clear.clear_template">清除模板緩存</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                        <h6 data-i18n="pages.cache_clear.all_cache">全部緩存</h6>
+                        <p class="text-muted small" data-i18n="pages.cache_clear.all_cache_desc">清除所有類型的緩存</p>
+                        <button class="btn btn-outline-danger" onclick="clearCache('all')" id="btnAll">
+                            <i class="fas fa-broom me-1"></i><span data-i18n="pages.cache_clear.clear_all">清除全部緩存</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+async function clearCache(type) {
+    const btnMap = { system: 'btnSystem', template: 'btnTemplate', all: 'btnAll' };
+    const btn = document.getElementById(btnMap[type]);
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + _t('pages.cache_clear.clearing', '清除中...');
+
+    try {
+        await apiRequest('POST', '/settings/clear-cache', { type: type });
+        showToast(_t('pages.cache_clear.clear_success', '清除成功'));
+    } catch (e) {
+        showToast(_t('pages.cache_clear.clear_failed', '清除失敗'), 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+    }
+}
+</script>
+{{end}}

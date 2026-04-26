@@ -1,0 +1,82 @@
+{{define "pages/error"}}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">錯誤 - vShip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .error-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #05ce78;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .error-message {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        .error-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+        .btn-back {
+            background-color: #05ce78;
+            border-color: #05ce78;
+            color: #fff;
+            padding: 0.6rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-back:hover {
+            background-color: #04b06a;
+            border-color: #04b06a;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-code">{{.Code}}</div>
+        <p class="error-message">{{.Message}}</p>
+        <a href="/dashboard" class="btn btn-back">
+            <i class="fas fa-home me-2"></i><span data-i18n="error_page.back_to_home">返回首頁</span>
+        </a>
+    </div>
+
+    <script src="/static/js/i18n.js"></script>
+    <script>
+        // Update page title based on language
+        if (typeof I18n !== 'undefined') {
+            I18n.whenReady(function() {
+                var titleEl = document.getElementById('pageTitle');
+                if (titleEl) titleEl.textContent = I18n.t('error_page.page_title', '錯誤 - vShip');
+            });
+        }
+    </script>
+</body>
+</html>
+{{end}}

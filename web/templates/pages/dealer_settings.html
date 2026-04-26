@@ -1,0 +1,74 @@
+{{define "pages/dealer_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.dealer_settings.title">分銷設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_settings.enable_dealer">是否開啟分銷</label>
+                <select class="form-select" name="enabled">
+                    <option value="true" data-i18n="pages.dealer_settings.open">開啟</option>
+                    <option value="false" data-i18n="pages.dealer_settings.close">關閉</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_settings.dealer_mode">分銷模式</label>
+                <select class="form-select" name="mode">
+                    <option value="manual" data-i18n="pages.dealer_settings.manual_review">手動審核</option>
+                    <option value="auto" data-i18n="pages.dealer_settings.auto_approve">自動通過</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_settings.settlement_cycle">佣金結算週期</label>
+                <select class="form-select" name="settlement_cycle">
+                    <option value="daily" data-i18n="pages.dealer_settings.daily">每日</option>
+                    <option value="weekly" data-i18n="pages.dealer_settings.weekly">每週</option>
+                    <option value="monthly" data-i18n="pages.dealer_settings.monthly">每月</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_settings.min_withdrawal">最低提現金額</label>
+                <input type="number" class="form-control" name="min_withdrawal_amount" step="0.01" min="0">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.dealer_settings.distribution_level">分銷層級</label>
+                <select class="form-select" name="max_level">
+                    <option value="1" data-i18n="pages.dealer_settings.level_1">一級</option>
+                    <option value="2" data-i18n="pages.dealer_settings.level_2">二級</option>
+                    <option value="3" data-i18n="pages.dealer_settings.level_3">三級</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                <i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const SETTING_KEY = 'dealer_setting';
+
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', '/settings?key=' + SETTING_KEY);
+        const data = res.data || res;
+        if (data && data.value) {
+            const settings = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+            populateForm('settingsForm', settings);
+        }
+    } catch(e) {}
+}
+
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', '/settings', { key: SETTING_KEY, value: data });
+        showToast(_t('pages.dealer_settings.settings_saved', '設置已儲存'), 'success');
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+{{end}}

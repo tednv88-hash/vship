@@ -1,0 +1,178 @@
+{{define "pages/orders_cod"}}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.orders_cod.title">貨到付款</h5>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="codTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="switchTab('overdue_users')" data-i18n="pages.orders_cod.overdue_users">欠費用戶</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="switchTab('unpaid_orders')" data-i18n="pages.orders_cod.unpaid_orders">未付訂單</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 欠費用戶 -->
+<div class="card" id="overdueUsersCard">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0" data-i18n="pages.orders_cod.cod_overdue_users">貨到付款欠費用戶</h6>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadOverdueUsers(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="userSearchInput" data-i18n-placeholder="pages.orders_cod.search_user" placeholder="搜尋用戶名稱/手機號...">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.users.username">用戶名</th>
+                    <th data-i18n="pages.users.phone">手機號</th>
+                    <th data-i18n="pages.orders_cod.debt_amount">欠費金額</th>
+                    <th data-i18n="pages.orders_cod.unpaid_order_count">未付訂單數</th>
+                    <th data-i18n="pages.orders_cod.last_order_time">最後下單時間</th>
+                    <th data-i18n="common.operations">操作</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="userPagination"></div>
+</div>
+
+<!-- 未付訂單 -->
+<div class="card d-none" id="unpaidOrdersCard">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0" data-i18n="pages.orders_cod.cod_unpaid_orders">貨到付款未付訂單</h6>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadUnpaidOrders(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="orderSearchInput" data-i18n-placeholder="pages.orders.search_order" placeholder="搜尋訂單編號...">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.orders.order_number">訂單編號</th>
+                    <th data-i18n="pages.orders.user">用戶</th>
+                    <th data-i18n="pages.orders.route">線路</th>
+                    <th data-i18n="pages.orders.package_count">包裹數</th>
+                    <th data-i18n="pages.orders.amount">金額</th>
+                    <th data-i18n="pages.order_sub.arrival_time">到貨時間</th>
+                    <th data-i18n="common.operations">操作</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                <tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="orderPagination"></div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentTab = 'overdue_users';
+let userPage = 1, orderPage = 1;
+const limit = 20;
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('#codTabs .nav-link').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    if (tab === 'overdue_users') {
+        document.getElementById('overdueUsersCard').classList.remove('d-none');
+        document.getElementById('unpaidOrdersCard').classList.add('d-none');
+        loadOverdueUsers(1);
+    } else {
+        document.getElementById('overdueUsersCard').classList.add('d-none');
+        document.getElementById('unpaidOrdersCard').classList.remove('d-none');
+        loadUnpaidOrders(1);
+    }
+}
+
+function loadOverdueUsers(page) {
+    userPage = page;
+    const search = document.getElementById('userSearchInput').value;
+    const params = buildQueryParams({ search, payment_type: 'cod', has_debt: true });
+    loadTableData('/users', 'userTableBody', renderUserRow, 'userPagination', page, limit, params);
+}
+
+function renderUserRow(item) {
+    return `<tr>
+        <td>${item.name || item.user_name || '--'}</td>
+        <td>${item.phone || '--'}</td>
+        <td class="text-danger fw-bold">${formatMoney(item.debt_amount || 0)}</td>
+        <td>${item.pending_orders || 0}</td>
+        <td>${formatDate(item.last_order_at || item.updated_at)}</td>
+        <td>
+            <button class="btn btn-sm btn-outline-primary" onclick="viewUserOrders('${item.id}')"><i class="fas fa-list"></i> ${_t('pages.orders_cod.view_orders', '查看訂單')}</button>
+            <button class="btn btn-sm btn-outline-warning" onclick="notifyUser('${item.id}')"><i class="fas fa-bell"></i> ${_t('pages.orders_cod.collect', '催款')}</button>
+        </td>
+    </tr>`;
+}
+
+function loadUnpaidOrders(page) {
+    orderPage = page;
+    const search = document.getElementById('orderSearchInput').value;
+    const params = buildQueryParams({ search, payment_type: 'cod', payment_status: 'unpaid' });
+    loadTableData('/orders', 'orderTableBody', renderOrderRow, 'orderPagination', page, limit, params);
+}
+
+function renderOrderRow(item) {
+    return `<tr>
+        <td><a href="/orders/${item.id}">${item.order_no || '--'}</a></td>
+        <td>${item.user_name || '--'}</td>
+        <td>${item.route_name || '--'}</td>
+        <td>${item.package_count || 0}</td>
+        <td class="text-danger fw-bold">${formatMoney(item.total_amount)}</td>
+        <td>${formatDate(item.delivered_at || item.updated_at)}</td>
+        <td>
+            <a href="/orders/${item.id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+            <button class="btn btn-sm btn-outline-success" onclick="confirmPayment('${item.id}')"><i class="fas fa-check"></i> ${_t('pages.orders_cod.confirm_receipt', '確認收款')}</button>
+        </td>
+    </tr>`;
+}
+
+function viewUserOrders(userId) {
+    switchTab('unpaid_orders');
+    document.getElementById('orderSearchInput').value = userId;
+    loadUnpaidOrders(1);
+}
+
+async function notifyUser(id) {
+    if (!confirm(_t('pages.order_sub.confirm_payment_reminder', '確定發送催款通知嗎？'))) return;
+    try {
+        await apiRequest('POST', '/notifications', { type: 'cod_payment_reminder', user_id: id });
+        showToast(_t('pages.order_sub.payment_reminder_sent', '催款通知已發送'), 'success');
+    } catch (e) {}
+}
+
+async function confirmPayment(id) {
+    if (!confirm(_t('pages.orders_cod.confirm_payment_received', '確定已收到此訂單的貨款嗎？'))) return;
+    try {
+        await apiRequest('PUT', '/orders/' + id + '/pay');
+        showToast(_t('pages.orders_cod.payment_confirmed', '已確認收款'), 'success');
+        loadUnpaidOrders(orderPage);
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadOverdueUsers(1));
+document.getElementById('userSearchInput').addEventListener('input', debounce(() => loadOverdueUsers(1)));
+document.getElementById('orderSearchInput').addEventListener('input', debounce(() => loadUnpaidOrders(1)));
+</script>
+{{end}}

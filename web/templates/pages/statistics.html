@@ -1,0 +1,239 @@
+{{define "pages/statistics"}}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<!-- Date Range Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label" data-i18n="pages.statistics.start_date">開始日期</label>
+                <input type="date" class="form-control" id="startDate">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-i18n="pages.statistics.end_date">結束日期</label>
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-i18n="pages.statistics.quick_select">快速選擇</label>
+                <select class="form-select" id="quickRange">
+                    <option value="7" data-i18n="pages.statistics.last_7_days">最近7天</option>
+                    <option value="30" selected data-i18n="pages.statistics.last_30_days">最近30天</option>
+                    <option value="90" data-i18n="pages.statistics.last_90_days">最近90天</option>
+                    <option value="365" data-i18n="pages.statistics.last_year">最近一年</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" onclick="loadStats()">
+                    <i class="fas fa-chart-bar me-1"></i><span data-i18n="pages.statistics.query">查詢</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="pages.statistics.period_orders">期間訂單</h6>
+                    <h3 class="stat-card-value" id="periodOrders">--</h3>
+                </div>
+                <div class="stat-card-icon bg-primary-light">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="pages.statistics.period_revenue">期間收入</h6>
+                    <h3 class="stat-card-value" id="periodRevenue">--</h3>
+                </div>
+                <div class="stat-card-icon bg-success-light">
+                    <i class="fas fa-dollar-sign text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="pages.statistics.period_packages">期間包裹</h6>
+                    <h3 class="stat-card-value" id="periodPackages">--</h3>
+                </div>
+                <div class="stat-card-icon bg-info-light">
+                    <i class="fas fa-box text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-card-body">
+                <div class="stat-card-info">
+                    <h6 class="stat-card-label" data-i18n="pages.statistics.period_users">期間用戶</h6>
+                    <h3 class="stat-card-value" id="periodUsers">--</h3>
+                </div>
+                <div class="stat-card-icon bg-warning-light">
+                    <i class="fas fa-user-plus text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.statistics.order_trend">訂單趨勢</h5>
+            </div>
+            <div class="card-body">
+                <div id="orderTrendChart" style="width:100%;height:350px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.statistics.route_distribution">線路分佈</h5>
+            </div>
+            <div class="card-body">
+                <div id="routePieChart" style="width:100%;height:350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.statistics.revenue_trend">收入趨勢</h5>
+            </div>
+            <div class="card-body">
+                <div id="revenueChart" style="width:100%;height:300px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0" data-i18n="pages.statistics.package_status_distribution">包裹狀態分佈</h5>
+            </div>
+            <div class="card-body">
+                <div id="statusChart" style="width:100%;height:300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let orderTrendChart, routePieChart, revenueChart, statusChart;
+
+document.addEventListener('DOMContentLoaded', function () {
+    orderTrendChart = echarts.init(document.getElementById('orderTrendChart'));
+    routePieChart = echarts.init(document.getElementById('routePieChart'));
+    revenueChart = echarts.init(document.getElementById('revenueChart'));
+    statusChart = echarts.init(document.getElementById('statusChart'));
+
+    // Set default dates
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - 30);
+    document.getElementById('startDate').value = start.toISOString().split('T')[0];
+    document.getElementById('endDate').value = end.toISOString().split('T')[0];
+
+    loadStats();
+    window.addEventListener('resize', () => {
+        orderTrendChart.resize();
+        routePieChart.resize();
+        revenueChart.resize();
+        statusChart.resize();
+    });
+});
+
+document.getElementById('quickRange').addEventListener('change', function () {
+    const days = parseInt(this.value);
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - days);
+    document.getElementById('startDate').value = start.toISOString().split('T')[0];
+    document.getElementById('endDate').value = end.toISOString().split('T')[0];
+});
+
+async function loadStats() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    try {
+        const data = await apiRequest('GET', `/statistics?start_date=${startDate}&end_date=${endDate}`);
+        const s = data.data || data;
+
+        document.getElementById('periodOrders').textContent = (s.period_orders || 0).toLocaleString();
+        document.getElementById('periodRevenue').textContent = formatMoney(s.period_revenue || 0);
+        document.getElementById('periodPackages').textContent = (s.period_packages || 0).toLocaleString();
+        document.getElementById('periodUsers').textContent = (s.period_users || 0).toLocaleString();
+
+        const legendOrders = _t('pages.statistics.legend_orders', '訂單');
+        const legendPackages = _t('pages.statistics.legend_packages', '包裹');
+
+        // Order trend
+        orderTrendChart.setOption({
+            tooltip: { trigger: 'axis' },
+            legend: { data: [legendOrders, legendPackages], bottom: 0 },
+            grid: { left: '3%', right: '4%', bottom: '15%', top: '5%', containLabel: true },
+            xAxis: { type: 'category', data: s.trend_dates || [] },
+            yAxis: { type: 'value' },
+            series: [
+                { name: legendOrders, type: 'line', smooth: true, areaStyle: { opacity: 0.1 }, lineStyle: { color: '#05ce78' }, itemStyle: { color: '#05ce78' }, data: s.trend_orders || [] },
+                { name: legendPackages, type: 'line', smooth: true, areaStyle: { opacity: 0.1 }, lineStyle: { color: '#3b82f6' }, itemStyle: { color: '#3b82f6' }, data: s.trend_packages || [] }
+            ]
+        });
+
+        // Route pie
+        routePieChart.setOption({
+            tooltip: { trigger: 'item' },
+            series: [{
+                type: 'pie', radius: ['40%', '70%'], avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+                label: { show: true, fontSize: 12 },
+                data: (s.route_distribution || []).map(r => ({ name: r.name, value: r.count }))
+            }]
+        });
+
+        // Revenue
+        revenueChart.setOption({
+            tooltip: { trigger: 'axis' },
+            grid: { left: '3%', right: '4%', bottom: '5%', top: '5%', containLabel: true },
+            xAxis: { type: 'category', data: s.trend_dates || [] },
+            yAxis: { type: 'value' },
+            series: [{
+                type: 'bar', barWidth: '60%',
+                itemStyle: { color: '#05ce78', borderRadius: [4, 4, 0, 0] },
+                data: s.trend_revenue || []
+            }]
+        });
+
+        // Status
+        statusChart.setOption({
+            tooltip: { trigger: 'item' },
+            series: [{
+                type: 'pie', radius: '65%',
+                itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+                label: { show: true, fontSize: 12 },
+                data: (s.status_distribution || []).map(st => ({ name: st.label, value: st.count }))
+            }]
+        });
+    } catch (e) {
+        console.error('Failed to load statistics:', e);
+    }
+}
+</script>
+{{end}}

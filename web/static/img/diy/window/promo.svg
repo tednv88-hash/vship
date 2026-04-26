@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" width="750" height="320">
+  <!-- 新用戶專享 New User Promo Banner -->
+  <defs>
+    <linearGradient id="promoBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#f7931e"/>
+    </linearGradient>
+    <linearGradient id="promoAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fff200"/>
+      <stop offset="100%" style="stop-color:#ffd700"/>
+    </linearGradient>
+  </defs>
+  <rect width="750" height="320" rx="12" fill="url(#promoBg)"/>
+  <!-- Decorative circles -->
+  <circle cx="680" cy="60" r="80" fill="#fff" opacity="0.08"/>
+  <circle cx="700" cy="280" r="60" fill="#fff" opacity="0.06"/>
+  <circle cx="50" cy="280" r="40" fill="#fff" opacity="0.05"/>
+  <!-- Main text -->
+  <text x="60" y="90" font-family="Arial,sans-serif" font-size="48" font-weight="bold" fill="#fff">新用戶專享</text>
+  <text x="60" y="140" font-family="Arial,sans-serif" font-size="28" fill="#fff" opacity="0.9">首單集運免運費</text>
+  <!-- Discount badge -->
+  <rect x="60" y="160" width="200" height="70" rx="10" fill="url(#promoAccent)"/>
+  <text x="160" y="195" text-anchor="middle" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="#d4380d">首單立減</text>
+  <text x="160" y="222" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#d4380d">¥50</text>
+  <!-- CTA button -->
+  <rect x="60" y="250" width="180" height="45" rx="22" fill="#fff"/>
+  <text x="150" y="278" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#ff6b35">立即領取 →</text>
+  <!-- Right side illustration: gift box -->
+  <rect x="480" y="80" width="160" height="140" rx="10" fill="#fff" opacity="0.2"/>
+  <rect x="480" y="80" width="160" height="35" rx="10" fill="#fff" opacity="0.3"/>
+  <rect x="548" y="60" width="24" height="30" rx="4" fill="#fff" opacity="0.3"/>
+  <line x1="560" y1="115" x2="560" y2="220" stroke="#fff" stroke-width="3" opacity="0.3"/>
+  <!-- Stars decoration -->
+  <text x="440" y="100" font-size="24" fill="#fff" opacity="0.4">★</text>
+  <text x="660" y="250" font-size="18" fill="#fff" opacity="0.3">★</text>
+  <text x="400" y="260" font-size="14" fill="#fff" opacity="0.3">★</text>
+</svg>

@@ -1,0 +1,116 @@
+{{define "pages/client_page_category"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.client_page_category.title">分類模板</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingForm">
+            <div class="mb-4">
+                <label class="form-label fw-bold" data-i18n="pages.client_page_category.category_page_style">分類頁樣式</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="category_style" id="style10" value="10" onchange="updatePreview()">
+                            <label class="form-check-label" for="style10" data-i18n="pages.client_page_category.level1_large">一級分類（大圖模式）</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="category_style" id="style11" value="11" onchange="updatePreview()">
+                            <label class="form-check-label" for="style11" data-i18n="pages.client_page_category.level1_small">一級分類（小圖模式）</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="category_style" id="style20" value="20" checked onchange="updatePreview()">
+                            <label class="form-check-label" for="style20" data-i18n="pages.client_page_category.level2">二級分類</label>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="border rounded p-3 bg-light text-center" id="previewArea">
+                            <div id="previewContent" style="min-height: 200px;">
+                                <i class="fas fa-th-large fa-3x text-muted mb-2"></i>
+                                <p class="text-muted" id="previewText" data-i18n="pages.client_page_category.level2_mode">二級分類模式</p>
+                                <small class="text-muted" id="previewDesc" data-i18n="pages.client_page_category.level2_desc">左側分類導航 + 右側商品列表</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="mb-3">
+                <label class="form-label fw-bold" data-i18n="pages.client_page_category.share_title">分享標題</label>
+                <input type="text" class="form-control" name="share_title" data-i18n-placeholder="pages.client_page_category.share_title_desc" placeholder="分享頁面時顯示的標題">
+                <small class="text-muted" data-i18n="pages.client_page_category.share_title_hint">用戶分享分類頁面時在微信中顯示的標題文字。</small>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="saveSetting()">
+                <i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const API_PATH = '/page-categories';
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function updatePreview() {
+    const style = document.querySelector('input[name="category_style"]:checked');
+    const previewText = document.getElementById('previewText');
+    const previewDesc = document.getElementById('previewDesc');
+    if (!style) return;
+    const descriptions = {
+        '10': {
+            text: _t('pages.client_page_category.level1_large', '一級分類（大圖模式）'),
+            desc: _t('pages.client_page_category.large_desc', '大圖展示每個分類，適合分類較少的場景'),
+            i18nText: 'pages.client_page_category.level1_large',
+            i18nDesc: 'pages.client_page_category.large_desc'
+        },
+        '11': {
+            text: _t('pages.client_page_category.level1_small', '一級分類（小圖模式）'),
+            desc: _t('pages.client_page_category.small_desc', '小圖標+文字，適合分類較多的場景'),
+            i18nText: 'pages.client_page_category.level1_small',
+            i18nDesc: 'pages.client_page_category.small_desc'
+        },
+        '20': {
+            text: _t('pages.client_page_category.level2_mode', '二級分類模式'),
+            desc: _t('pages.client_page_category.level2_desc', '左側分類導航 + 右側商品列表'),
+            i18nText: 'pages.client_page_category.level2_mode',
+            i18nDesc: 'pages.client_page_category.level2_desc'
+        }
+    };
+    const info = descriptions[style.value] || descriptions['20'];
+    previewText.textContent = info.text;
+    previewText.setAttribute('data-i18n', info.i18nText);
+    previewDesc.textContent = info.desc;
+    previewDesc.setAttribute('data-i18n', info.i18nDesc);
+}
+
+async function loadSetting() {
+    try {
+        const res = await apiRequest('GET', API_PATH);
+        const data = res.data || res;
+        if (data && typeof data === 'object') {
+            if (data.category_style) {
+                const radio = document.getElementById('style' + data.category_style);
+                if (radio) radio.checked = true;
+            }
+            if (data.share_title) {
+                document.querySelector('[name="share_title"]').value = data.share_title;
+            }
+            updatePreview();
+        }
+    } catch (e) {}
+}
+
+async function saveSetting() {
+    const style = document.querySelector('input[name="category_style"]:checked');
+    const data = {
+        category_style: style ? style.value : '20',
+        share_title: document.querySelector('[name="share_title"]').value || ''
+    };
+    try {
+        await apiRequest('POST', API_PATH, data);
+        showToast(_t('common.save_success', '儲存成功'), 'success');
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => loadSetting());
+</script>
+{{end}}

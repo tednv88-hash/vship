@@ -1,0 +1,384 @@
+{{define "pages/shipping_routes"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.shipping_routes.title">線路管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span>
+        </button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.shipping_routes.search_route" placeholder="搜尋線路名稱...">
+        </div>
+        <select class="form-select" id="filterStatus" style="max-width:150px;">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="common.status_active">啟用</option>
+            <option value="inactive" data-i18n="common.status_inactive">停用</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="pages.shipping_routes.route_name">線路名稱</th>
+                    <th data-i18n="pages.shipping_routes.route_code">線路代碼</th>
+                    <th data-i18n="pages.shipping_routes.category">分類</th>
+                    <th data-i18n="pages.shipping_routes.origin">始發國</th>
+                    <th data-i18n="pages.shipping_routes.destination">目的國</th>
+                    <th data-i18n="pages.shipping_routes.first_weight_price">首重價格</th>
+                    <th data-i18n="pages.shipping_routes.additional_weight_price">續重價格</th>
+                    <th data-i18n="pages.shipping_routes.transit_time">時效 (天)</th>
+                    <th data-i18n="common.status">狀態</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="10" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<!-- Route Form Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.shipping_routes.add_route">新增線路</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id" id="itemId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.route_name">線路名稱 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.route_code">線路代碼 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="code" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.category">分類</label>
+                            <select class="form-select" name="category_id" id="categorySelect">
+                                <option value="" data-i18n="common.please_select">請選擇</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.origin">始發國</label>
+                            <select class="form-select" name="origin_country_id" id="originCountrySelect">
+                                <option value="" data-i18n="common.please_select">請選擇</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.destination">目的國</label>
+                            <select class="form-select" name="destination_country_id" id="destCountrySelect">
+                                <option value="" data-i18n="common.please_select">請選擇</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.first_weight">首重 (kg)</label>
+                            <input type="number" class="form-control" name="first_weight" step="0.01" data-type="number">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="pages.shipping_routes.first_weight_price">首重價格</label>
+                            <input type="number" class="form-control" name="first_weight_price" step="0.01" data-type="number">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="pages.shipping_routes.additional_price_per_kg">續重價格 (/kg)</label>
+                            <input type="number" class="form-control" name="additional_weight_price" step="0.01" data-type="number">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="pages.shipping_routes.estimated_transit">預計時效 (天)</label>
+                            <input type="number" class="form-control" name="estimated_days" data-type="number">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="pages.shipping_routes.max_weight">最大重量 (kg)</label>
+                            <input type="number" class="form-control" name="max_weight" step="0.01" data-type="number">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="common.status">狀態</label>
+                            <select class="form-select" name="status">
+                                <option value="active" data-i18n="common.status_active">啟用</option>
+                                <option value="inactive" data-i18n="common.status_inactive">停用</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" data-i18n="common.description">描述</label>
+                            <textarea class="form-control" name="description" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pricing Tiers Modal -->
+<div class="modal fade" id="pricingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-money-bill-wave me-2"></i><span data-i18n="pages.shipping_routes.pricing">定價設定</span> - <span id="pricingRouteName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <small class="text-muted" data-i18n="pages.shipping_routes.pricing_description">設定不同重量區間的價格</small>
+                    <button class="btn btn-primary btn-sm" onclick="openAddTierForm()">
+                        <i class="fas fa-plus me-1"></i><span data-i18n="pages.shipping_routes.add_pricing">新增定價</span>
+                    </button>
+                </div>
+                <!-- Add/Edit Tier Form -->
+                <div id="tierFormArea" class="card mb-3" style="display:none;">
+                    <div class="card-body">
+                        <form id="tierForm">
+                            <input type="hidden" name="tier_id" id="tierId">
+                            <div class="row g-2">
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.shipping_routes.min_weight">最小重量 (kg)</label>
+                                    <input type="number" class="form-control form-control-sm" name="weight_min" step="0.01" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.shipping_routes.max_weight">最大重量 (kg)</label>
+                                    <input type="number" class="form-control form-control-sm" name="weight_max" step="0.01" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.shipping_routes.first_weight_price">首重價格</label>
+                                    <input type="number" class="form-control form-control-sm" name="first_weight_price" step="0.01" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.shipping_routes.additional_weight_price">續重價格</label>
+                                    <input type="number" class="form-control form-control-sm" name="additional_weight_price" step="0.01" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" data-i18n="pages.shipping_routes.unit_price">單價</label>
+                                    <input type="number" class="form-control form-control-sm" name="unit_price" step="0.01" value="0" data-type="number">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-1">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveTier()" data-i18n="common.save">儲存</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelTierForm()" data-i18n="common.cancel">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th data-i18n="pages.shipping_routes.min_weight">最小重量 (kg)</th>
+                                <th data-i18n="pages.shipping_routes.max_weight">最大重量 (kg)</th>
+                                <th data-i18n="pages.shipping_routes.first_weight_price">首重價格</th>
+                                <th data-i18n="pages.shipping_routes.additional_weight_price">續重價格</th>
+                                <th data-i18n="pages.shipping_routes.unit_price_per_kg">單價 (/kg)</th>
+                                <th data-i18n="common.actions">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tierTableBody">
+                            <tr><td colspan="6" class="text-center py-3 text-muted" data-i18n="common.loading">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+const limit = 20;
+let editingId = null;
+let currentRouteId = null;
+let editingTierId = null;
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+function loadData(page) {
+    currentPage = page;
+    const search = document.getElementById('searchInput').value;
+    const status = document.getElementById('filterStatus').value;
+    const params = buildQueryParams({ search, status });
+    loadTableData('/shipping-routes', 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+
+function renderRow(item) {
+    return `<tr>
+        <td>${item.name || '--'}</td>
+        <td>${item.code || '--'}</td>
+        <td>${item.category_name || '--'}</td>
+        <td>${item.origin_country_name || '--'}</td>
+        <td>${item.destination_country_name || '--'}</td>
+        <td>${formatMoney(item.first_weight_price)}</td>
+        <td>${formatMoney(item.additional_weight_price)}</td>
+        <td>${item.estimated_days || '--'}</td>
+        <td>${getStatusBadge(item.status)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-info" onclick="openPricingModal('${item.id}', '${(item.name||'').replace(/'/g, "\\'")}')" title="${_t('pages.shipping_routes.pricing', '定價設定')}"><i class="fas fa-money-bill-wave"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.shipping_routes.add_route', '新增線路');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.shipping_routes.add_route');
+    resetForm('itemForm');
+    openModal('formModal');
+}
+
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.shipping_routes.edit_route', '編輯線路');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.shipping_routes.edit_route');
+    try {
+        const res = await apiRequest('GET', '/shipping-routes/' + id);
+        populateForm('itemForm', res.data || res);
+        openModal('formModal');
+    } catch (e) {}
+}
+
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if (editingId) {
+            await apiRequest('PUT', '/shipping-routes/' + editingId, data);
+            showToast(_t('common.update_success', '更新成功'), 'success');
+        } else {
+            await apiRequest('POST', '/shipping-routes', data);
+            showToast(_t('common.create_success', '建立成功'), 'success');
+        }
+        closeModal('formModal');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+async function deleteItem(id) {
+    if (!confirmDelete(_t('pages.shipping_routes.confirm_delete', '確定要刪除此線路嗎？'))) return;
+    try {
+        await apiRequest('DELETE', '/shipping-routes/' + id);
+        showToast(_t('common.delete_success', '刪除成功'), 'success');
+        loadData(currentPage);
+    } catch (e) {}
+}
+
+// ===== Pricing Tiers Management =====
+function openPricingModal(routeId, routeName) {
+    currentRouteId = routeId;
+    document.getElementById('pricingRouteName').textContent = routeName;
+    cancelTierForm();
+    loadTiers();
+    openModal('pricingModal');
+}
+
+async function loadTiers() {
+    try {
+        const res = await apiRequest('GET', '/shipping-routes/' + currentRouteId + '/pricing');
+        const tiers = res.data || [];
+        const tbody = document.getElementById('tierTableBody');
+        if (tiers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">${_t('pages.shipping_routes.no_pricing', '尚無定價')}</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = tiers.map(t => `<tr>
+            <td>${t.weight_min || 0}</td>
+            <td>${t.weight_max || _t('pages.shipping_routes.unlimited', '不限')}</td>
+            <td>${formatMoney(t.first_weight_price)}</td>
+            <td>${formatMoney(t.additional_weight_price)}</td>
+            <td>${formatMoney(t.unit_price)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editTier('${t.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTier('${t.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>`).join('');
+    } catch (e) {
+        document.getElementById('tierTableBody').innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">${_t('common.load_failed', '載入失敗')}</td></tr>`;
+    }
+}
+
+function openAddTierForm() {
+    editingTierId = null;
+    resetForm('tierForm');
+    document.getElementById('tierFormArea').style.display = 'block';
+}
+
+function cancelTierForm() {
+    document.getElementById('tierFormArea').style.display = 'none';
+    resetForm('tierForm');
+    editingTierId = null;
+}
+
+async function editTier(id) {
+    editingTierId = id;
+    try {
+        const res = await apiRequest('GET', '/shipping-routes/' + currentRouteId + '/pricing');
+        const tier = (res.data || []).find(t => t.id === id);
+        if (tier) {
+            populateForm('tierForm', tier);
+            document.getElementById('tierFormArea').style.display = 'block';
+        }
+    } catch (e) {}
+}
+
+async function saveTier() {
+    const data = getFormData('tierForm');
+    delete data.tier_id;
+    try {
+        if (editingTierId) {
+            await apiRequest('PUT', '/pricing-tiers/' + editingTierId, data);
+            showToast(_t('pages.shipping_routes.pricing_updated', '定價更新成功'), 'success');
+        } else {
+            await apiRequest('POST', '/shipping-routes/' + currentRouteId + '/pricing', data);
+            showToast(_t('pages.shipping_routes.pricing_created', '定價建立成功'), 'success');
+        }
+        cancelTierForm();
+        loadTiers();
+    } catch (e) {}
+}
+
+async function deleteTier(id) {
+    if (!confirmDelete(_t('pages.shipping_routes.confirm_delete_pricing', '確定要刪除此定價嗎？'))) return;
+    try {
+        await apiRequest('DELETE', '/pricing-tiers/' + id);
+        showToast(_t('pages.shipping_routes.pricing_deleted', '定價刪除成功'), 'success');
+        loadTiers();
+    } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    loadData(1);
+    try {
+        const cats = await apiRequest('GET', '/route-categories?limit=100');
+        const sel = document.getElementById('categorySelect');
+        (cats.data || cats || []).forEach(c => {
+            sel.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+        });
+    } catch (e) {}
+    try {
+        const countries = await apiRequest('GET', '/countries?limit=200');
+        (countries.data || countries || []).forEach(c => {
+            const opt = `<option value="${c.id}">${c.name_zh || c.name}</option>`;
+            document.getElementById('originCountrySelect').insertAdjacentHTML('beforeend', opt);
+            document.getElementById('destCountrySelect').insertAdjacentHTML('beforeend', opt);
+        });
+    } catch (e) {}
+});
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+document.getElementById('filterStatus').addEventListener('change', () => loadData(1));
+</script>
+{{end}}

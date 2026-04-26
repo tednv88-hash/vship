@@ -1,0 +1,98 @@
+{{define "pages/goods"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.goods.title">商品列表</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="filter-bar">
+        <div class="search-input-group"><i class="fas fa-search search-icon"></i><input type="text" class="form-control" id="searchInput" data-i18n-placeholder="pages.goods.search_product" placeholder="搜尋商品名稱..."></div>
+        <select class="form-select form-select-sm" id="categoryFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.filter_all_category">全部分類</option>
+        </select>
+        <select class="form-select form-select-sm" id="statusFilter" style="width:auto;" onchange="loadData(1)">
+            <option value="" data-i18n="common.filter_all_status">全部狀態</option>
+            <option value="active" data-i18n="pages.goods.status_on_shelf">上架</option>
+            <option value="inactive" data-i18n="pages.goods.status_off_shelf">下架</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" onclick="loadData(1)"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead><tr><th data-i18n="pages.goods.product_image">商品圖片</th><th data-i18n="pages.goods.product_name">商品名稱</th><th data-i18n="pages.goods.price">價格</th><th data-i18n="pages.goods.stock">庫存</th><th data-i18n="pages.goods.sales">銷量</th><th data-i18n="common.status">狀態</th><th data-i18n="common.actions">操作</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="7" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+<div class="modal fade" id="formModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.goods.add_product">新增商品</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><form id="itemForm"><input type="hidden" name="id">
+        <div class="mb-3"><label class="form-label" data-i18n="pages.goods.product_name">商品名稱 <span class="text-danger">*</span></label><input type="text" class="form-control" name="name" required></div>
+        <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.goods.product_category">分類</label><select class="form-select" name="category_id" id="modalCategorySelect"><option value="" data-i18n="pages.goods.select_category">請選擇分類</option></select></div>
+            <div class="col-md-6 mb-3"><label class="form-label" data-i18n="pages.goods.unit">單位</label><input type="text" class="form-control" name="unit" data-i18n-placeholder="pages.goods.unit_placeholder" placeholder="如: 件、個、盒"></div>
+        </div>
+        <div class="mb-3"><label class="form-label" data-i18n="common.description">描述</label><textarea class="form-control" name="description" rows="3"></textarea></div>
+        <div class="mb-3"><label class="form-label" data-i18n="pages.goods.image_url">商品圖片 URL</label><input type="text" class="form-control" name="image_url" placeholder="https://..."></div>
+        <div class="row">
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="pages.goods.price">價格 <span class="text-danger">*</span></label><input type="number" class="form-control" name="price" step="0.01" data-type="number" required></div>
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="pages.goods.original_price">原價</label><input type="number" class="form-control" name="original_price" step="0.01" data-type="number"></div>
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="pages.goods.stock">庫存 <span class="text-danger">*</span></label><input type="number" class="form-control" name="stock" data-type="number" required></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="pages.goods.weight_kg">重量 (kg)</label><input type="number" class="form-control" name="weight" step="0.01" data-type="number"></div>
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="common.sort">排序</label><input type="number" class="form-control" name="sort_order" data-type="number" value="0"></div>
+            <div class="col-md-4 mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" name="status"><option value="active" data-i18n="pages.goods.status_on_shelf">上架</option><option value="inactive" data-i18n="pages.goods.status_off_shelf">下架</option></select></div>
+        </div>
+    </form></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
+</div></div></div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+let currentPage = 1; const limit = 20; let editingId = null; const API_PATH = '/goods';
+function loadData(page) {
+    currentPage = page;
+    const params = buildQueryParams({ search: document.getElementById('searchInput').value, category_id: document.getElementById('categoryFilter').value, status: document.getElementById('statusFilter').value });
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, params);
+}
+function renderRow(item) {
+    const img = item.image_url ? `<img src="${item.image_url}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">` : '<span class="text-muted">--</span>';
+    return `<tr><td>${img}</td><td>${item.name||'--'}</td><td>${formatMoney(item.price)}</td><td>${item.stock||0}</td><td>${item.sales||0}</td><td>${getStatusBadge(item.status)}</td><td><div class="action-buttons"><button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+}
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = _t('pages.goods.add_product', '新增商品');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.goods.add_product');
+    resetForm('itemForm'); openModal('formModal');
+}
+async function editItem(id) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = _t('pages.goods.edit_product', '編輯商品');
+    document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.goods.edit_product');
+    try { const res = await apiRequest('GET', API_PATH+'/'+id); populateForm('itemForm', res.data||res); openModal('formModal'); } catch(e){}
+}
+async function saveItem() {
+    const data = getFormData('itemForm');
+    try {
+        if(editingId){await apiRequest('PUT',API_PATH+'/'+editingId,data);showToast(_t('common.update_success','更新成功'));}
+        else{await apiRequest('POST',API_PATH,data);showToast(_t('common.create_success','建立成功'));}
+        closeModal('formModal'); loadData(currentPage);
+    } catch(e){}
+}
+async function deleteItem(id) {
+    if(!confirmDelete(_t('pages.goods.confirm_delete','確定要刪除此商品嗎？')))return;
+    try{await apiRequest('DELETE',API_PATH+'/'+id);showToast(_t('common.delete_success','刪除成功'));loadData(currentPage);}catch(e){}
+}
+async function loadCategories() {
+    try {
+        const res = await apiRequest('GET', '/goods-categories?limit=100');
+        const items = res.data || res || [];
+        const opts = items.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        document.getElementById('categoryFilter').insertAdjacentHTML('beforeend', opts);
+        document.getElementById('modalCategorySelect').insertAdjacentHTML('beforeend', opts);
+    } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', () => { loadCategories(); loadData(1); });
+document.getElementById('searchInput').addEventListener('input', debounce(() => loadData(1)));
+</script>
+{{end}}

@@ -1,0 +1,70 @@
+{{define "pages/points_settings"}}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" data-i18n="pages.points_settings.title">積分設置</h5>
+    </div>
+    <div class="card-body">
+        <form id="settingsForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.points_name">積分名稱</label>
+                    <input type="text" class="form-control" name="points_name" data-i18n-placeholder="pages.points_settings.points_name_placeholder" placeholder="如: 積分">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.points_ratio">積分比例（多少積分 = 1 元）</label>
+                    <input type="number" class="form-control" name="points_rate" data-type="number" data-i18n-placeholder="pages.points_settings.points_ratio_placeholder" placeholder="如: 100">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.earn_per_yuan">消費獲取積分（每消費 1 元獲得）</label>
+                    <input type="number" class="form-control" name="earn_per_yuan" data-type="number" data-i18n-placeholder="pages.points_settings.earn_per_yuan_placeholder" placeholder="如: 1">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.check_in_points">簽到積分</label>
+                    <input type="number" class="form-control" name="sign_in_points" data-type="number" data-i18n-placeholder="pages.points_settings.check_in_placeholder" placeholder="每日簽到獲得積分">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.register_bonus">註冊贈送積分</label>
+                    <input type="number" class="form-control" name="register_points" data-type="number" data-i18n-placeholder="pages.points_settings.register_bonus_placeholder" placeholder="新用戶註冊贈送">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" data-i18n="pages.points_settings.deduction_limit">積分抵扣上限（%）</label>
+                    <input type="number" class="form-control" name="max_deduct_percent" data-type="number" data-i18n-placeholder="pages.points_settings.deduction_limit_placeholder" placeholder="如: 50 表示最多抵扣 50%">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-i18n="pages.points_settings.enable_points">是否啟用積分功能</label>
+                <select class="form-select" name="enabled">
+                    <option value="true" data-i18n="common.status_active">啟用</option>
+                    <option value="false" data-i18n="common.status_inactive">停用</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer text-end">
+        <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save me-1"></i><span data-i18n="common.save_settings">儲存設置</span></button>
+    </div>
+</div>
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+const API_PATH = '/points/setting';
+async function loadSettings() {
+    try {
+        const res = await apiRequest('GET', API_PATH);
+        const data = res.data || res;
+        populateForm('settingsForm', data);
+    } catch(e){}
+}
+async function saveSettings() {
+    const data = getFormData('settingsForm');
+    try {
+        await apiRequest('PUT', API_PATH, data);
+        showToast(_t('pages.points_settings.save_success', '儲存成功'));
+    } catch(e){}
+}
+document.addEventListener('DOMContentLoaded', loadSettings);
+</script>
+{{end}}

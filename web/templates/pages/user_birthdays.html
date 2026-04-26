@@ -1,0 +1,114 @@
+{{define "pages/user_birthdays"}}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0" data-i18n="pages.user_birthdays.title">生日管理</h5>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()"><i class="fas fa-plus me-1"></i><span data-i18n="common.add">新增</span></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-i18n="common.user">用戶</th>
+                    <th data-i18n="pages.user_birthdays.birthday">生日</th>
+                    <th data-i18n="pages.user_birthdays.lunar_birthday">農曆生日</th>
+                    <th data-i18n="pages.user_birthdays.send_coupon">發送優惠券</th>
+                    <th data-i18n="pages.user_birthdays.send_points">發送積分</th>
+                    <th data-i18n="common.actions">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="6" class="text-center py-4 text-muted" data-i18n="common.loading">載入中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pagination"></div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle" data-i18n="pages.user_birthdays.add_record">新增生日記錄</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.package_unclaimed.user_id_label">用戶ID <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="user_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.user_birthdays.birthday">生日</label>
+                        <input type="date" class="form-control" name="birthday">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="pages.user_birthdays.lunar_birthday">農曆生日</label>
+                        <input type="text" class="form-control" name="lunar_birthday" data-i18n-placeholder="pages.user_birthdays.lunar_example" placeholder="例: 正月十五">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="send_coupon" id="sendCoupon" value="true">
+                        <label class="form-check-label" for="sendCoupon" data-i18n="pages.user_birthdays.send_coupon_label">生日發送優惠券</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="send_points" id="sendPoints" value="true">
+                        <label class="form-check-label" for="sendPoints" data-i18n="pages.user_birthdays.send_points_label">生日發送積分</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
+
+let currentPage = 1; const limit = 20; let editingId = null;
+const API_PATH = '/user-birthdays';
+
+function loadData(page) {
+    currentPage = page;
+    loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit);
+}
+function renderRow(item) {
+    const couponBadge = item.send_coupon ? `<span class="badge bg-success">${_t('common.yes', '是')}</span>` : `<span class="badge bg-secondary">${_t('common.no', '否')}</span>`;
+    const pointsBadge = item.send_points ? `<span class="badge bg-success">${_t('common.yes', '是')}</span>` : `<span class="badge bg-secondary">${_t('common.no', '否')}</span>`;
+    return `<tr>
+        <td>${item.user_name || item.user_id || '--'}</td>
+        <td>${item.birthday || '--'}</td>
+        <td>${item.lunar_birthday || '--'}</td>
+        <td>${couponBadge}</td>
+        <td>${pointsBadge}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </td>
+    </tr>`;
+}
+function openCreateModal() { editingId = null; document.getElementById('modalTitle').textContent = _t('pages.user_birthdays.add_record', '新增生日記錄'); resetForm('itemForm'); openModal('formModal'); }
+async function editItem(id) {
+    editingId = id; document.getElementById('modalTitle').textContent = _t('pages.user_birthdays.edit_record', '編輯生日記錄');
+    try {
+        const res = await apiRequest('GET', API_PATH + '/' + id); const data = res.data || res;
+        populateForm('itemForm', data);
+        document.getElementById('sendCoupon').checked = !!data.send_coupon;
+        document.getElementById('sendPoints').checked = !!data.send_points;
+        openModal('formModal');
+    } catch (e) {}
+}
+async function saveItem() {
+    const data = getFormData('itemForm');
+    data.send_coupon = document.getElementById('sendCoupon').checked;
+    data.send_points = document.getElementById('sendPoints').checked;
+    try { if (editingId) { await apiRequest('PUT', API_PATH + '/' + editingId, data); showToast(_t('common.update_success', '更新成功')); } else { await apiRequest('POST', API_PATH, data); showToast(_t('common.create_success', '建立成功')); } closeModal('formModal'); loadData(currentPage); } catch (e) {}
+}
+async function deleteItem(id) { if (!confirmDelete()) return; try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功')); loadData(currentPage); } catch (e) {} }
+document.addEventListener('DOMContentLoaded', () => loadData(1));
+</script>
+{{end}}
