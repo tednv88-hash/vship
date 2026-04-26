@@ -26,3 +26,6 @@ scripts/.automation-output/
 
 # Logs
 *.log
+
+.env.deploy
+
