@@ -2,8 +2,8 @@
   <view class="login-page">
     <!-- Logo -->
     <view class="logo-section">
-      <image class="logo" src="/static/logo.png" mode="aspectFit" />
-      <text class="brand-name">vShip</text>
+      <image class="logo" src="/static/logo.svg" mode="aspectFit" />
+      <text class="brand-name">国韵好运</text>
     </view>
 
     <!-- Form -->
@@ -30,7 +30,7 @@
             class="input"
           />
         </view>
-        <view v-if="!isLogin" class="input-item">
+        <view v-if="!isLogin && SHOW_SMS_CODE" class="input-item">
           <text class="input-icon">&#xe61a;</text>
           <input
             v-model="form.code"
@@ -92,10 +92,13 @@
 import { ref, reactive } from 'vue'
 import { t } from '@/locale'
 import { userApi } from '@/api/user'
+import { setUser } from '@/store'
 
 const isLogin = ref(true)
 const loading = ref(false)
 const countdown = ref(0)
+// Toggle: SMS code temporarily disabled (provider not configured)
+const SHOW_SMS_CODE = false
 let timer: ReturnType<typeof setInterval> | null = null
 
 const form = reactive({
@@ -146,16 +149,23 @@ async function handleSubmit() {
   try {
     if (isLogin.value) {
       const res = await userApi.login({ phone: form.phone, password: form.password })
-      const data = res as any
-      if (data?.token) {
-        uni.setStorageSync('token', data.token)
+      const payload = (res as any)?.data || res
+      const token = payload?.token
+      if (token) {
+        uni.setStorageSync('token', token)
+        if (payload.user) {
+          uni.setStorageSync('userInfo', payload.user)
+          setUser(payload.user as any)
+        }
+      } else {
+        throw new Error('登入回應冇 token')
       }
       uni.showToast({ title: '登入成功', icon: 'success' })
       setTimeout(() => {
         uni.switchTab({ url: '/pages/index/index' })
       }, 1000)
     } else {
-      if (!form.code) {
+      if (SHOW_SMS_CODE && !form.code) {
         uni.showToast({ title: t('login.codePlaceholder'), icon: 'none' })
         loading.value = false
         return
@@ -163,13 +173,14 @@ async function handleSubmit() {
       await userApi.register({
         phone: form.phone,
         password: form.password,
-        code: form.code,
+        code: form.code || '000000',
       })
       uni.showToast({ title: '註冊成功', icon: 'success' })
       isLogin.value = true
     }
-  } catch {
-    uni.showToast({ title: isLogin.value ? '登入失敗' : '註冊失敗', icon: 'none' })
+  } catch (e: any) {
+    const msg = e?.message || e?.data?.error || (isLogin.value ? '登入失敗' : '註冊失敗')
+    uni.showToast({ title: String(msg).slice(0, 30), icon: 'none' })
   } finally {
     loading.value = false
   }
@@ -182,9 +193,14 @@ async function handleWechatLogin() {
       uni.showToast({ title: '微信授權失敗', icon: 'none' })
       return
     }
-    const data = (await userApi.wechatLogin({ code: res.code })) as any
+    const resp = (await userApi.wechatLogin({ code: res.code })) as any
+    const data = resp?.data || resp
     if (data?.token) {
       uni.setStorageSync('token', data.token)
+      if (data.user) {
+        uni.setStorageSync('userInfo', data.user)
+        setUser(data.user as any)
+      }
       if (data.needBindPhone) {
         uni.navigateTo({ url: '/pages/login/bindPhone' })
       } else {

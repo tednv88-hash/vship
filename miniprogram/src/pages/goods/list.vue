@@ -33,7 +33,7 @@
         class="goods-card"
         @click="goDetail(item.id)"
       >
-        <image class="goods-img" :src="item.image" mode="aspectFill" lazy-load />
+        <image class="goods-img" :src="item.image || item.image_url || (item.images && item.images[0]) || 'https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto'" mode="aspectFill" lazy-load />
         <view class="goods-info">
           <text class="goods-name">{{ item.name }}</text>
           <view class="goods-bottom">

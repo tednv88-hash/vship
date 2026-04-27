@@ -23,6 +23,10 @@ export const orderApi = {
 
   /** Get shop order detail */
   getShopOrderDetail: (id: string) => http.get(`/shop-orders/${id}`),
+
+  /** Checkout cart -> create shop order */
+  checkoutCart: (data: { cart_ids: string[]; address_id: string; remark?: string; pay_method?: string }) =>
+    http.post('/shop-orders/checkout', data),
 }
 
 export default orderApi

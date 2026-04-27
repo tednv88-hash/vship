@@ -28,12 +28,12 @@ export const commonApi = {
 
   /** Coupons */
   getCoupons: (params?: any) => http.get('/coupons', params),
-  getMyCoupons: (params?: any) => http.get('/user/coupons', params),
+  getMyCoupons: (params?: any) => http.get('/coupons/mine', params),
   claimCoupon: (id: string) => http.post(`/coupons/${id}/claim`),
 
   /** Help articles */
-  getHelpList: (params?: any) => http.get('/help-articles', params),
-  getHelpDetail: (id: string) => http.get(`/help-articles/${id}`),
+  getHelpList: (params?: any) => http.get('/help', params),
+  getHelpDetail: (id: string) => http.get(`/help/${id}`),
 
   /** Articles */
   getArticles: (params?: any) => http.get('/articles', params),
@@ -52,7 +52,7 @@ export const commonApi = {
   getRouteDetail: (id: string) => http.get(`/routes/${id}`),
 
   /** Estimate / calculator */
-  calculateEstimate: (data: any) => http.post('/estimate', data),
+  calculateEstimate: (data: any) => http.post('/routes/estimate', data),
 
   /** Messages */
   getMessages: (params?: any) => http.get('/messages', params),
@@ -80,7 +80,7 @@ export const commonApi = {
   createRefund: (data: any) => http.post('/refunds', data),
 
   /** Dealer / Affiliate */
-  getDealerInfo: () => http.get('/dealer'),
+  getDealerInfo: () => http.get('/dealer/info'),
   applyDealer: (data: any) => http.post('/dealer/apply', data),
   getDealerOrders: (params?: any) => http.get('/dealer/orders', params),
   getDealerWithdrawals: (params?: any) => http.get('/dealer/withdrawals', params),
@@ -97,13 +97,13 @@ export const commonApi = {
 
   /** Invite */
   getInviteInfo: () => http.get('/invite'),
-  getInvitePoster: () => http.get('/invite/poster'),
+  getInvitePoster: () => http.get('/invite'),
 
   /** Value-added services */
-  getValueAddedServices: () => http.get('/services/value-added'),
+  getValueAddedServices: () => http.get('/value-added-services'),
 
   /** Insurance */
-  getInsuranceOptions: () => http.get('/services/insurance'),
+  getInsuranceOptions: () => http.get('/insurance-options'),
 
   /** App settings */
   getAppSettings: (settingType: string) =>

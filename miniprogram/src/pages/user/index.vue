@@ -190,9 +190,9 @@ const packageStatuses = [
 
 // --- Menu items ---
 const menuItems = [
-  { key: 'packages', label: '我的包裹', icon: '📦', path: '/pages/package/index' },
-  { key: 'address', label: '地址管理', icon: '📍', path: '/pages/address/list' },
-  { key: 'warehouse', label: '倉庫地址', icon: '🏠', path: '/pages/warehouse/address' },
+  { key: 'packages', label: '倉內包裹', icon: '📦', path: '/pages/package/index' },
+  { key: 'address', label: '收件地址', icon: '📍', path: '/pages/address/list' },
+  { key: 'warehouse', label: '海外倉地址', icon: '🏠', path: '/pages/warehouse/address' },
   { key: 'favorite', label: '收藏列表', icon: '❤️', path: '/pages/favorite/index' },
   { key: 'history', label: '瀏覽記錄', icon: '🕐', path: '/pages/history/index' },
   { key: 'dealer', label: '分銷中心', icon: '💰', path: '/pages/dealer/index' },

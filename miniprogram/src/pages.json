@@ -33,6 +33,7 @@
     { "path": "pages/goods/detail", "style": { "navigationBarTitleText": "商品詳情" } },
     { "path": "pages/shop-order/list", "style": { "navigationBarTitleText": "商城訂單" } },
     { "path": "pages/shop-order/detail", "style": { "navigationBarTitleText": "訂單詳情" } },
+    { "path": "pages/shop-order/checkout", "style": { "navigationBarTitleText": "確認訂單" } },
     { "path": "pages/mys/userVip/userVip", "style": { "navigationBarTitleText": "購買會員" } },
     { "path": "pages/warehouse/address", "style": { "navigationBarTitleText": "倉庫地址" } },
     { "path": "pages/estimate/index", "style": { "navigationBarTitleText": "估價計算" } },
@@ -67,7 +68,7 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "vShip",
+    "navigationBarTitleText": "国韵好运 · 仓储集运",
     "navigationBarBackgroundColor": "#0f3a57",
     "backgroundColor": "#f5f5f5",
     "backgroundTextStyle": "dark"

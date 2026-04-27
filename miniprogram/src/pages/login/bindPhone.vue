@@ -17,7 +17,7 @@
         />
       </view>
 
-      <view class="input-item">
+      <view v-if="SHOW_SMS_CODE" class="input-item">
         <text class="label">驗證碼</text>
         <view class="code-row">
           <input
@@ -53,6 +53,7 @@ import { userApi } from '@/api/user'
 
 const loading = ref(false)
 const countdown = ref(0)
+const SHOW_SMS_CODE = false
 let timer: ReturnType<typeof setInterval> | null = null
 
 const form = reactive({

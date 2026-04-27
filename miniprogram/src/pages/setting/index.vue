@@ -73,6 +73,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { t, getLang, setLang } from '@/locale'
 import type { Lang } from '@/locale'
+import { clearUser } from '@/store'
 
 const showLangPicker = ref(false)
 const cacheSize = ref('0 KB')
@@ -118,37 +119,45 @@ async function getCacheSize() {
   }
 }
 
-async function handleClearCache() {
-  const [, res] = (await uni.showModal({
+function handleClearCache() {
+  uni.showModal({
     title: '提示',
     content: '確定清除所有緩存？',
-  })) as any
-  if (res?.confirm) {
-    try {
-      // Preserve token & lang
-      const token = uni.getStorageSync('token')
-      const lang = uni.getStorageSync('lang')
-      uni.clearStorageSync()
-      if (token) uni.setStorageSync('token', token)
-      if (lang) uni.setStorageSync('lang', lang)
-      cacheSize.value = '0 KB'
-      uni.showToast({ title: '清除成功', icon: 'success' })
-    } catch {
-      uni.showToast({ title: '清除失敗', icon: 'none' })
-    }
-  }
+    success: (res) => {
+      if (!res.confirm) return
+      try {
+        const token = uni.getStorageSync('token')
+        const lang = uni.getStorageSync('lang')
+        uni.clearStorageSync()
+        if (token) uni.setStorageSync('token', token)
+        if (lang) uni.setStorageSync('lang', lang)
+        cacheSize.value = '0 KB'
+        uni.showToast({ title: '清除成功', icon: 'success' })
+      } catch {
+        uni.showToast({ title: '清除失敗', icon: 'none' })
+      }
+    },
+  })
 }
 
 async function handleLogout() {
-  const [, res] = (await uni.showModal({
+  uni.showModal({
     title: '提示',
     content: '確定退出登入？',
-  })) as any
-  if (res?.confirm) {
-    uni.removeStorageSync('token')
-    uni.removeStorageSync('userInfo')
-    uni.reLaunch({ url: '/pages/login/index' })
-  }
+    success: (res) => {
+      if (res.confirm) {
+        try {
+          uni.removeStorageSync('token')
+          uni.removeStorageSync('userInfo')
+          uni.removeStorageSync('user')
+        } catch (e) {}
+        try {
+          clearUser()
+        } catch (e) {}
+        uni.reLaunch({ url: '/pages/login/index' })
+      }
+    },
+  })
 }
 
 onMounted(() => {

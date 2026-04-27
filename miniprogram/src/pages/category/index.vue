@@ -70,7 +70,7 @@
                 class="goods-item"
                 @tap="goToGoodsDetail(goods.id)"
               >
-                <image class="goods-image" :src="goods.image" mode="aspectFill" />
+                <image class="goods-image" :src="goods.image || goods.image_url || (goods.images && goods.images[0]) || 'https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto'" mode="aspectFill" />
                 <view class="goods-info">
                   <text class="goods-name">{{ goods.name }}</text>
                   <text class="goods-desc" v-if="goods.desc">{{ goods.desc }}</text>

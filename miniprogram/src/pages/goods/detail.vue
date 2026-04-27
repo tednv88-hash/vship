@@ -141,6 +141,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { t } from '@/locale'
 import { goodsApi } from '@/api/goods'
 import { commonApi } from '@/api/common'
@@ -162,23 +163,50 @@ const selectedSku = computed(() => {
   }) || null
 })
 
+const goodsId = ref('')
+
+onLoad((options: any) => {
+  const id = options?.id || options?.goods_id || ''
+  if (id) {
+    goodsId.value = id
+    loadDetail(id)
+    loadReviews(id)
+  } else {
+    uni.showToast({ title: '商品 ID 缺失', icon: 'none' })
+  }
+})
+
 onMounted(() => {
-  const pages = getCurrentPages()
-  const currentPage = pages[pages.length - 1] as any
-  const options = currentPage?.$page?.options || {}
-  if (options.id) {
-    loadDetail(options.id)
-    loadReviews(options.id)
+  // Fallback for environments where onLoad options miss
+  if (!goodsId.value) {
+    const pages = getCurrentPages()
+    const currentPage = pages[pages.length - 1] as any
+    const opts = currentPage?.$page?.options || currentPage?.options || {}
+    if (opts.id) {
+      goodsId.value = opts.id
+      loadDetail(opts.id)
+      loadReviews(opts.id)
+    }
   }
 })
 
 async function loadDetail(id: string) {
   try {
     const res = await goodsApi.getDetail(id)
-    detail.value = res?.data || res || {}
-    uni.setNavigationBarTitle({ title: detail.value.name || t('goods.detail') })
+    const d: any = res?.data || res || {}
+    // Normalize: ensure images array, fallback sales field
+    if (!d.images || (Array.isArray(d.images) && d.images.length === 0)) {
+      d.images = d.image_url ? [d.image_url] : []
+    }
+    if (!d.images.length) {
+      d.images = ['https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto']
+    }
+    if (d.sales == null) d.sales = d.sales_count || 0
+    detail.value = d
+    uni.setNavigationBarTitle({ title: d.name || t('goods.detail') })
   } catch (e) {
     console.error(e)
+    uni.showToast({ title: '加載失敗', icon: 'none' })
   }
 }
 

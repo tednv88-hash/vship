@@ -240,6 +240,7 @@ func main() {
 	// --- Shop/Mall Orders ---
 	mp.Get("/shop-orders", handlers.MpGetShopOrders)
 	mp.Get("/shop-orders/:id", handlers.MpGetShopOrder)
+	mp.Post("/shop-orders/checkout", handlers.MpCheckoutCart)
 
 	// --- Cart ---
 	mp.Get("/cart", handlers.MpGetCart)

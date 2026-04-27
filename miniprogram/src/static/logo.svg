@@ -20,8 +20,8 @@
   <line x1="1" y1="18" x2="4" y2="18" stroke="#fbbf24" stroke-width="1" opacity="0.6"/>
   <line x1="0" y1="22" x2="4" y2="22" stroke="#fbbf24" stroke-width="1.2" opacity="0.7"/>
   <line x1="1" y1="26" x2="4" y2="26" stroke="#fbbf24" stroke-width="1" opacity="0.6"/>
-  <!-- Text: 大發貨運 -->
-  <text x="46" y="28" font-family="Arial,Microsoft JhengHei,sans-serif" font-size="18" font-weight="bold" fill="#ffffff" letter-spacing="2">大發貨運</text>
+  <!-- Text: 国韵好运 -->
+  <text x="46" y="28" font-family="Arial,Microsoft JhengHei,sans-serif" font-size="18" font-weight="bold" fill="#ffffff" letter-spacing="2">国韵好运</text>
   <!-- Subtitle -->
-  <text x="46" y="40" font-family="Arial,sans-serif" font-size="7" fill="#fbbf24" letter-spacing="1" opacity="0.8">GLOBAL SHIPPING</text>
+  <text x="46" y="40" font-family="Arial,sans-serif" font-size="7" fill="#fbbf24" letter-spacing="1" opacity="0.8">GUOYUN EXPRESS</text>
 </svg>

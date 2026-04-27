@@ -2,7 +2,7 @@
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { initLang } from '@/locale'
 import { getToken } from '@/utils/request'
-import { store } from '@/store'
+import { store, setUser } from '@/store'
 
 onLaunch(async () => {
   console.log('App Launch')
@@ -10,11 +10,14 @@ onLaunch(async () => {
   // Initialize language from backend
   await initLang()
 
-  // Check login status
+  // Restore login state from storage
   const token = getToken()
   if (token) {
     store.isLoggedIn = true
-    // TODO: fetch user info
+    const cached = uni.getStorageSync('userInfo')
+    if (cached) {
+      try { setUser(typeof cached === 'string' ? JSON.parse(cached) : cached) } catch {}
+    }
   }
 })
 

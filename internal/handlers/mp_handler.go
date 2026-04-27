@@ -816,6 +816,109 @@ func MpGetShopOrder(c *fiber.Ctx) error {
 	return GetShopOrder(c)
 }
 
+// MpCheckoutCart creates a shop order from selected cart items
+func MpCheckoutCart(c *fiber.Ctx) error {
+	userID := middleware.GetUserID(c)
+	tenantID := middleware.GetTenantID(c)
+
+	var req struct {
+		CartIDs   []uuid.UUID `json:"cart_ids"`
+		AddressID uuid.UUID   `json:"address_id"`
+		Remark    string      `json:"remark"`
+		PayMethod string      `json:"pay_method"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return mpErr(c, 400, "Invalid request body")
+	}
+	if len(req.CartIDs) == 0 {
+		return mpErr(c, 400, "No cart items selected")
+	}
+	if req.AddressID == uuid.Nil {
+		return mpErr(c, 400, "Address is required")
+	}
+
+	// Load address
+	var addr models.AddressBook
+	if err := database.DB.Where("id = ? AND member_id = ? AND tenant_id = ? AND trashed_at IS NULL",
+		req.AddressID, userID, tenantID).First(&addr).Error; err != nil {
+		return mpErr(c, 404, "Address not found")
+	}
+
+	// Load cart items with goods info
+	type CartWithGoods struct {
+		models.CartItem
+		GoodsName     string  `json:"goods_name"`
+		GoodsImageURL string  `json:"goods_image_url"`
+		GoodsPrice    float64 `json:"goods_price"`
+	}
+	var cartRows []CartWithGoods
+	if err := database.DB.Table("cart_items").
+		Select("cart_items.*, goods.name AS goods_name, goods.image_url AS goods_image_url, goods.price AS goods_price").
+		Joins("LEFT JOIN goods ON goods.id = cart_items.goods_id").
+		Where("cart_items.id IN ? AND cart_items.user_id = ? AND cart_items.tenant_id = ?", req.CartIDs, userID, tenantID).
+		Find(&cartRows).Error; err != nil {
+		return mpErr(c, 500, "Failed to load cart")
+	}
+	if len(cartRows) == 0 {
+		return mpErr(c, 400, "Cart items not found")
+	}
+
+	// Build order
+	var total float64
+	for _, ci := range cartRows {
+		total += ci.GoodsPrice * float64(ci.Quantity)
+	}
+
+	receiverAddr := addr.Province + addr.City + addr.District + " " + addr.Address
+	orderNo := time.Now().Format("20060102150405") + uuid.New().String()[0:6]
+
+	order := models.ShopOrder{
+		TenantID:        &tenantID,
+		OrderNo:         orderNo,
+		UserID:          &userID,
+		Status:          "pending",
+		TotalAmount:     total,
+		PayAmount:       total,
+		PayMethod:       req.PayMethod,
+		Remark:          req.Remark,
+		ReceiverName:    addr.RecipientName,
+		ReceiverPhone:   addr.Phone,
+		ReceiverAddress: receiverAddr,
+	}
+
+	tx := database.DB.Begin()
+	if err := tx.Create(&order).Error; err != nil {
+		tx.Rollback()
+		return mpErr(c, 500, "Failed to create order")
+	}
+
+	for _, ci := range cartRows {
+		oi := models.ShopOrderItem{
+			TenantID:    &tenantID,
+			OrderID:     order.ID,
+			GoodsID:     ci.GoodsID,
+			GoodsName:   ci.GoodsName,
+			GoodsImage:  ci.GoodsImageURL,
+			Price:       ci.GoodsPrice,
+			Quantity:    ci.Quantity,
+			TotalAmount: ci.GoodsPrice * float64(ci.Quantity),
+		}
+		if err := tx.Create(&oi).Error; err != nil {
+			tx.Rollback()
+			return mpErr(c, 500, "Failed to create order item")
+		}
+	}
+
+	// Remove cart items
+	if err := tx.Where("id IN ? AND user_id = ?", req.CartIDs, userID).Delete(&models.CartItem{}).Error; err != nil {
+		tx.Rollback()
+		return mpErr(c, 500, "Failed to clear cart")
+	}
+
+	tx.Commit()
+	return mpCreated(c, order)
+}
+
 // ============================================================
 // 6. Goods
 // ============================================================

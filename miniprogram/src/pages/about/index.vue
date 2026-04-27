@@ -17,9 +17,9 @@
     <view v-else class="about-content">
       <!-- Logo & Company info -->
       <view class="company-section">
-        <image class="company-logo" src="/static/logo.png" mode="aspectFit" />
-        <text class="company-name">{{ info.company_name || 'vShip' }}</text>
-        <text class="company-desc">{{ info.description }}</text>
+        <image class="company-logo" src="/static/logo.svg" mode="aspectFit" />
+        <text class="company-name">{{ info.company_name || '国韵好运仓储' }}</text>
+        <text class="company-desc">{{ info.description || '海外仓储 · 集运转运一站式服务' }}</text>
       </view>
 
       <!-- Version -->
@@ -95,7 +95,7 @@ async function loadAbout() {
     const res: any = await commonApi.getAbout()
     const data = res?.data || res
     info.value = {
-      company_name: data.company_name || data.name || 'vShip',
+      company_name: data.company_name || data.name || '国韵好运仓储',
       description: data.description || '',
       version: data.version || '1.0.0',
       contacts: data.contacts || [],

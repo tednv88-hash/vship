@@ -110,7 +110,12 @@
               class="goods-card"
               @tap="goods.id ? goToGoodsDetail(goods.id) : null"
             >
-              <image class="goods-image" :src="goods.image || goods.goods_image || ''" mode="aspectFill" />
+              <image
+                class="goods-image"
+                :src="getGoodsImage(goods)"
+                mode="aspectFill"
+                @error="onImgError($event, goods)"
+              />
               <view class="goods-info">
                 <text class="goods-name">{{ goods.name || goods.goods_name || '' }}</text>
                 <view class="goods-price-row">
@@ -119,7 +124,7 @@
                     ¥{{ goods.original_price || goods.line_price }}
                   </text>
                 </view>
-                <text v-if="goods.sales || goods.goods_sales" class="goods-sales">已售 {{ goods.sales || goods.goods_sales || 0 }}</text>
+                <text v-if="goods.sales || goods.sales_count || goods.goods_sales" class="goods-sales">已售 {{ goods.sales || goods.sales_count || goods.goods_sales || 0 }}</text>
               </view>
             </view>
           </view>
@@ -304,6 +309,24 @@ function goToGoodsList() {
 
 function goToGoodsDetail(id: string) {
   uni.navigateTo({ url: `/pages/goods/detail?id=${id}` })
+}
+
+const FALLBACK_IMG = 'https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto'
+
+function getGoodsImage(g: any): string {
+  if (!g) return FALLBACK_IMG
+  if (g._failed) return FALLBACK_IMG
+  return (
+    g.image ||
+    g.image_url ||
+    g.goods_image ||
+    (Array.isArray(g.images) && g.images.length ? g.images[0] : '') ||
+    FALLBACK_IMG
+  )
+}
+
+function onImgError(_e: any, g: any) {
+  if (g) g._failed = true
 }
 </script>
 

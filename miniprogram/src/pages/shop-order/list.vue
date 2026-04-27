@@ -29,7 +29,7 @@
       <view v-for="item in list" :key="item.id" class="order-card" @tap="goDetail(item.id)">
         <!-- Shop header -->
         <view class="order-header">
-          <text class="shop-name">vShip 商城</text>
+          <text class="shop-name">国韵好运商城</text>
           <text class="order-status" :class="'status-' + item.status">
             {{ getStatusLabel(item.status) }}
           </text>

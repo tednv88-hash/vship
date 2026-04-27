@@ -20,7 +20,7 @@
             <!-- Product Image -->
             <image
               class="cart-image"
-              :src="item.image"
+              :src="item.image || 'https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto'"
               mode="aspectFill"
               @tap="goToGoodsDetail(item.goods_id)"
             />
@@ -147,13 +147,22 @@ async function fetchCart() {
   loading.value = true
   try {
     const res: any = await commonApi.getCart()
-    const data = res?.data || res
-    const list = data?.list || data?.items || (Array.isArray(data) ? data : [])
+    const data = res?.data ?? res
+    const list = Array.isArray(data) ? data : (data?.list || data?.items || [])
     cartList.value = list.map((item: any) => ({
-      ...item,
-      price: Number(item.price) || 0,
+      id: item.id,
+      goods_id: item.goods_id,
+      sku_id: item.sku_id,
+      sku_name: item.sku_name || item.goods_sku_name || '',
+      name: item.name || item.goods_name || '商品',
+      image:
+        item.image ||
+        item.goods_image_url ||
+        item.goods_image ||
+        'https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto',
+      price: Number(item.price ?? item.goods_price ?? 0),
       quantity: Number(item.quantity) || 1,
-      checked: false,
+      checked: true,
     }))
   } catch (e) {
     cartList.value = []
@@ -223,7 +232,7 @@ function onCheckout() {
     .map(item => item.id)
     .join(',')
 
-  uni.navigateTo({ url: `/pages/shop-order/list?cart_ids=${selectedIds}` })
+  uni.navigateTo({ url: `/pages/shop-order/checkout?cart_ids=${selectedIds}` })
 }
 
 function goToGoodsDetail(id: string) {

@@ -7,8 +7,14 @@ export const userApi = {
     http.post('/auth/login', data),
 
   /** Register */
-  register: (data: { phone: string; password: string; code?: string }) =>
-    http.post('/auth/register', data),
+  register: (data: { phone: string; password: string; code?: string; email?: string; name?: string }) =>
+    http.post('/auth/register', {
+      phone: data.phone,
+      password: data.password,
+      email: data.email || `${data.phone}@guoyun.local`,
+      name: data.name || data.phone,
+      code: data.code,
+    }),
 
   /** WeChat login */
   wechatLogin: (data: { code: string }) =>
