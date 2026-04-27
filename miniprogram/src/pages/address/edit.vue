@@ -24,24 +24,21 @@
       </view>
 
       <!-- Region picker -->
-      <view class="form-item" @tap="showRegionPicker = true">
+      <view class="form-item">
         <text class="label">{{ t('address.region') }}</text>
-        <view class="picker-display">
-          <text :class="['picker-text', { placeholder: !regionText }]">
-            {{ regionText || `請選擇${t('address.region')}` }}
-          </text>
-          <text class="arrow">&#xe61c;</text>
-        </view>
+        <picker
+          mode="region"
+          :value="regionValue"
+          @change="onRegionChange"
+        >
+          <view class="picker-display">
+            <text :class="['picker-text', { placeholder: !regionText }]">
+              {{ regionText || `請選擇${t('address.region')}` }}
+            </text>
+            <text class="arrow">&#x276F;</text>
+          </view>
+        </picker>
       </view>
-
-      <!-- Region picker popup -->
-      <picker
-        mode="region"
-        @change="onRegionChange"
-        :value="[form.province, form.city, form.district]"
-      >
-        <view />
-      </picker>
 
       <!-- Detail address -->
       <view class="form-item">
@@ -97,11 +94,21 @@ const regionText = computed(() => {
   if (form.province && form.city && form.district) {
     return `${form.province} ${form.city} ${form.district}`
   }
+  if (form.province || form.city) {
+    return [form.province, form.city, form.district].filter(Boolean).join(' ')
+  }
   return ''
 })
 
+const regionValue = computed(() => {
+  if (form.province && form.city) {
+    return [form.province, form.city, form.district || '']
+  }
+  return ['廣東省', '深圳市', '南山區']
+})
+
 function onRegionChange(e: any) {
-  const values = e.detail.value
+  const values = e.detail.value || []
   form.province = values[0] || ''
   form.city = values[1] || ''
   form.district = values[2] || ''
@@ -112,7 +119,7 @@ async function loadAddress(id: string) {
     const res = (await commonApi.getAddress(id)) as any
     const data = res?.data || res
     if (data) {
-      form.name = data.name || ''
+      form.name = data.recipient_name || data.name || ''
       form.phone = data.phone || ''
       form.province = data.province || ''
       form.city = data.city || ''
@@ -147,7 +154,15 @@ async function handleSave() {
   loading.value = true
 
   try {
-    const payload = { ...form }
+    const payload: any = {
+      recipient_name: form.name,
+      phone: form.phone,
+      province: form.province,
+      city: form.city,
+      district: form.district,
+      address: form.address,
+      is_default: form.is_default,
+    }
     if (isEdit.value) {
       await commonApi.updateAddress(addressId.value, payload)
     } else {

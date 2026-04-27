@@ -14,7 +14,7 @@
       >
         <view class="address-info" @tap="selectAddress(item)">
           <view class="name-row">
-            <text class="name">{{ item.name }}</text>
+            <text class="name">{{ item.recipient_name || item.name }}</text>
             <text class="phone">{{ item.phone }}</text>
             <view v-if="item.is_default" class="default-badge">
               <text class="default-text">默認</text>

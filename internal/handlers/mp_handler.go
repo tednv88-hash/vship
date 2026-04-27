@@ -36,6 +36,40 @@ func mpErr(c *fiber.Ctx, status int, msg string) error {
 	return c.Status(status).JSON(fiber.Map{"code": status, "message": msg, "data": nil})
 }
 
+// ensureMemberForUser creates a Member row matching the User ID if missing,
+// so that FK constraints (e.g. address_books.member_id -> members.id) can be satisfied.
+func ensureMemberForUser(userID, tenantID uuid.UUID) error {
+	if userID == uuid.Nil {
+		return fmt.Errorf("invalid user id")
+	}
+	var existing models.Member
+	if err := database.DB.Where("id = ?", userID).First(&existing).Error; err == nil {
+		return nil
+	}
+	var user models.User
+	if err := database.DB.Where("id = ?", userID).First(&user).Error; err != nil {
+		return err
+	}
+	tID := tenantID
+	tenantPtr := &tID
+	if tenantID == uuid.Nil {
+		tenantPtr = user.TenantID
+	}
+	name := user.Name
+	if name == "" {
+		name = user.Email
+	}
+	member := models.Member{
+		ID:       userID,
+		TenantID: tenantPtr,
+		Name:     name,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Status:   "active",
+	}
+	return database.DB.Create(&member).Error
+}
+
 func mpPaginate(c *fiber.Ctx) (page, limit, offset int) {
 	page, _ = strconv.Atoi(c.Query("page", "1"))
 	limit, _ = strconv.Atoi(c.Query("limit", "20"))
@@ -1208,6 +1242,11 @@ func MpCreateAddress(c *fiber.Ctx) error {
 
 	if addr.RecipientName == "" || addr.Phone == "" || addr.Address == "" {
 		return mpErr(c, 400, "Recipient name, phone, and address are required")
+	}
+
+	// Ensure a Member row exists with same ID as user (FK constraint)
+	if err := ensureMemberForUser(userID, tenantID); err != nil {
+		return mpErr(c, 500, "Failed to prepare member record")
 	}
 
 	// If this is the first address or marked default, ensure default uniqueness
