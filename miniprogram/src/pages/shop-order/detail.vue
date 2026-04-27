@@ -165,38 +165,18 @@ const showActions = computed(() => {
 
 async function fetchDetail() {
   try {
-    const res = await orderApi.getShopOrderDetail(orderId.value)
-    if (res?.data) {
-      detail.value = res.data
+    const res: any = await orderApi.getShopOrderDetail(orderId.value)
+    const data = res?.data ?? res
+    if (data && data.id) {
+      detail.value = {
+        ...detail.value,
+        ...data,
+        products: data.products || [],
+        address: data.address || {},
+      }
     }
   } catch (e) {
-    detail.value = {
-      id: orderId.value,
-      order_no: 'SM20260308001',
-      status: 'shipped',
-      products: [
-        { id: 'p1', name: '日本限定零食禮盒', spec: '大份裝', price: '129.00', quantity: 1, image: '/static/mock/goods1.jpg' },
-        { id: 'p2', name: '韓國面膜套裝', spec: '10片裝', price: '70.00', quantity: 1, image: '/static/mock/goods2.jpg' },
-      ],
-      address: {
-        name: '王小明',
-        phone: '0912345678',
-        region: '台北市信義區',
-        detail: '忠孝東路五段100號',
-      },
-      shipping: {
-        courier_name: '順豐速運',
-        tracking_no: 'SF1234567890',
-        latest_event: '包裹正在派送中',
-      },
-      goods_total: '199.00',
-      shipping_fee: '0.00',
-      coupon_discount: '',
-      total_price: '199.00',
-      created_at: '2026-03-08 15:30',
-      paid_at: '2026-03-08 15:35',
-      shipped_at: '2026-03-09 10:00',
-    }
+    uni.showToast({ title: '載入失敗', icon: 'none' })
   }
 }
 
@@ -219,10 +199,15 @@ function cancelOrder() {
   uni.showModal({
     title: '取消訂單',
     content: '確認取消此訂單？',
-    success: (res) => {
+    success: async (res) => {
       if (res.confirm) {
-        uni.showToast({ title: '已取消', icon: 'success' })
-        detail.value.status = 'cancelled'
+        try {
+          await orderApi.cancelShopOrder(orderId.value)
+          uni.showToast({ title: '已取消', icon: 'success' })
+          detail.value.status = 'cancelled'
+        } catch (e: any) {
+          uni.showToast({ title: e?.message || '取消失敗', icon: 'none' })
+        }
       }
     },
   })
@@ -236,10 +221,15 @@ function confirmReceive() {
   uni.showModal({
     title: '確認收貨',
     content: '確認已收到商品？',
-    success: (res) => {
+    success: async (res) => {
       if (res.confirm) {
-        uni.showToast({ title: '已確認收貨', icon: 'success' })
-        detail.value.status = 'completed'
+        try {
+          await orderApi.confirmShopOrder(orderId.value)
+          uni.showToast({ title: '已確認收貨', icon: 'success' })
+          detail.value.status = 'completed'
+        } catch (e: any) {
+          uni.showToast({ title: e?.message || '操作失敗', icon: 'none' })
+        }
       }
     },
   })

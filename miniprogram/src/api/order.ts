@@ -24,6 +24,16 @@ export const orderApi = {
   /** Get shop order detail */
   getShopOrderDetail: (id: string) => http.get(`/shop-orders/${id}`),
 
+  /** Pay shop order (mock) */
+  payShopOrder: (id: string, data: { payment_method: string }) =>
+    http.post(`/shop-orders/${id}/pay`, data),
+
+  /** Cancel shop order */
+  cancelShopOrder: (id: string) => http.put(`/shop-orders/${id}/cancel`),
+
+  /** Confirm receive shop order */
+  confirmShopOrder: (id: string) => http.put(`/shop-orders/${id}/confirm`),
+
   /** Checkout cart -> create shop order */
   checkoutCart: (data: { cart_ids: string[]; address_id: string; remark?: string; pay_method?: string }) =>
     http.post('/shop-orders/checkout', data),

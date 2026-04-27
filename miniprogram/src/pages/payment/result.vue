@@ -53,23 +53,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { t } from '@/locale'
 import { orderApi } from '@/api/order'
 
 const orderId = ref('')
 const status = ref('')
+const orderType = ref<'shop' | 'consol'>('shop')
 const orderInfo = ref<any>({})
 
 const isSuccess = computed(() => status.value === 'success')
 
-onMounted(() => {
-  const pages = getCurrentPages()
-  const currentPage = pages[pages.length - 1] as any
-  const options = currentPage?.$page?.options || {}
-  orderId.value = options.order_id || ''
-  status.value = options.status || 'fail'
-
+onLoad((options: any) => {
+  orderId.value = options?.order_id || ''
+  status.value = options?.status || 'fail'
+  orderType.value = options?.type === 'consol' ? 'consol' : 'shop'
   if (orderId.value) {
     loadOrderInfo()
   }
@@ -77,8 +76,15 @@ onMounted(() => {
 
 async function loadOrderInfo() {
   try {
-    const res = await orderApi.getDetail(orderId.value)
-    orderInfo.value = res?.data || res || {}
+    const res: any = orderType.value === 'shop'
+      ? await orderApi.getShopOrderDetail(orderId.value)
+      : await orderApi.getDetail(orderId.value)
+    const data = res?.data ?? res ?? {}
+    orderInfo.value = {
+      ...data,
+      total_amount: data.total_price || data.pay_amount || data.total_amount || '',
+      payment_method: data.pay_method || data.payment_method || '',
+    }
   } catch (e) {
     console.error(e)
   }
@@ -87,6 +93,7 @@ async function loadOrderInfo() {
 function getMethodLabel(method: string): string {
   const map: Record<string, string> = {
     wechat: '微信支付',
+    wxpay: '微信支付',
     alipay: '支付寶',
     balance: '餘額支付',
   }
@@ -94,7 +101,8 @@ function getMethodLabel(method: string): string {
 }
 
 function goOrderDetail() {
-  uni.redirectTo({ url: `/pages/order/detail?id=${orderId.value}` })
+  const path = orderType.value === 'shop' ? '/pages/shop-order/detail' : '/pages/order/detail'
+  uni.redirectTo({ url: `${path}?id=${orderId.value}` })
 }
 
 function goHome() {
@@ -102,7 +110,7 @@ function goHome() {
 }
 
 function retryPay() {
-  uni.redirectTo({ url: `/pages/payment/index?order_id=${orderId.value}` })
+  uni.redirectTo({ url: `/pages/payment/index?order_id=${orderId.value}&type=${orderType.value}` })
 }
 </script>
 

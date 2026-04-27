@@ -845,9 +845,182 @@ func MpGetShopOrders(c *fiber.Ctx) error {
 	return GetShopOrders(c)
 }
 
-// MpGetShopOrder returns a single shop order
+// MpGetShopOrder returns a single shop order with items, normalized for the MP UI
 func MpGetShopOrder(c *fiber.Ctx) error {
-	return GetShopOrder(c)
+	userID := middleware.GetUserID(c)
+	tenantID := middleware.GetTenantID(c)
+
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return mpErr(c, 400, "Invalid order ID")
+	}
+
+	var order models.ShopOrder
+	if err := database.DB.Where("id = ? AND user_id = ? AND tenant_id = ? AND trashed_at IS NULL",
+		id, userID, tenantID).First(&order).Error; err != nil {
+		return mpErr(c, 404, "Order not found")
+	}
+
+	var items []models.ShopOrderItem
+	database.DB.Where("order_id = ?", id).Find(&items)
+
+	// Build product list for UI
+	products := make([]fiber.Map, 0, len(items))
+	for _, it := range items {
+		img := it.GoodsImage
+		if img == "" {
+			img = "https://placehold.co/600x600/0f3a57/ffffff/png?text=GUOYUN&font=roboto"
+		}
+		products = append(products, fiber.Map{
+			"id":       it.ID,
+			"goods_id": it.GoodsID,
+			"name":     it.GoodsName,
+			"image":    img,
+			"price":    fmt.Sprintf("%.2f", it.Price),
+			"quantity": it.Quantity,
+			"total":    fmt.Sprintf("%.2f", it.TotalAmount),
+		})
+	}
+
+	formatTime := func(t *time.Time) string {
+		if t == nil || t.IsZero() {
+			return ""
+		}
+		return t.Format("2006-01-02 15:04")
+	}
+
+	resp := fiber.Map{
+		"id":              order.ID,
+		"order_no":        order.OrderNo,
+		"status":          order.Status,
+		"products":        products,
+		"goods_total":     fmt.Sprintf("%.2f", order.TotalAmount),
+		"shipping_fee":    fmt.Sprintf("%.2f", order.ShippingFee),
+		"discount_amount": fmt.Sprintf("%.2f", order.DiscountAmount),
+		"total_price":     fmt.Sprintf("%.2f", order.PayAmount),
+		"pay_amount":      fmt.Sprintf("%.2f", order.PayAmount),
+		"pay_method":      order.PayMethod,
+		"remark":          order.Remark,
+		"address": fiber.Map{
+			"name":   order.ReceiverName,
+			"phone":  order.ReceiverPhone,
+			"region": "",
+			"detail": order.ReceiverAddress,
+		},
+		"shipping": nil,
+		"created_at": order.CreatedAt.Format("2006-01-02 15:04"),
+		"paid_at":    formatTime(order.PayTime),
+		"shipped_at": formatTime(order.DeliveryTime),
+		"received_at": formatTime(order.ReceiveTime),
+	}
+
+	if order.ExpressNo != "" {
+		resp["shipping"] = fiber.Map{
+			"courier_name": order.ExpressCompany,
+			"tracking_no":  order.ExpressNo,
+			"latest_event": "包裹運送中",
+		}
+	}
+
+	return mpOK(c, resp)
+}
+
+// MpPayShopOrder marks a shop order as paid (mock — no real wxpay integration yet)
+func MpPayShopOrder(c *fiber.Ctx) error {
+	userID := middleware.GetUserID(c)
+	tenantID := middleware.GetTenantID(c)
+
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return mpErr(c, 400, "Invalid order ID")
+	}
+
+	var req struct {
+		PaymentMethod string `json:"payment_method"`
+	}
+	_ = c.BodyParser(&req)
+	if req.PaymentMethod == "" {
+		req.PaymentMethod = "wxpay"
+	}
+
+	var order models.ShopOrder
+	if err := database.DB.Where("id = ? AND user_id = ? AND tenant_id = ? AND trashed_at IS NULL",
+		id, userID, tenantID).First(&order).Error; err != nil {
+		return mpErr(c, 404, "Order not found")
+	}
+
+	if order.Status != "pending" && order.Status != "pending_payment" {
+		return mpErr(c, 400, "Order is not pending payment")
+	}
+
+	now := time.Now()
+	updates := map[string]interface{}{
+		"status":     "paid",
+		"pay_method": req.PaymentMethod,
+		"pay_time":   &now,
+	}
+	if err := database.DB.Model(&order).Updates(updates).Error; err != nil {
+		return mpErr(c, 500, "Failed to mark paid")
+	}
+
+	return mpOK(c, fiber.Map{
+		"order_id":       order.ID,
+		"order_no":       order.OrderNo,
+		"status":         "paid",
+		"pay_amount":     fmt.Sprintf("%.2f", order.PayAmount),
+		"payment_params": nil, // no real wxpay yet
+	})
+}
+
+// MpCancelShopOrder cancels a pending shop order
+func MpCancelShopOrder(c *fiber.Ctx) error {
+	userID := middleware.GetUserID(c)
+	tenantID := middleware.GetTenantID(c)
+
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return mpErr(c, 400, "Invalid order ID")
+	}
+
+	var order models.ShopOrder
+	if err := database.DB.Where("id = ? AND user_id = ? AND tenant_id = ? AND trashed_at IS NULL",
+		id, userID, tenantID).First(&order).Error; err != nil {
+		return mpErr(c, 404, "Order not found")
+	}
+	if order.Status != "pending" && order.Status != "pending_payment" {
+		return mpErr(c, 400, "Order cannot be cancelled")
+	}
+
+	if err := database.DB.Model(&order).Update("status", "cancelled").Error; err != nil {
+		return mpErr(c, 500, "Failed to cancel")
+	}
+	return mpOK(c, fiber.Map{"id": order.ID, "status": "cancelled"})
+}
+
+// MpConfirmReceiveShopOrder marks a shipped order as completed
+func MpConfirmReceiveShopOrder(c *fiber.Ctx) error {
+	userID := middleware.GetUserID(c)
+	tenantID := middleware.GetTenantID(c)
+
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return mpErr(c, 400, "Invalid order ID")
+	}
+
+	var order models.ShopOrder
+	if err := database.DB.Where("id = ? AND user_id = ? AND tenant_id = ? AND trashed_at IS NULL",
+		id, userID, tenantID).First(&order).Error; err != nil {
+		return mpErr(c, 404, "Order not found")
+	}
+
+	now := time.Now()
+	if err := database.DB.Model(&order).Updates(map[string]interface{}{
+		"status":       "completed",
+		"receive_time": &now,
+	}).Error; err != nil {
+		return mpErr(c, 500, "Failed to confirm")
+	}
+	return mpOK(c, fiber.Map{"id": order.ID, "status": "completed"})
 }
 
 // MpCheckoutCart creates a shop order from selected cart items

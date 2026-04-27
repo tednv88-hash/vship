@@ -249,11 +249,26 @@ async function addToCart() {
   }
 }
 
-function buyNow() {
-  const skuId = selectedSku.value?.id || ''
-  uni.navigateTo({
-    url: `/pages/payment/index?goods_id=${detail.value.id}&sku_id=${skuId}&quantity=${quantity.value}`,
-  })
+async function buyNow() {
+  try {
+    uni.showLoading({ title: '處理中', mask: true })
+    const res: any = await commonApi.addToCart({
+      goods_id: detail.value.id,
+      sku_id: selectedSku.value?.id,
+      quantity: quantity.value,
+    })
+    const data = res?.data ?? res
+    const cartId = data?.id
+    uni.hideLoading()
+    if (!cartId) {
+      uni.showToast({ title: '下單失敗', icon: 'none' })
+      return
+    }
+    uni.navigateTo({ url: `/pages/shop-order/checkout?cart_ids=${cartId}` })
+  } catch (e) {
+    uni.hideLoading()
+    uni.showToast({ title: '下單失敗', icon: 'none' })
+  }
 }
 
 function contactService() {

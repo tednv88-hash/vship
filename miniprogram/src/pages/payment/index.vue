@@ -75,15 +75,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { t } from '@/locale'
 import { orderApi } from '@/api/order'
-import { userApi } from '@/api/user'
 
 const orderInfo = ref<any>({})
 const selectedMethod = ref('wechat')
 const paying = ref(false)
 const orderId = ref('')
+const orderType = ref<'shop' | 'consol'>('shop')
 
 const paymentMethods = computed(() => [
   {
@@ -109,23 +110,35 @@ const paymentMethods = computed(() => [
   },
 ])
 
-onMounted(() => {
-  const pages = getCurrentPages()
-  const currentPage = pages[pages.length - 1] as any
-  const options = currentPage?.$page?.options || {}
-  if (options.order_id) {
+onLoad((options: any) => {
+  orderType.value = (options?.type === 'consol' ? 'consol' : 'shop')
+  if (options?.order_id) {
     orderId.value = options.order_id
     loadOrder(options.order_id)
+  } else {
+    uni.showToast({ title: '訂單ID缺失', icon: 'none' })
   }
 })
 
 async function loadOrder(id: string) {
   uni.showLoading({ title: t('common.loading') })
   try {
-    const res = await orderApi.getDetail(id)
-    orderInfo.value = res?.data || res || {}
+    const res: any = orderType.value === 'shop'
+      ? await orderApi.getShopOrderDetail(id)
+      : await orderApi.getDetail(id)
+    const data = res?.data ?? res ?? {}
+    // Normalize fields used by the template
+    orderInfo.value = {
+      ...data,
+      goods_amount: data.goods_total || data.goods_amount || data.total_amount || '0.00',
+      total_amount: data.total_price || data.pay_amount || data.total_amount || '0.00',
+      shipping_fee: data.shipping_fee || '0.00',
+      goods_name: (data.products && data.products[0]?.name) || data.goods_name || '',
+      quantity: (data.products && data.products.reduce((s: number, p: any) => s + (p.quantity || 0), 0)) || data.quantity || '',
+    }
   } catch (e) {
     console.error(e)
+    uni.showToast({ title: '加載失敗', icon: 'none' })
   } finally {
     uni.hideLoading()
   }
@@ -138,7 +151,7 @@ async function confirmPay() {
     return
   }
 
-  // Balance check
+  // Balance check (only relevant once balance feature is wired)
   if (selectedMethod.value === 'balance') {
     const balance = parseFloat(orderInfo.value.user_balance || '0')
     const total = parseFloat(orderInfo.value.total_amount || '0')
@@ -159,27 +172,32 @@ async function confirmPay() {
 
   paying.value = true
   try {
-    const res = await orderApi.payOrder(orderId.value, {
-      payment_method: selectedMethod.value,
-    })
+    const res: any = orderType.value === 'shop'
+      ? await orderApi.payShopOrder(orderId.value, { payment_method: selectedMethod.value })
+      : await orderApi.payOrder(orderId.value, { payment_method: selectedMethod.value })
 
-    // WeChat pay needs to invoke uni payment
-    if (selectedMethod.value === 'wechat' && res?.data?.payment_params) {
-      await uni.requestPayment(res.data.payment_params)
+    const data = res?.data ?? res
+    // If real wxpay params returned, invoke uni payment
+    if (selectedMethod.value === 'wechat' && data?.payment_params) {
+      try {
+        await uni.requestPayment(data.payment_params)
+      } catch (err: any) {
+        if (err?.errMsg?.includes('cancel')) {
+          uni.showToast({ title: '已取消支付', icon: 'none' })
+          return
+        }
+        throw err
+      }
     }
 
     uni.redirectTo({
-      url: `/pages/payment/result?order_id=${orderId.value}&status=success`,
+      url: `/pages/payment/result?order_id=${orderId.value}&type=${orderType.value}&status=success`,
     })
   } catch (e: any) {
     console.error(e)
-    if (e?.errMsg?.includes('cancel')) {
-      uni.showToast({ title: '已取消支付', icon: 'none' })
-    } else {
-      uni.redirectTo({
-        url: `/pages/payment/result?order_id=${orderId.value}&status=fail`,
-      })
-    }
+    uni.redirectTo({
+      url: `/pages/payment/result?order_id=${orderId.value}&type=${orderType.value}&status=fail`,
+    })
   } finally {
     paying.value = false
   }

@@ -241,6 +241,9 @@ func main() {
 	mp.Get("/shop-orders", handlers.MpGetShopOrders)
 	mp.Get("/shop-orders/:id", handlers.MpGetShopOrder)
 	mp.Post("/shop-orders/checkout", handlers.MpCheckoutCart)
+	mp.Post("/shop-orders/:id/pay", handlers.MpPayShopOrder)
+	mp.Put("/shop-orders/:id/cancel", handlers.MpCancelShopOrder)
+	mp.Put("/shop-orders/:id/confirm", handlers.MpConfirmReceiveShopOrder)
 
 	// --- Cart ---
 	mp.Get("/cart", handlers.MpGetCart)
