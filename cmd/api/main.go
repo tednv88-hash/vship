@@ -177,10 +177,10 @@ func main() {
 
 	// --- Goods (browsable without login) ---
 	mpPub.Get("/goods", handlers.MpGetGoods)
-	mpPub.Get("/goods/:id", handlers.MpGetGoodsDetail)
 	mpPub.Get("/goods/categories", handlers.MpGetCategories)
 	mpPub.Get("/goods/categories/:id/goods", handlers.MpGetCategoryGoods)
 	mpPub.Get("/goods/search", handlers.MpSearchGoods)
+	mpPub.Get("/goods/:id", handlers.MpGetGoodsDetail)
 
 	// --- Content (public) ---
 	mpPub.Get("/help", handlers.MpGetHelpList)
@@ -224,11 +224,11 @@ func main() {
 
 	// --- Packages ---
 	mp.Get("/packages", handlers.MpGetPackages)
-	mp.Get("/packages/:id", handlers.MpGetPackage)
 	mp.Post("/packages/forecast", handlers.MpForecastPackage)
 	mp.Get("/packages/forecasts", handlers.MpGetForecasts)
 	mp.Post("/packages/merge", handlers.MpMergePackages)
 	mp.Post("/packages/split", handlers.MpSplitPackage)
+	mp.Get("/packages/:id", handlers.MpGetPackage)
 
 	// --- Orders (Consolidation) ---
 	mp.Get("/orders", handlers.MpGetOrders)
@@ -578,6 +578,7 @@ func main() {
 	api.Delete("/article-categories/:id", handlers.DeleteArticleCategory)
 	api.Get("/files", handlers.GetFiles)
 	api.Get("/files/deleted", handlers.GetDeletedFiles)
+	api.Delete("/files", handlers.DeleteFile)
 	api.Get("/files/:id", handlers.GetFile)
 	api.Post("/files", handlers.CreateFile)
 	api.Put("/files/:id", handlers.UpdateFile)
@@ -607,7 +608,10 @@ func main() {
 	api.Get("/balance/logs", handlers.GetBalanceLogs)
 	api.Post("/balance/logs", handlers.CreateBalanceLog)
 	api.Get("/coupon-receives", handlers.GetCouponReceiveLogs)
+	api.Get("/coupon-receives/:id", handlers.GetCouponReceiveLog)
 	api.Post("/coupon-receives", handlers.CreateCouponReceiveLog)
+	api.Put("/coupon-receives/:id", handlers.UpdateCouponReceiveLog)
+	api.Delete("/coupon-receives/:id", handlers.DeleteCouponReceiveLog)
 	api.Get("/blind-box/activities", handlers.GetBlindBoxActivities)
 	api.Get("/blind-box/activities/:id", handlers.GetBlindBoxActivity)
 	api.Post("/blind-box/activities", handlers.CreateBlindBoxActivity)
@@ -615,6 +619,8 @@ func main() {
 	api.Delete("/blind-box/activities/:id", handlers.DeleteBlindBoxActivity)
 	api.Get("/blind-box/draws", handlers.GetBlindBoxDraws)
 	api.Post("/blind-box/draws", handlers.CreateBlindBoxDraw)
+	api.Put("/blind-box/draws/:id", handlers.UpdateBlindBoxDraw)
+	api.Delete("/blind-box/draws/:id", handlers.DeleteBlindBoxDraw)
 	api.Get("/blind-box/setting", handlers.GetBlindBoxSetting)
 	api.Put("/blind-box/setting", handlers.UpdateBlindBoxSetting)
 
@@ -625,6 +631,7 @@ func main() {
 	api.Put("/user-discounts/:id", handlers.UpdateUserDiscount)
 	api.Delete("/user-discounts/:id", handlers.DeleteUserDiscount)
 	api.Get("/user-marks", handlers.GetUserMarks)
+	api.Get("/user-marks/:id", handlers.GetUserMark)
 	api.Post("/user-marks", handlers.CreateUserMark)
 	api.Put("/user-marks/:id", handlers.UpdateUserMark)
 	api.Delete("/user-marks/:id", handlers.DeleteUserMark)
@@ -632,6 +639,7 @@ func main() {
 	api.Get("/user-birthdays/:id", handlers.GetUserBirthday)
 	api.Post("/user-birthdays", handlers.CreateUserBirthday)
 	api.Put("/user-birthdays/:id", handlers.UpdateUserBirthday)
+	api.Delete("/user-birthdays/:id", handlers.DeleteUserBirthday)
 
 	// --- Warehouse Expansion ---
 	api.Get("/warehouse-addresses", handlers.GetWarehouseAddresses)
@@ -651,9 +659,11 @@ func main() {
 	api.Delete("/warehouse-clerks/:id", handlers.DeleteWarehouseClerk)
 	api.Get("/warehouse/capital", handlers.GetWarehouseCapitalLogs)
 	api.Get("/warehouse/bonuses", handlers.GetWarehouseBonuses)
+	api.Get("/warehouse/bonuses/:id", handlers.GetWarehouseBonus)
 	api.Post("/warehouse/bonuses", handlers.CreateWarehouseBonus)
 	api.Put("/warehouse/bonuses/:id", handlers.UpdateWarehouseBonus)
 	api.Put("/warehouse/bonuses/:id/pay", handlers.PayWarehouseBonus)
+	api.Delete("/warehouse/bonuses/:id", handlers.DeleteWarehouseBonus)
 	api.Get("/warehouse/withdrawals", handlers.GetWarehouseWithdrawals)
 	api.Put("/warehouse/withdrawals/:id/approve", handlers.ApproveWarehouseWithdrawal)
 	api.Put("/warehouse/withdrawals/:id/reject", handlers.RejectWarehouseWithdrawal)
@@ -692,10 +702,16 @@ func main() {
 	api.Post("/dealer/levels", handlers.CreateDealerLevel)
 	api.Put("/dealer/levels/:id", handlers.UpdateDealerLevel)
 	api.Delete("/dealer/levels/:id", handlers.DeleteDealerLevel)
+	api.Get("/dealer/posters", handlers.GetDealerPosters)
+	api.Get("/dealer/posters/:id", handlers.GetDealerPoster)
+	api.Post("/dealer/posters", handlers.CreateDealerPoster)
+	api.Put("/dealer/posters/:id", handlers.UpdateDealerPoster)
+	api.Delete("/dealer/posters/:id", handlers.DeleteDealerPoster)
 
 	// --- Sharing ---
 	api.Get("/sharing/orders", handlers.GetSharingOrders)
 	api.Get("/sharing/verifications", handlers.GetSharingVerifications)
+	api.Put("/sharing/verifications/:id", handlers.UpdateSharingVerification)
 	api.Put("/sharing/verifications/:id/verify", handlers.VerifySharing)
 
 	// --- Admin Roles ---
@@ -716,6 +732,7 @@ func main() {
 	api.Get("/barcode-settings/:id", handlers.GetBarcodeSetting)
 	api.Post("/barcode-settings", handlers.CreateBarcodeSetting)
 	api.Put("/barcode-settings/:id", handlers.UpdateBarcodeSetting)
+	api.Delete("/barcode-settings/:id", handlers.DeleteBarcodeSetting)
 	api.Get("/bank-accounts", handlers.GetBankAccounts)
 	api.Get("/bank-accounts/:id", handlers.GetBankAccount)
 	api.Post("/bank-accounts", handlers.CreateBankAccount)
@@ -747,6 +764,7 @@ func main() {
 	api.Get("/subscribe-messages/:id", handlers.GetSubscribeMessage)
 	api.Post("/subscribe-messages", handlers.CreateSubscribeMessage)
 	api.Put("/subscribe-messages/:id", handlers.UpdateSubscribeMessage)
+	api.Delete("/subscribe-messages/:id", handlers.DeleteSubscribeMessage)
 	api.Get("/app-settings", handlers.GetAppSettings)
 	api.Get("/app-settings/:id", handlers.GetAppSetting)
 	api.Post("/app-settings", handlers.CreateAppSetting)

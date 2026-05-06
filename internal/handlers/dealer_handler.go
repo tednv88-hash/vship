@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"strconv"
 	"time"
 	"vship/internal/database"
@@ -10,6 +11,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
+
+const dealerPosterSettingKey = "dealer_posters"
 
 // GetDealerApplications lists dealer applications with pagination and filters
 func GetDealerApplications(c *fiber.Ctx) error {
@@ -501,4 +504,143 @@ func DeleteDealerLevel(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"message": "Dealer level deleted successfully"})
+}
+
+func getDealerPosters(tenantID uuid.UUID) ([]map[string]interface{}, error) {
+	var setting models.Setting
+	err := database.DB.Where("tenant_id = ? AND key = ?", tenantID, dealerPosterSettingKey).First(&setting).Error
+	if err != nil {
+		return []map[string]interface{}{}, nil
+	}
+
+	var posters []map[string]interface{}
+	if setting.Value == "" {
+		return []map[string]interface{}{}, nil
+	}
+	if err := json.Unmarshal([]byte(setting.Value), &posters); err != nil {
+		return nil, err
+	}
+
+	return posters, nil
+}
+
+func saveDealerPosters(tenantID uuid.UUID, posters []map[string]interface{}) error {
+	data, err := json.Marshal(posters)
+	if err != nil {
+		return err
+	}
+
+	var setting models.Setting
+	err = database.DB.Where("tenant_id = ? AND key = ?", tenantID, dealerPosterSettingKey).First(&setting).Error
+	if err != nil {
+		setting = models.Setting{TenantID: &tenantID, Key: dealerPosterSettingKey, Value: string(data), Group: "dealer"}
+		return database.DB.Create(&setting).Error
+	}
+
+	return database.DB.Model(&setting).Updates(map[string]interface{}{"value": string(data), "group": "dealer"}).Error
+}
+
+// GetDealerPosters lists dealer poster settings stored as tenant JSON config.
+func GetDealerPosters(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	posters, err := getDealerPosters(tenantID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch dealer posters"})
+	}
+
+	return c.JSON(fiber.Map{"data": posters, "total": len(posters)})
+}
+
+// GetDealerPoster returns a single dealer poster by ID.
+func GetDealerPoster(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	posters, err := getDealerPosters(tenantID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch dealer poster"})
+	}
+
+	id := c.Params("id")
+	for _, poster := range posters {
+		if poster["id"] == id {
+			return c.JSON(poster)
+		}
+	}
+
+	return c.Status(404).JSON(fiber.Map{"error": "Dealer poster not found"})
+}
+
+// CreateDealerPoster creates a dealer poster config entry.
+func CreateDealerPoster(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	posters, err := getDealerPosters(tenantID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to create dealer poster"})
+	}
+
+	var poster map[string]interface{}
+	if err := c.BodyParser(&poster); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+	poster["id"] = uuid.New().String()
+	posters = append(posters, poster)
+
+	if err := saveDealerPosters(tenantID, posters); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to create dealer poster"})
+	}
+
+	return c.Status(201).JSON(poster)
+}
+
+// UpdateDealerPoster updates a dealer poster config entry.
+func UpdateDealerPoster(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	posters, err := getDealerPosters(tenantID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to update dealer poster"})
+	}
+
+	var updates map[string]interface{}
+	if err := c.BodyParser(&updates); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	id := c.Params("id")
+	for i, poster := range posters {
+		if poster["id"] == id {
+			for key, value := range updates {
+				if key != "id" {
+					poster[key] = value
+				}
+			}
+			posters[i] = poster
+			if err := saveDealerPosters(tenantID, posters); err != nil {
+				return c.Status(500).JSON(fiber.Map{"error": "Failed to update dealer poster"})
+			}
+			return c.JSON(poster)
+		}
+	}
+
+	return c.Status(404).JSON(fiber.Map{"error": "Dealer poster not found"})
+}
+
+// DeleteDealerPoster deletes a dealer poster config entry.
+func DeleteDealerPoster(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	posters, err := getDealerPosters(tenantID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete dealer poster"})
+	}
+
+	id := c.Params("id")
+	for i, poster := range posters {
+		if poster["id"] == id {
+			posters = append(posters[:i], posters[i+1:]...)
+			if err := saveDealerPosters(tenantID, posters); err != nil {
+				return c.Status(500).JSON(fiber.Map{"error": "Failed to delete dealer poster"})
+			}
+			return c.JSON(fiber.Map{"message": "Dealer poster deleted successfully"})
+		}
+	}
+
+	return c.Status(404).JSON(fiber.Map{"error": "Dealer poster not found"})
 }

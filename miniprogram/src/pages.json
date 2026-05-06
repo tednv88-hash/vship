@@ -64,7 +64,7 @@
     { "path": "pages/invite/index", "style": { "navigationBarTitleText": "邀請好友" } },
     { "path": "pages/feedback/index", "style": { "navigationBarTitleText": "意見反饋" } },
     { "path": "pages/policy/privacy", "style": { "navigationBarTitleText": "隱私政策" } },
-    { "path": "pages/policy/terms", "style": { "navigationBarTitleText": "用戶協議" } }
+    { "path": "pages/policy/terms", "style": { "navigationBarTitleText": "用戶服務協議" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",

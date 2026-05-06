@@ -51,6 +51,18 @@
         </view>
       </view>
 
+      <view class="agreement-row" @tap="acceptedAgreement = !acceptedAgreement">
+        <view class="checkbox" :class="{ checked: acceptedAgreement }">
+          <text v-if="acceptedAgreement" class="check-text">√</text>
+        </view>
+        <view class="agreement-text-wrap">
+          <text class="agreement-text">我已閱讀並同意</text>
+          <text class="agreement-link" @tap.stop="navigateTo('/pages/policy/terms')">《用戶服務協議》</text>
+          <text class="agreement-text">和</text>
+          <text class="agreement-link" @tap.stop="navigateTo('/pages/policy/privacy')">《隱私政策》</text>
+        </view>
+      </view>
+
       <!-- Login button -->
       <view class="submit-btn" @tap="handleSubmit">
         <text class="submit-btn-text">
@@ -97,6 +109,7 @@ import { setUser } from '@/store'
 const isLogin = ref(true)
 const loading = ref(false)
 const countdown = ref(0)
+const acceptedAgreement = ref(false)
 // Toggle: SMS code temporarily disabled (provider not configured)
 const SHOW_SMS_CODE = false
 let timer: ReturnType<typeof setInterval> | null = null
@@ -139,6 +152,10 @@ async function handleGetCode() {
 }
 
 async function handleSubmit() {
+  if (!acceptedAgreement.value) {
+    uni.showToast({ title: '請先閱讀並同意用戶服務協議和隱私政策', icon: 'none' })
+    return
+  }
   if (!form.phone || !form.password) {
     uni.showToast({ title: '請填寫完整信息', icon: 'none' })
     return
@@ -187,6 +204,10 @@ async function handleSubmit() {
 }
 
 async function handleWechatLogin() {
+  if (!acceptedAgreement.value) {
+    uni.showToast({ title: '請先閱讀並同意用戶服務協議和隱私政策', icon: 'none' })
+    return
+  }
   try {
     const [err, res] = await uni.login({ provider: 'weixin' }) as any
     if (err || !res?.code) {
@@ -221,6 +242,7 @@ async function handleWechatLogin() {
   flex-direction: column;
   align-items: center;
   padding: 0 60rpx;
+  box-sizing: border-box;
 }
 
 .logo-section {
@@ -315,6 +337,55 @@ async function handleWechatLogin() {
   align-items: center;
   justify-content: center;
   margin-top: 16rpx;
+}
+
+.agreement-row {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin: 8rpx 0 28rpx;
+}
+
+.checkbox {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #c8c9cc;
+  border-radius: 50%;
+  margin-right: 14rpx;
+  margin-top: 4rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkbox.checked {
+  background: #0f3a57;
+  border-color: #0f3a57;
+}
+
+.check-text {
+  color: #fff;
+  font-size: 22rpx;
+  line-height: 1;
+}
+
+.agreement-text-wrap {
+  flex: 1;
+  line-height: 40rpx;
+}
+
+.agreement-text,
+.agreement-link {
+  font-size: 28rpx;
+}
+
+.agreement-text {
+  color: #666;
+}
+
+.agreement-link {
+  color: #0f3a57;
 }
 
 .submit-btn-text {

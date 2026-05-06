@@ -12,13 +12,13 @@
     <div class="modal-dialog"><div class="modal-content">
         <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.dealer_poster.add_poster">新增海報</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body"><form id="dataForm"><input type="hidden" id="editId">
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_name">海報名稱</label><input type="text" class="form-control" id="name" required></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_image_url">海報圖片URL</label><input type="url" class="form-control" id="image_url"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.promo_link">推廣連結</label><input type="url" class="form-control" id="promo_url"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_x">QR碼位置X(%)</label><input type="number" class="form-control" id="qr_x" value="50" min="0" max="100"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_y">QR碼位置Y(%)</label><input type="number" class="form-control" id="qr_y" value="80" min="0" max="100"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.sort_order">排序</label><input type="number" class="form-control" id="sort_order" value="0" min="0"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status"><option value="active" data-i18n="common.enable">啟用</option><option value="inactive" data-i18n="common.disable">停用</option></select></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_name">海報名稱</label><input type="text" class="form-control" id="name" name="name" required></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.poster_image_url">海報圖片URL</label><input type="url" class="form-control" id="image_url" name="image_url"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.promo_link">推廣連結</label><input type="url" class="form-control" id="promo_url" name="promo_url"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_x">QR碼位置X(%)</label><input type="number" class="form-control" id="qr_x" name="qr_x" value="50" min="0" max="100"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.qr_y">QR碼位置Y(%)</label><input type="number" class="form-control" id="qr_y" name="qr_y" value="80" min="0" max="100"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.dealer_poster.sort_order">排序</label><input type="number" class="form-control" id="sort_order" name="sort_order" value="0" min="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status" name="status"><option value="active" data-i18n="common.enable">啟用</option><option value="inactive" data-i18n="common.disable">停用</option></select></div>
         </form></div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
     </div></div>

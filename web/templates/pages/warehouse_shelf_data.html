@@ -40,7 +40,15 @@ async function loadData() {
     const wid = document.getElementById('filterWarehouse').value;
     const params = buildQueryParams({ warehouse_id: wid });
     try {
-        const res = await apiRequest('GET', '/warehouses/' + (wid || 'all') + '/shelves?limit=200');
+        if (!wid) {
+            loadTableData('/warehouses', 'tableBody', renderRow, 'pagination', 1, limit, params);
+            document.getElementById('totalSlots').textContent = '0';
+            document.getElementById('usedSlots').textContent = '0';
+            document.getElementById('freeSlots').textContent = '0';
+            document.getElementById('usageRate').textContent = '0%';
+            return;
+        }
+        const res = await apiRequest('GET', '/warehouses/' + wid + '/shelves?limit=200');
         const data = res.data || [];
         const total = data.length; const used = data.filter(s => s.package_count > 0).length;
         document.getElementById('totalSlots').textContent = total;
@@ -52,7 +60,7 @@ async function loadData() {
             <td>${s.shelf_name || '--'}</td><td>${s.package_count || 0}</td><td>${(s.total_weight || 0).toFixed(2)}</td>
             <td>${s.package_count > 0 ? '<span class="badge bg-warning">' + _t('pages.warehouse_shelf_data.occupied_badge', '已佔用') + '</span>' : '<span class="badge bg-success">' + _t('pages.warehouse_shelf_data.available_badge', '空閒') + '</span>'}</td>
             <td>${formatDate(s.updated_at)}</td></tr>`).join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">' + _t('common.no_data', '暫無數據') + '</td></tr>';
-    } catch(e) { loadTableData('/warehouses/' + (wid || '0') + '/shelves', 'tableBody', renderRow, 'pagination', 1, limit, params); }
+    } catch(e) { if (wid) loadTableData('/warehouses/' + wid + '/shelves', 'tableBody', renderRow, 'pagination', 1, limit, params); }
 }
 function renderRow(item) { return `<tr><td>${item.code || item.name || '--'}</td><td>${item.warehouse_name || '--'}</td>
     <td>${item.shelf_name || '--'}</td><td>${item.package_count || 0}</td><td>${(item.total_weight || 0).toFixed(2)}</td>

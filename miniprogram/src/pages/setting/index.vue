@@ -31,7 +31,7 @@
         <text class="menu-arrow">›</text>
       </view>
       <view class="menu-item" @tap="navigateTo('/pages/policy/terms')">
-        <text class="menu-label">用戶協議</text>
+        <text class="menu-label">用戶服務協議</text>
         <text class="menu-arrow">›</text>
       </view>
       <view class="menu-item" @tap="navigateTo('/pages/about/index')">

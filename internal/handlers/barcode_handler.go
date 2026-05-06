@@ -107,3 +107,22 @@ func UpdateBarcodeSetting(c *fiber.Ctx) error {
 
 	return c.JSON(item)
 }
+
+// DeleteBarcodeSetting hard-deletes a barcode setting
+func DeleteBarcodeSetting(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	result := database.DB.Delete(&models.BarcodeSetting{}, "id = ? AND tenant_id = ?", id, tenantID)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete barcode setting"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Barcode setting not found"})
+	}
+
+	return c.JSON(fiber.Map{"message": "Barcode setting deleted successfully"})
+}

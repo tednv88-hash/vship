@@ -31,15 +31,34 @@ const loading = ref(true)
 const error = ref('')
 const content = ref('')
 
+const fallbackContent = `
+<div>
+  <h2>用戶服務協議</h2>
+  <p>歡迎使用國韻好運小程序。請您在登入、註冊或使用本服務前，仔細閱讀並充分理解本用戶服務協議。</p>
+  <h3>一、服務內容</h3>
+  <p>本小程序為用戶提供倉儲集運、包裹預報、訂單查詢、物流跟蹤、地址管理、支付及相關客戶服務。</p>
+  <h3>二、帳號使用</h3>
+  <p>您應提供真實、準確、完整的註冊及登入信息，並妥善保管帳號信息。因您保管不善造成的損失，由您自行承擔。</p>
+  <h3>三、手機號收集與使用</h3>
+  <p>為完成註冊登入、身份識別、訂單通知、物流聯繫及售後服務，我們需要收集並使用您的手機號碼。您未同意本協議及隱私政策前，我們不會進行登入或獲取手機號操作。</p>
+  <h3>四、用戶行為規範</h3>
+  <p>您不得利用本服務從事違法違規活動，不得提交虛假訂單、違規貨物信息或侵犯他人合法權益的內容。</p>
+  <h3>五、服務變更與終止</h3>
+  <p>我們可能根據業務需要優化或調整服務內容，並會依法保障您的合法權益。</p>
+  <h3>六、聯繫我們</h3>
+  <p>如您對本協議有任何疑問，可通過小程序客服或「關於我們」頁面提供的聯繫方式與我們聯繫。</p>
+</div>
+`
+
 async function loadContent() {
   loading.value = true
   error.value = ''
   try {
     const res: any = await commonApi.getTerms()
     const data = res?.data || res
-    content.value = data.content || data || ''
+    content.value = data.content || data || fallbackContent
   } catch (e: any) {
-    error.value = e?.message || t('common.retry')
+    content.value = fallbackContent
   } finally {
     loading.value = false
   }

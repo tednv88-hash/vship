@@ -116,3 +116,32 @@ func VerifySharing(c *fiber.Ctx) error {
 	item.Status = "verified"
 	return c.JSON(item)
 }
+
+// UpdateSharingVerification updates a sharing verification record
+func UpdateSharingVerification(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	var item models.SharingVerification
+	if err := database.DB.Where("id = ? AND tenant_id = ?", id, tenantID).First(&item).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Sharing verification not found"})
+	}
+
+	var updates map[string]interface{}
+	if err := c.BodyParser(&updates); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	delete(updates, "id")
+	delete(updates, "tenant_id")
+	delete(updates, "created_at")
+
+	if err := database.DB.Model(&item).Updates(updates).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to update sharing verification"})
+	}
+
+	return c.JSON(item)
+}

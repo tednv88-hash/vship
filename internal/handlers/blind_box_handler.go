@@ -185,6 +185,54 @@ func CreateBlindBoxDraw(c *fiber.Ctx) error {
 	return c.Status(201).JSON(item)
 }
 
+// UpdateBlindBoxDraw updates an existing blind box draw record
+func UpdateBlindBoxDraw(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	var item models.BlindBoxDraw
+	if err := database.DB.Where("id = ? AND tenant_id = ?", id, tenantID).First(&item).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Blind box draw not found"})
+	}
+
+	var updates map[string]interface{}
+	if err := c.BodyParser(&updates); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	delete(updates, "id")
+	delete(updates, "tenant_id")
+	delete(updates, "created_at")
+
+	if err := database.DB.Model(&item).Updates(updates).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to update blind box draw"})
+	}
+
+	return c.JSON(item)
+}
+
+// DeleteBlindBoxDraw hard-deletes a blind box draw record
+func DeleteBlindBoxDraw(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	result := database.DB.Delete(&models.BlindBoxDraw{}, "id = ? AND tenant_id = ?", id, tenantID)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete blind box draw"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Blind box draw not found"})
+	}
+
+	return c.JSON(fiber.Map{"message": "Blind box draw deleted successfully"})
+}
+
 // GetBlindBoxSetting returns the blind box setting for the current tenant
 func GetBlindBoxSetting(c *fiber.Ctx) error {
 	tenantID := middleware.GetTenantID(c)

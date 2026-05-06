@@ -117,6 +117,14 @@ func UpdateFile(c *fiber.Ctx) error {
 // DeleteFile soft-deletes a file (moves to recycle bin)
 func DeleteFile(c *fiber.Ctx) error {
 	tenantID := middleware.GetTenantID(c)
+	if c.Query("trashed") == "true" {
+		if err := database.DB.Where("tenant_id = ? AND trashed_at IS NOT NULL", tenantID).Delete(&models.File{}).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to empty recycle bin"})
+		}
+
+		return c.JSON(fiber.Map{"message": "Recycle bin emptied successfully"})
+	}
+
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})

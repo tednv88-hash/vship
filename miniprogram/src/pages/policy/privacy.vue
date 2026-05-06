@@ -31,15 +31,36 @@ const loading = ref(true)
 const error = ref('')
 const content = ref('')
 
+const fallbackContent = `
+<div>
+  <h2>隱私政策</h2>
+  <p>國韻好運重視並保護您的個人信息安全。請您在使用本小程序前仔細閱讀本隱私政策。</p>
+  <h3>一、我們收集的信息</h3>
+  <p>為向您提供登入註冊、手機號綁定、包裹預報、訂單處理、物流通知、售後客服等服務，我們可能收集您的手機號、微信授權登入信息、收貨地址、訂單信息、包裹信息、支付狀態及客服溝通信息。</p>
+  <h3>二、手機號的使用目的</h3>
+  <p>我們收集手機號僅用於帳號識別、登入註冊、訂單及物流通知、異常聯繫、售後服務及法律法規要求的必要場景。未勾選同意《用戶服務協議》和《隱私政策》前，不會登入或獲取手機號。</p>
+  <h3>三、信息的存儲與保護</h3>
+  <p>我們會採取合理的安全措施保護您的個人信息，防止未經授權訪問、披露、使用、修改、損壞或丟失。</p>
+  <h3>四、信息共享</h3>
+  <p>除為完成物流配送、支付結算、售後服務或依法依規需要外，我們不會向無關第三方共享您的個人信息。</p>
+  <h3>五、用戶權利</h3>
+  <p>您有權查詢、更正、刪除您的個人信息，或撤回授權。您可以通過小程序客服或「關於我們」頁面提供的聯繫方式提出申請。</p>
+  <h3>六、政策更新</h3>
+  <p>我們可能根據法律法規或業務變化更新本政策，更新後會在本頁面展示。</p>
+  <h3>七、聯繫我們</h3>
+  <p>如您對個人信息保護有任何疑問、投訴或建議，可通過小程序客服與我們聯繫。</p>
+</div>
+`
+
 async function loadContent() {
   loading.value = true
   error.value = ''
   try {
     const res: any = await commonApi.getPrivacy()
     const data = res?.data || res
-    content.value = data.content || data || ''
+    content.value = data.content || data || fallbackContent
   } catch (e: any) {
-    error.value = e?.message || t('common.retry')
+    content.value = fallbackContent
   } finally {
     loading.value = false
   }

@@ -107,3 +107,22 @@ func UpdateUserBirthday(c *fiber.Ctx) error {
 
 	return c.JSON(item)
 }
+
+// DeleteUserBirthday hard-deletes a user birthday reminder
+func DeleteUserBirthday(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	result := database.DB.Delete(&models.UserBirthday{}, "id = ? AND tenant_id = ?", id, tenantID)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete user birthday"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "User birthday not found"})
+	}
+
+	return c.JSON(fiber.Map{"message": "User birthday deleted successfully"})
+}

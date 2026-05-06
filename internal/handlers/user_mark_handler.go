@@ -43,6 +43,22 @@ func GetUserMarks(c *fiber.Ctx) error {
 	})
 }
 
+// GetUserMark returns a single user mark by ID
+func GetUserMark(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	var item models.UserMark
+	if err := database.DB.Where("id = ? AND tenant_id = ?", id, tenantID).First(&item).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "User mark not found"})
+	}
+
+	return c.JSON(item)
+}
+
 // CreateUserMark creates a new user mark
 func CreateUserMark(c *fiber.Ctx) error {
 	tenantID := middleware.GetTenantID(c)

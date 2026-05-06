@@ -16,23 +16,41 @@
     <div class="modal-dialog"><div class="modal-content">
         <div class="modal-header"><h5 class="modal-title" id="modalTitle" data-i18n="pages.coupon_distribution.add_rule">新增發放規則</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body"><form id="dataForm"><input type="hidden" id="editId">
-            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.rule_name">規則名稱</label><input type="text" class="form-control" id="name" required></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.select_coupon">選擇優惠券</label><select class="form-select" id="coupon_id"><option value="" data-i18n="common.please_select">請選擇</option></select></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.trigger_condition">觸發條件</label><select class="form-select" id="trigger_type">
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.rule_name">規則名稱</label><input type="text" class="form-control" id="name" name="name" required></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.select_coupon">選擇優惠券</label><select class="form-select" id="coupon_id" name="coupon_id"><option value="" data-i18n="common.please_select">請選擇</option></select></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.trigger_condition">觸發條件</label><select class="form-select" id="trigger_type" name="trigger_type">
                 <option value="register" data-i18n="pages.coupon_distribution.trigger_register">新用戶註冊</option><option value="first_order" data-i18n="pages.coupon_distribution.trigger_first_order">首次下單</option><option value="birthday" data-i18n="pages.coupon_distribution.trigger_birthday">生日</option><option value="level_up" data-i18n="pages.coupon_distribution.trigger_level_up">等級升級</option><option value="manual" data-i18n="pages.coupon_distribution.trigger_manual">手動發放</option></select></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.quantity_per_user">發放數量(每人)</label><input type="number" class="form-control" id="quantity_per_user" value="1" min="1"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.total_limit">總數量限制(0=不限)</label><input type="number" class="form-control" id="total_limit" value="0" min="0"></div>
-            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status"><option value="active" data-i18n="common.status_active">啟用</option><option value="inactive" data-i18n="common.status_inactive">停用</option></select></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.quantity_per_user">發放數量(每人)</label><input type="number" class="form-control" id="quantity_per_user" name="quantity_per_user" value="1" min="1"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="pages.coupon_distribution.total_limit">總數量限制(0=不限)</label><input type="number" class="form-control" id="total_limit" name="total_limit" value="0" min="0"></div>
+            <div class="mb-3"><label class="form-label" data-i18n="common.status">狀態</label><select class="form-select" id="status" name="status"><option value="active" data-i18n="common.status_active">啟用</option><option value="inactive" data-i18n="common.status_inactive">停用</option></select></div>
         </form></div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button><button type="button" class="btn btn-primary" onclick="saveItem()" data-i18n="common.save">儲存</button></div>
     </div></div>
 </div>
 <script>
 const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(key) : fallback;
-const API_PATH = '/coupon-receives'; let currentPage = 1; const limit = 20;
+const API_PATH = '/settings'; const SETTING_KEY = 'coupon_distribution_rules'; let currentPage = 1; const limit = 20;
 async function loadCoupons() { try { const res = await apiRequest('GET', '/coupons?limit=100');
     const sel = document.getElementById('coupon_id'); (res.data || []).forEach(c => { sel.innerHTML += `<option value="${c.id}">${c.name}</option>`; }); } catch(e) {} }
-function loadData(page) { currentPage = page; loadTableData(API_PATH, 'tableBody', renderRow, 'pagination', page, limit, ''); }
+async function getRules() {
+    const res = await apiRequest('GET', API_PATH + '?key=' + SETTING_KEY);
+    const item = (res.data || []).find(s => s.key === SETTING_KEY);
+    return item && item.value ? JSON.parse(item.value) : [];
+}
+async function saveRules(rules) { await apiRequest('PUT', API_PATH, { key: SETTING_KEY, value: JSON.stringify(rules), group: 'coupon' }); }
+async function loadData(page) {
+    currentPage = page;
+    try {
+        const rules = await getRules();
+        const start = (page - 1) * limit;
+        const items = rules.slice(start, start + limit);
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = items.length ? items.map(renderRow).join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">' + _t('common.no_data', '暫無數據') + '</td></tr>';
+        renderPagination(rules.length, page, limit, 'pagination', loadData);
+    } catch(e) {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger">' + _t('common.load_failed_retry', '載入失敗，請重試') + '</td></tr>';
+    }
+}
 function renderRow(item) {
     const triggers = {
         register: _t('pages.coupon_distribution.trigger_register','新用戶註冊'),
@@ -52,7 +70,8 @@ function openCreateModal() {
     document.getElementById('editId').value = ''; resetForm('dataForm'); openModal('formModal');
 }
 async function editItem(id) {
-    try { const res = await apiRequest('GET', API_PATH + '/' + id); const d = res.data || res;
+    try { const rules = await getRules(); const d = rules.find(r => r.id === id);
+    if (!d) return;
     document.getElementById('editId').value = d.id; populateForm('dataForm', d);
     document.getElementById('modalTitle').textContent = _t('pages.coupon_distribution.edit_rule', '編輯規則');
     document.getElementById('modalTitle').setAttribute('data-i18n', 'pages.coupon_distribution.edit_rule');
@@ -60,12 +79,15 @@ async function editItem(id) {
 }
 async function saveItem() {
     const id = document.getElementById('editId').value; const data = getFormData('dataForm');
-    try { if (id) { await apiRequest('PUT', API_PATH + '/' + id, data); } else { await apiRequest('POST', API_PATH, data); }
+    try { const rules = await getRules();
+    if (id) { const idx = rules.findIndex(r => r.id === id); if (idx >= 0) rules[idx] = { ...rules[idx], ...data, id }; }
+    else { rules.push({ ...data, id: String(Date.now()), distributed_count: 0 }); }
+    await saveRules(rules);
     showToast(_t('common.operation_success', '儲存成功'), 'success'); closeModal('formModal'); loadData(currentPage); } catch(e) {}
 }
 async function deleteItem(id) {
     if (!confirmDelete()) return;
-    try { await apiRequest('DELETE', API_PATH + '/' + id); showToast(_t('common.delete_success', '刪除成功'), 'success'); loadData(currentPage); } catch(e) {}
+    try { const rules = (await getRules()).filter(r => r.id !== id); await saveRules(rules); showToast(_t('common.delete_success', '刪除成功'), 'success'); loadData(currentPage); } catch(e) {}
 }
 document.addEventListener('DOMContentLoaded', () => { loadCoupons(); loadData(1); });
 </script>

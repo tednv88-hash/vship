@@ -110,3 +110,22 @@ func UpdateSubscribeMessage(c *fiber.Ctx) error {
 
 	return c.JSON(item)
 }
+
+// DeleteSubscribeMessage hard-deletes a subscribe message template
+func DeleteSubscribeMessage(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	result := database.DB.Delete(&models.SubscribeMessage{}, "id = ? AND tenant_id = ?", id, tenantID)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete subscribe message"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Subscribe message not found"})
+	}
+
+	return c.JSON(fiber.Map{"message": "Subscribe message deleted successfully"})
+}

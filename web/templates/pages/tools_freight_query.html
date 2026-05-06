@@ -59,7 +59,7 @@ const _t = (key, fallback) => (typeof I18n !== 'undefined' && I18n.t) ? I18n.t(k
 async function loadCountries() {
     try {
         const data = await apiRequest('GET', '/countries');
-        const items = data.items || data || [];
+        const items = data.data || data.items || data || [];
         const originSel = document.getElementById('originCountry');
         const destSel = document.getElementById('destinationCountry');
         items.forEach(c => {
@@ -73,7 +73,7 @@ async function loadCountries() {
 async function loadRoutes() {
     try {
         const data = await apiRequest('GET', '/shipping-routes');
-        const items = data.items || data || [];
+        const items = data.data || data.items || data || [];
         const sel = document.getElementById('shippingRoute');
         items.forEach(r => {
             const name = r.name || r.route_name || '';
@@ -85,8 +85,14 @@ async function loadRoutes() {
 async function queryFreight() {
     const data = getFormData('queryForm');
     try {
-        const result = await apiRequest('POST', '/tools/freight-query', data);
-        const items = result.items || result || [];
+        const result = await apiRequest('POST', '/shipping-routes/calculate', {
+            route_id: data.shipping_route,
+            weight: data.weight,
+            length: data.length,
+            width: data.width,
+            height: data.height,
+        });
+        const items = result ? [result] : [];
         const container = document.getElementById('resultsContainer');
         const area = document.getElementById('resultsArea');
         const noResults = document.getElementById('noResults');
@@ -103,7 +109,7 @@ async function queryFreight() {
                     <div class="card h-100">
                         <div class="card-body">
                             <h6 class="card-title">${item.route_name||item.name||'--'}</h6>
-                            <div class="mb-2"><span class="text-muted">${_t('pages.tools_freight_query.estimated_cost', '預估費用')}：</span><strong class="text-primary">${formatMoney(item.estimated_cost)}</strong></div>
+                            <div class="mb-2"><span class="text-muted">${_t('pages.tools_freight_query.estimated_cost', '預估費用')}：</span><strong class="text-primary">${formatMoney(item.estimated_cost || item.price)}</strong></div>
                             <div class="mb-2"><span class="text-muted">${_t('pages.tools_freight_query.estimated_transit', '預估時效')}：</span>${item.estimated_days||'--'} ${_t('pages.tools_freight_query.days', '天')}</div>
                             <div><span class="text-muted">${_t('pages.tools_freight_query.channel', '渠道')}：</span>${item.channel||'--'}</div>
                         </div>

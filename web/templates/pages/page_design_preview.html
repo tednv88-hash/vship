@@ -246,6 +246,8 @@
                         data = data.list.find(d => d.id === PAGE_ID) || data.list[0];
                     } else if (data.items) {
                         data = data.items.find(d => d.id === PAGE_ID) || data.items[0];
+                    } else if (data.data) {
+                        data = data.data.find(d => d.id === PAGE_ID) || data.data[0];
                     }
                 }
                 

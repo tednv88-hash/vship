@@ -90,6 +90,22 @@ func GetWarehouseBonuses(c *fiber.Ctx) error {
 	})
 }
 
+// GetWarehouseBonus gets a single warehouse bonus by ID
+func GetWarehouseBonus(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	var item models.WarehouseBonus
+	if err := database.DB.Where("id = ? AND tenant_id = ?", id, tenantID).First(&item).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Warehouse bonus not found"})
+	}
+
+	return c.JSON(item)
+}
+
 // CreateWarehouseBonus creates a new warehouse bonus
 func CreateWarehouseBonus(c *fiber.Ctx) error {
 	tenantID := middleware.GetTenantID(c)
@@ -161,6 +177,25 @@ func PayWarehouseBonus(c *fiber.Ctx) error {
 	item.Status = "paid"
 	item.PaidAt = &now
 	return c.JSON(item)
+}
+
+// DeleteWarehouseBonus hard-deletes a warehouse bonus
+func DeleteWarehouseBonus(c *fiber.Ctx) error {
+	tenantID := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	result := database.DB.Delete(&models.WarehouseBonus{}, "id = ? AND tenant_id = ?", id, tenantID)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete warehouse bonus"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Warehouse bonus not found"})
+	}
+
+	return c.JSON(fiber.Map{"message": "Warehouse bonus deleted successfully"})
 }
 
 // GetWarehouseWithdrawals lists warehouse withdrawals with pagination and filters
