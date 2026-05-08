@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"net/http"
+	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -275,7 +278,7 @@ func MpRegister(c *fiber.Ctx) error {
 	})
 }
 
-// MpWechatLogin is a placeholder for WeChat mini-program login
+// MpWechatLogin exchanges a WeChat mini-program login code for an account.
 func MpWechatLogin(c *fiber.Ctx) error {
 	var req struct {
 		Code string `json:"code"`
@@ -283,10 +286,207 @@ func MpWechatLogin(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return mpErr(c, 400, "Invalid request body")
 	}
+	req.Code = strings.TrimSpace(req.Code)
 	if req.Code == "" {
 		return mpErr(c, 400, "Code is required")
 	}
-	return mpErr(c, 501, "WeChat login not configured")
+
+	appid, secret := getMiniprogramWechatCredentials()
+	if appid == "" || secret == "" {
+		return mpErr(c, 503, "WeChat login is not configured")
+	}
+
+	endpoint := "https://api.weixin.qq.com/sns/jscode2session?" + url.Values{
+		"appid":      {appid},
+		"secret":     {secret},
+		"js_code":    {req.Code},
+		"grant_type": {"authorization_code"},
+	}.Encode()
+
+	client := http.Client{Timeout: 8 * time.Second}
+	resp, err := client.Get(endpoint)
+	if err != nil {
+		return mpErr(c, 502, "Failed to contact WeChat")
+	}
+	defer resp.Body.Close()
+
+	var wxResp struct {
+		OpenID     string `json:"openid"`
+		SessionKey string `json:"session_key"`
+		UnionID    string `json:"unionid"`
+		ErrCode    int    `json:"errcode"`
+		ErrMsg     string `json:"errmsg"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&wxResp); err != nil {
+		return mpErr(c, 502, "Invalid WeChat response")
+	}
+	if wxResp.ErrCode != 0 || strings.TrimSpace(wxResp.OpenID) == "" {
+		msg := strings.TrimSpace(wxResp.ErrMsg)
+		if msg == "" {
+			msg = "WeChat login failed"
+		}
+		return mpErr(c, 401, msg)
+	}
+
+	var user models.User
+	lookup := database.DB.Where("extra_fields ->> 'wechat_openid' = ? AND trashed_at IS NULL", wxResp.OpenID).First(&user)
+	if lookup.Error != nil && lookup.Error != gorm.ErrRecordNotFound {
+		return mpErr(c, 500, "Failed to query account")
+	}
+
+	if lookup.Error == gorm.ErrRecordNotFound {
+		var defaultTenant models.Tenant
+		var userTenantID *uuid.UUID
+		if err := database.DB.Where("status = ?", "active").Order("created_at ASC").First(&defaultTenant).Error; err == nil {
+			tid := defaultTenant.ID
+			userTenantID = &tid
+		}
+
+		nowSuffix := time.Now().Format("20060102150405")
+		email := fmt.Sprintf("wx_%s_%s@wechat.local", wxResp.OpenID, nowSuffix)
+		if len(email) > 255 {
+			email = fmt.Sprintf("wx_%s@wechat.local", uuid.New().String())
+		}
+
+		user = models.User{
+			TenantID:     userTenantID,
+			Email:        email,
+			PasswordHash: "wechat_login",
+			Name:         "WeChat User",
+			UserRole:     "user",
+			Status:       "active",
+			ExtraFields: models.JSONB{
+				"wechat_openid":  wxResp.OpenID,
+				"wechat_unionid": wxResp.UnionID,
+			},
+		}
+		if err := database.DB.Create(&user).Error; err != nil {
+			return mpErr(c, 500, "Failed to create account")
+		}
+	}
+
+	if strings.TrimSpace(strings.ToLower(user.Status)) != "active" {
+		return mpErr(c, 401, "Account is inactive")
+	}
+
+	tenantID := uuid.Nil
+	if user.TenantID != nil {
+		tenantID = *user.TenantID
+	}
+	token, err := utils.GenerateToken(user.ID, tenantID, user.Email, user.UserRole)
+	if err != nil {
+		return mpErr(c, 500, "Failed to generate token")
+	}
+
+	now := time.Now()
+	extraFields := user.ExtraFields
+	if extraFields == nil {
+		extraFields = models.JSONB{}
+	}
+	extraFields["wechat_openid"] = wxResp.OpenID
+	if wxResp.UnionID != "" {
+		extraFields["wechat_unionid"] = wxResp.UnionID
+	}
+	database.DB.Model(&user).Updates(map[string]interface{}{
+		"last_login_at": now,
+		"extra_fields":  extraFields,
+	})
+
+	return mpOK(c, fiber.Map{
+		"token":         token,
+		"needBindPhone": false,
+		"user": fiber.Map{
+			"id":          user.ID,
+			"email":       user.Email,
+			"name":        user.Name,
+			"phone":       user.Phone,
+			"user_role":   user.UserRole,
+			"tenant_id":   tenantID,
+			"profile_pic": user.ProfilePic,
+		},
+	})
+}
+
+func getMiniprogramWechatCredentials() (string, string) {
+	if appid, secret := credentialsFromSQLRow("SELECT to_jsonb(u) FROM users u WHERE u.trashed_at IS NULL ORDER BY u.updated_at DESC LIMIT 1"); appid != "" && secret != "" {
+		return appid, secret
+	}
+
+	if appid, secret := credentialsFromSQLRow("SELECT to_jsonb(t) FROM tenants t WHERE t.status = 'active' ORDER BY t.updated_at DESC LIMIT 1"); appid != "" && secret != "" {
+		return appid, secret
+	}
+
+	var setting models.AppSetting
+	if err := database.DB.Where("setting_type = ?", "miniprogram").Order("updated_at DESC").First(&setting).Error; err == nil {
+		if appid, secret := credentialsFromJSONB(setting.Config); appid != "" && secret != "" {
+			return appid, secret
+		}
+	}
+
+	appid := strings.TrimSpace(os.Getenv("WECHAT_MINIPROGRAM_APPID"))
+	secret := strings.TrimSpace(os.Getenv("WECHAT_MINIPROGRAM_SECRET"))
+	return appid, secret
+}
+
+func credentialsFromSQLRow(query string) (string, string) {
+	var raw []byte
+	if err := database.DB.Raw(query).Scan(&raw).Error; err != nil || len(raw) == 0 {
+		return "", ""
+	}
+
+	var fields map[string]interface{}
+	if err := json.Unmarshal(raw, &fields); err != nil {
+		return "", ""
+	}
+	return credentialsFromMap(fields)
+}
+
+func credentialsFromJSONB(fields models.JSONB) (string, string) {
+	plain := map[string]interface{}{}
+	for key, value := range fields {
+		plain[key] = value
+	}
+	return credentialsFromMap(plain)
+}
+
+func credentialsFromMap(fields map[string]interface{}) (string, string) {
+	appidKeys := []string{
+		"app_id", "appid", "appId", "AppID", "APPID",
+		"wechat_app_id", "wechat_appid", "wechatAppId",
+		"miniprogram_app_id", "miniprogram_appid", "mini_program_app_id",
+		"wechat_miniprogram_app_id", "wechat_miniprogram_appid",
+	}
+	secretKeys := []string{
+		"app_secret", "appsecret", "appSecret", "AppSecret", "APPSECRET",
+		"secret", "wechat_app_secret", "wechat_secret", "wechatAppSecret",
+		"miniprogram_app_secret", "miniprogram_secret", "mini_program_app_secret",
+		"wechat_miniprogram_app_secret", "wechat_miniprogram_secret",
+	}
+
+	appid := firstMapString(fields, appidKeys)
+	secret := firstMapString(fields, secretKeys)
+	if appid != "" && secret != "" {
+		return appid, secret
+	}
+
+	if extraFields, ok := fields["extra_fields"].(map[string]interface{}); ok {
+		return firstMapString(extraFields, appidKeys), firstMapString(extraFields, secretKeys)
+	}
+	if config, ok := fields["config"].(map[string]interface{}); ok {
+		return firstMapString(config, appidKeys), firstMapString(config, secretKeys)
+	}
+
+	return "", ""
+}
+
+func firstMapString(fields map[string]interface{}, keys []string) string {
+	for _, key := range keys {
+		value := strings.TrimSpace(fmt.Sprint(fields[key]))
+		if value != "" && value != "<nil>" {
+			return value
+		}
+	}
+	return ""
 }
 
 // MpBindPhone is a placeholder for binding phone number
@@ -907,10 +1107,10 @@ func MpGetShopOrder(c *fiber.Ctx) error {
 			"region": "",
 			"detail": order.ReceiverAddress,
 		},
-		"shipping": nil,
-		"created_at": order.CreatedAt.Format("2006-01-02 15:04"),
-		"paid_at":    formatTime(order.PayTime),
-		"shipped_at": formatTime(order.DeliveryTime),
+		"shipping":    nil,
+		"created_at":  order.CreatedAt.Format("2006-01-02 15:04"),
+		"paid_at":     formatTime(order.PayTime),
+		"shipped_at":  formatTime(order.DeliveryTime),
 		"received_at": formatTime(order.ReceiveTime),
 	}
 

@@ -228,8 +228,9 @@ async function handleWechatLogin() {
         uni.switchTab({ url: '/pages/index/index' })
       }
     }
-  } catch {
-    uni.showToast({ title: '微信登入失敗', icon: 'none' })
+  } catch (e: any) {
+    const msg = e?.message || e?.data?.message || '微信登入失敗'
+    uni.showToast({ title: String(msg).slice(0, 30), icon: 'none' })
   }
 }
 </script>

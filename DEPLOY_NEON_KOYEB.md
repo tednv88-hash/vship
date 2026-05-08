@@ -70,6 +70,15 @@ miniprogram/dist/build/mp-weixin
 
 ## 6. Configure WeChat Backend
 
+If the mini program `AppID` and `AppSecret` are not stored in the account or tenant `extra_fields`, set these fallback environment variables on the backend service:
+
+```text
+WECHAT_MINIPROGRAM_APPID=<your-mini-program-appid>
+WECHAT_MINIPROGRAM_SECRET=<your-mini-program-secret>
+```
+
+Then configure the mini program domain in WeChat:
+
 In `mp.weixin.qq.com` for your mini program:
 
 1. Go to `开发管理` -> `开发设置`.
