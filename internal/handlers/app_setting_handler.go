@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"strconv"
 	"vship/internal/database"
 	"vship/internal/middleware"
@@ -69,8 +70,23 @@ func CreateAppSetting(c *fiber.Ctx) error {
 	if err := c.BodyParser(&item); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
 	}
+	mergeAppSettingFormFields(c, &item)
 
 	item.TenantID = &tenantID
+	if item.SettingType != "" {
+		var existing models.AppSetting
+		if err := database.DB.Where("tenant_id = ? AND setting_type = ?", tenantID, item.SettingType).First(&existing).Error; err == nil {
+			item.ID = existing.ID
+			if err := database.DB.Model(&existing).Updates(map[string]interface{}{
+				"setting_type": item.SettingType,
+				"config":       item.Config,
+				"extra_fields": item.ExtraFields,
+			}).Error; err != nil {
+				return c.Status(500).JSON(fiber.Map{"error": "Failed to update app setting"})
+			}
+			return c.JSON(existing)
+		}
+	}
 
 	if err := database.DB.Create(&item).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to create app setting"})
@@ -96,6 +112,7 @@ func UpdateAppSetting(c *fiber.Ctx) error {
 	if err := c.BodyParser(&updates); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
 	}
+	normalizeAppSettingUpdates(c, updates)
 
 	delete(updates, "id")
 	delete(updates, "tenant_id")
@@ -106,4 +123,38 @@ func UpdateAppSetting(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(item)
+}
+
+func mergeAppSettingFormFields(c *fiber.Ctx, item *models.AppSetting) {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(c.Body(), &raw); err != nil {
+		return
+	}
+	if item.Config == nil {
+		item.Config = models.JSONB{}
+	}
+	if item.ExtraFields == nil {
+		item.ExtraFields = models.JSONB{}
+	}
+	for key, value := range raw {
+		switch key {
+		case "id", "tenant_id", "setting_type", "config", "created_at", "updated_at", "extra_fields":
+			continue
+		default:
+			item.Config[key] = value
+		}
+	}
+}
+
+func normalizeAppSettingUpdates(c *fiber.Ctx, updates map[string]interface{}) {
+	var item models.AppSetting
+	if err := c.BodyParser(&item); err == nil {
+		mergeAppSettingFormFields(c, &item)
+		if len(item.Config) > 0 {
+			updates["config"] = item.Config
+		}
+		if len(item.ExtraFields) > 0 {
+			updates["extra_fields"] = item.ExtraFields
+		}
+	}
 }

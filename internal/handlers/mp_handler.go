@@ -421,6 +421,9 @@ func getMiniprogramWechatCredentials() (string, string) {
 		if appid, secret := credentialsFromJSONB(setting.Config); appid != "" && secret != "" {
 			return appid, secret
 		}
+		if appid, secret := credentialsFromJSONB(setting.ExtraFields); appid != "" && secret != "" {
+			return appid, secret
+		}
 	}
 
 	appid := strings.TrimSpace(os.Getenv("WECHAT_MINIPROGRAM_APPID"))
