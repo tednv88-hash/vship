@@ -171,8 +171,19 @@ async function handleSubmit() {
       if (token) {
         uni.setStorageSync('token', token)
         if (payload.user) {
-          uni.setStorageSync('userInfo', payload.user)
-          setUser(payload.user as any)
+          const u = payload.user
+          const normalized = {
+            id: u.id,
+            nickname: u.nickname || u.name || '',
+            avatar: u.avatar || u.profile_pic || '',
+            phone: u.phone || '',
+            balance: Number(u.balance) || 0,
+            points: Number(u.points) || 0,
+            is_vip: !!(u.is_vip ?? u.vip_level > 0),
+            vip_level: Number(u.vip_level) || 0,
+          }
+          uni.setStorageSync('userInfo', normalized)
+          setUser(normalized as any)
         }
       } else {
         throw new Error('登入回應冇 token')
@@ -209,8 +220,14 @@ async function handleWechatLogin() {
     return
   }
   try {
-    const [err, res] = await uni.login({ provider: 'weixin' }) as any
-    if (err || !res?.code) {
+    const res = await new Promise<UniApp.LoginRes>((resolve, reject) => {
+      uni.login({
+        provider: 'weixin',
+        success: (r) => resolve(r),
+        fail: (e) => reject(e),
+      })
+    })
+    if (!res?.code) {
       uni.showToast({ title: '微信授權失敗', icon: 'none' })
       return
     }
@@ -219,8 +236,19 @@ async function handleWechatLogin() {
     if (data?.token) {
       uni.setStorageSync('token', data.token)
       if (data.user) {
-        uni.setStorageSync('userInfo', data.user)
-        setUser(data.user as any)
+        const u = data.user
+        const normalized = {
+          id: u.id,
+          nickname: u.nickname || u.name || '',
+          avatar: u.avatar || u.profile_pic || '',
+          phone: u.phone || '',
+          balance: Number(u.balance) || 0,
+          points: Number(u.points) || 0,
+          is_vip: !!(u.is_vip ?? u.vip_level > 0),
+          vip_level: Number(u.vip_level) || 0,
+        }
+        uni.setStorageSync('userInfo', normalized)
+        setUser(normalized as any)
       }
       if (data.needBindPhone) {
         uni.navigateTo({ url: '/pages/login/bindPhone' })

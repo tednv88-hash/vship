@@ -325,7 +325,15 @@ func MpWechatLogin(c *fiber.Ctx) error {
 		if msg == "" {
 			msg = "WeChat login failed"
 		}
-		return mpErr(c, 401, msg)
+		return c.Status(401).JSON(fiber.Map{
+			"code":    401,
+			"message": msg,
+			"data": fiber.Map{
+				"wx_errcode": wxResp.ErrCode,
+				"wx_errmsg":  wxResp.ErrMsg,
+				"appid":      appid[:min(8, len(appid))] + "***",
+			},
+		})
 	}
 
 	var user models.User

@@ -222,7 +222,21 @@ async function fetchUserInfo() {
     const res: any = await userApi.getUserInfo()
     const data = res?.data || res
     if (data?.id) {
-      setUser(data as UserInfo)
+      // Normalize backend field names to UserInfo shape
+      const normalized: UserInfo = {
+        id: data.id,
+        nickname: data.nickname || data.name || '',
+        avatar: data.avatar || data.profile_pic || '',
+        phone: data.phone || '',
+        balance: Number(data.balance) || 0,
+        points: Number(data.points) || 0,
+        is_vip: !!(data.is_vip ?? data.vip_level > 0),
+        vip_level: Number(data.vip_level) || 0,
+      }
+      setUser(normalized)
+      if (typeof data.coupon_count === 'number') {
+        couponCount.value = data.coupon_count
+      }
     }
   } catch (e) {
     // Silent
